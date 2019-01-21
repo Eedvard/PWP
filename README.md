@@ -1,8 +1,8 @@
 # PWP SPRING 2019
-# PROJECT NAME
+# Don't Starve - Meal planner API
 # Group information
-* Student 1. Name and email
-* Student 2. Name and email
-* Student 3. Name and email
+* Student 1. Jesse Korhonen <jesse.korhonen@student.oulu.fi>
+* Student 2. Eetu Haapamäki
+* Student 3. Samuli Helttunen
 
 
