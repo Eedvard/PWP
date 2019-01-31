@@ -3,6 +3,6 @@
 # Group information
 * Student 1. Jesse Korhonen <jesse.korhonen@student.oulu.fi>
 * Student 2. Eetu Haapamäki
-* Student 3. Samuli Helttunen
+* Student 3. Samuli Helttunen <samuli.helttunen@gmail.com>
 
 
