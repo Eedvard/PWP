@@ -35,6 +35,7 @@ class Ingredient(db.Model):
     nutritionInformation = db.Column(db.Integer, db.ForeignKey("nutritioninformation.id"), nullable=True)
 
     nutritionInformation_r = db.relationship("NutritionInformation", back_populates="ingredient_r")
+    recipeingredient_r = db.relationship("RecipeIngredient", back_populates="ingredient_r")
 
 
 class Recipe(db.Model):
@@ -49,7 +50,18 @@ class Recipe(db.Model):
     nutritionInformation = db.Column(db.Integer, db.ForeignKey("nutritioninformation.id"), nullable=True)
 
     instructionstep_r = db.relationship("RecipeInstructionStep", back_populates="recipe_r")
+    recipeingredient_r = db.relationship("RecipeIngredient", back_populates="recipe_r")
     nutritionInformation_r = db.relationship("NutritionInformation", back_populates="recipe_r")
+
+
+class RecipeIngredient(db.Model):
+    recipe = db.Column(db.Integer, db.ForeignKey("recipe.id"), primary_key=True)
+    ingredient = db.Column(db.Integer, db.ForeignKey("ingredient.id"), primary_key=True)
+    amount = db.Column(db.Integer, nullable=False)
+    unit = db.Column(db.String(255), nullable=True)
+
+    ingredient_r = db.relationship("Ingredient", back_populates="recipeingredient_r", uselist=False)
+    recipe_r = db.relationship("Recipe", back_populates="recipeingredient_r", uselist=False)
 
 
 class RecipeInstructionStep(db.Model):
