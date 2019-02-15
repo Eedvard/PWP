@@ -1498,7 +1498,7 @@ A list of all artists known to the API. This collection can be sorted using the 
 
 ### List all Artists [GET]
 
-Get a list of all albums known to the API.
+Get a list of all artists known to the API.
 
 + Relation: artists-all
 + Request
@@ -1544,7 +1544,8 @@ Get a list of all albums known to the API.
                     } 
                 ]
             }
-            
+
+          
 ### Add artist [POST]
 
 Adds a new artist. The album representation must be valid against the album schema.
@@ -1577,106 +1578,19 @@ Adds a new artist. The album representation must be valid against the album sche
     The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
 
     + Body
-    
-            {
-                "resource_url": "/api/artists/",
-                "@error": {
-                    "@message": "Invalid JSON document",
-                    "@messages": [                    
-                        "'release' is a required property
-                        
-                        Failed validating 'required' in schema:
-                        {'properties': {'discs': {'default': 1,
-                        'description': 'Number of discs',
-                        'type': 'integer'},
-                        'genre': {'description': \"Album's genre(s)\",
-                        'type': 'string'},
-                        'release': {'description': 'Release date',
-                        'pattern': '^[0-9]{4}(?:-[01][0-9])?(?:-[0-3][0-9])?$',
-                        'type': 'string'},
-                        'title': {'description': 'Album title',
-                        'type': 'string'}},
-                        'required': ['title', 'release'],
-                        'type': 'object'}
-                        
-                        On instance:
-                        {'title': 'Best Scandal'}"
-                    ]
-                },
-                "@controls": {
-                    "profile": {
-                        "href": "/profiles/error/"
-                    }
-                }
-            }
-
-+ Response 404 (application/vnd.mason+json)
-
-    The client is trying to add an album for an artist that doesn't exist.
-
-    + Body
-    
-            {
-                "resource_url": "/api/artists/hemuli/albums/",
-                "@error": {
-                    "@message": "Artist not found",
-                    "@messages": [null]
-                },
-                "@controls": {
-                    "profile": {
-                        "href": "/profiles/error/"
-                    }
-                }
-            }
-
-+ Response 409 (application/vnd.mason+json)
-
-    The client is trying to add an album with a title that's already used by another album for the same artist.
-
-    + Body
-    
-            {
-                "resource_url": "/api/artists/scandal/albums/",
-                "@error": {
-                    "@message": "Already exists",
-                    "@messages": [
-                        "Artist 'scandal' already has album with title 'Hello World'"
-                    ]
-                },
-                "@controls": {
-                    "profile": {
-                        "href": "/profiles/error/"
-                    }
-                }
-            }
-            
 
 + Response 415 (application/vnd.mason+json)
 
     The client did not use the proper content type, or the request body was not valid JSON.
 
     + Body
-        
-            {
-                "resource_url": "/api/artists/scandal/albums/",
-                "@error": {
-                    "@message": "Unsupported media type",
-                    "@messages": [
-                        "Use JSON"
-                    ]
-                },
-                "@controls": {
-                    "profile": {
-                        "href": "/profiles/error-profile/"
-                    }
-                }
-            }
+    
 
 ## Artist [/api/artists/{artist}/]
-ripuli
+
 + Parameters
 
-    + artist (string) - artist's unique name (unique_name)
+    + artist (string, optional) - artist's unique name (unique_name)
         + Default: `name`
         + Members
         
@@ -1708,11 +1622,11 @@ Get the artist representation.
                         "name": "/musicmeta/link-relations#"
                     }
                 },
-                "title": "Hello World",
-                "release": "2014-12-03",
-                "genre": "Pop Rock",
-                "discs": 1,
-                "artist": "Scandal",
+                "name": "Scandal",
+                "unique_name": "scandal",
+                "formed": "2006-08-21",
+                "disbanded": null,
+                "location": "Osaka, JP"
                 "@controls": {
                     "author": {
                         "href": "/api/artists/scandal/"
@@ -1823,18 +1737,6 @@ Get the artist representation.
 
     + Body
     
-            {
-                "resource_url": "/api/artists/scandal/albums/Yellow/",
-                "@error": {
-                    "@message": "Album not found",
-                    "@messages": [null]
-                },
-                "@controls": {
-                    "profile": {
-                        "href": "/profiles/error/"
-                    }
-                }
-            }
             
 ### Add track to album [POST]
 
@@ -1968,10 +1870,11 @@ Replace the album's representation with a new one. Missing optinal fields will b
     + Body
     
             {
-                "title": "Hello World",
-                "release": "2014-12-03",
-                "genre": "Pop Rock, Power Pop",
-                "discs": 1,
+            "name": "Scandal",
+            "unique_name": "scandal",
+            "formed": "2006-08-21",
+            "disbanded": null,
+            "location": "Osaka, JP"
             }
         
 + Response 204
