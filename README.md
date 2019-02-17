@@ -10,7 +10,7 @@ Following commands will create the database and fill it with example data.
 from app import db
 
 from app import NutritionInformation, Ingredient, Recipe, RecipeIngredient, RecipeInstructionStep, ShoppingList, ShoppingListIngredient, User, WeeklyPlan, Meal, MealRecipe, Like, MealPlan
-
+from datetime import datetime
 db.create_all()
 
 #create example models
@@ -50,7 +50,7 @@ recipei = RecipeIngredient(
 amount = 5,
 unit = "kg")
 
-recipeohj = RecipeInstructionStep(
+recipestep = RecipeInstructionStep(
 step = 5,
 text = "boil the potatoes")
 
@@ -64,14 +64,13 @@ unit = "dl"
 user = User(
 username = "rille"
 )
-
 weekplan = WeeklyPlan(
 week= 8,
 notes = "tjasj"
 )
 
 mealplan = MealPlan(
-weekday = "friday"
+weekday = "friday",
 type = "emt"
 )
 
@@ -112,19 +111,19 @@ like.user = user
 
 #create database 
 
-db_handle.session.add(nutri)
-db_handle.session.add(ingredient)
-db_handle.session.add(recipe)
-db_handle.session.add(recipei)
-db_handle.session.add(recipestep)
-db_handle.session.add(shoplist)
-db_handle.session.add(shoplisti)
-db_handle.session.add(user)
-db_handle.session.add(weekplan)
-db_handle.session.add(meal)
-db_handle.session.add(mealrecipe)
-db_handle.session.add(like)
+db.session.add(nutri)
+db.session.add(ingredient)
+db.session.add(recipe)
+db.session.add(recipei)
+db.session.add(recipestep)
+db.session.add(shoplist)
+db.session.add(shoplisti)
+db.session.add(user)
+db.session.add(weekplan)
+db.session.add(meal)
+db.session.add(mealrecipe)
+db.session.add(like)
 
-db_handle.session.commit()
+db.session.commit()
 ```
 The testing is done with pytest. db_test.py file is put into the same folder as the database app and ran by typing pytest into the terminal. The test will create the database and check that the relationships work properly. Then it will test that editing models will work properly with foreign keys. Then it will test the same but with removing the models.
