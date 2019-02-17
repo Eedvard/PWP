@@ -5,7 +5,7 @@
 * Student 2. Eetu Haapamäki <eetu.haapamaki@gmail.com>
 * Student 3. Samuli Helttunen <samuli.helttunen@gmail.com>
 
-Following commands will create the database and fill it with example data.
+Following commands will create the database and fill it with example data. All the necessary files are found on the requirements.txt file.
 ```python
 from app import db
 
