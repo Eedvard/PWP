@@ -35,9 +35,7 @@ Polls is a simple API allowing consumers to view polls and vote in them.
 
 ### Create a New Recipe [POST]
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+You may create new recipe using this action.
 
 + Request (application/json)
 
@@ -78,3 +76,31 @@ form of choices.
                     }
                 ]
             }
+            
+
+## Meals Collection  [/meals]
+
+### List All Meals [GET]
+
++ Response 200 (application/json)
+
+        [
+        ]
+
+### Create a New Meal [POST]
+
++ Request (application/json)
+
+        [
+        ]
+
++ Response 201 (application/json)
+    
+    + Headers
+        
+        Location: /meals/2
+        
+    + Body
+        
+        [
+        ]
