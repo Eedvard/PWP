@@ -5,6 +5,93 @@ HOST: http://polls.apiblueprint.org/
 
 Polls is a simple API allowing consumers to view polls and vote in them.
 
+# Group Link Relations
+
+## create-plan
+
+## edit
+
+## delete
+
+## add-meal
+
+## add-recipe
+
+## add-ingredient
+
+## up
+
+# Group Profiles
+
+## Recipe profile
+
+### Link Relations
+
+This section lists all possible link relations associated with albums; not all of them are necessarily present on each resource type. The following link relations from the mumeta namespace are used:
+
+ * [add-ingredient](reference/link-relations/add-album)
+ * [add-step](reference/link-relations/add-track)
+ * [add-recipe](reference/link-relations/albums-all)
+ * [delete](reference/link-relations/delete)
+
+The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml) link relations are also used:
+
+ * author
+ * collection
+ * edit
+ * profile
+ * self
+ 
+ 
+### Semantic Descriptors
+
+#### Data Type Recipe
+
+ * `id`: Unique id of the recipe. Mandatory.
+ * `name`: Name of the recipe. Mandatory.
+ * `description`: Description of the recipe. Optional.
+ * `recipeYield`: The ammount of servings provided by the recipe. Mandatory
+ * `cookTime`: The time required to cook the recipe. Optional.
+ * `recipeCategory`: The category of the recipe. Optional.
+ * `author`: Name of the creator of the recipe. Mandatory.
+ * `datePublished`: The date when the recipe was published in following format: (YYYY-MM-DD). Optional
+ * `nutrition_information_id`: Id of the nutrition information of the recipe. Mandatory.
+ 
+
+## Meal profile
+
+### Link Relations
+
+This section lists all possible link relations associated with albums; not all of them are necessarily present on each resource type. The following link relations from the mumeta namespace are used:
+
+ * [add-ingredient](reference/link-relations/add-album)
+ * [add-step](reference/link-relations/add-track)
+ * [add-meal](reference/link-relations/delete)
+ * [add-recipe](reference/link-relations/albums-all)
+ * [delete](reference/link-relations/delete)
+
+The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml) link relations are also used:
+
+ * author
+ * collection
+ * edit
+ * profile
+ * self
+ 
+ 
+### Semantic Descriptors
+
+#### Data Type Meal
+
+ * `id`: Unique id of the meal. Mandatory.
+ * `name`: Name of the meal. Mandatory.
+ * `description`: Description of the meal. Optional.
+ * `author`: Name of the creator of the meal. Mandatory.
+ * `datePublished`: The date when the recipe was published in following format: (YYYY-MM-DD). Optional
+ * `type`: Type of the recipe (breakfast, lunch or dinner). Mandatory.
+ 
+#Group Recipes
+
 ## Recipes Collection [/recipes]
 
 ### List All Recipes [GET]
@@ -77,6 +164,7 @@ You may create new recipe using this action.
                 ]
             }
             
+#Group Meals
 
 ## Meals Collection  [/meals]
 
