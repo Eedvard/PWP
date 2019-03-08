@@ -29,9 +29,9 @@ Polls is a simple API allowing consumers to view polls and vote in them.
 
 This section lists all possible link relations associated with albums; not all of them are necessarily present on each resource type. The following link relations from the mumeta namespace are used:
 
- * [add-ingredient](reference/link-relations/add-album)
- * [add-step](reference/link-relations/add-track)
- * [add-recipe](reference/link-relations/albums-all)
+ * [add-ingredient](reference/link-relations/add-ingredient)
+ * [add-step](reference/link-relations/add-step)
+ * [add-recipe](reference/link-relations/add-recipe)
  * [delete](reference/link-relations/delete)
 
 The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml) link relations are also used:
@@ -64,10 +64,10 @@ The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link
 
 This section lists all possible link relations associated with albums; not all of them are necessarily present on each resource type. The following link relations from the mumeta namespace are used:
 
- * [add-ingredient](reference/link-relations/add-album)
- * [add-step](reference/link-relations/add-track)
- * [add-meal](reference/link-relations/delete)
- * [add-recipe](reference/link-relations/albums-all)
+ * [add-ingredient](reference/link-relations/add-ingredient)
+ * [add-step](reference/link-relations/add-step)
+ * [add-meal](reference/link-relations/add-meal)
+ * [add-recipe](reference/link-relations/add-recipe)
  * [delete](reference/link-relations/delete)
 
 The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml) link relations are also used:
@@ -163,7 +163,27 @@ You may create new recipe using this action.
                     }
                 ]
             }
-            
+
+## Recipes [/recipes/{recipe}/]
++ Parameters
+
+    + recipe (string) - recipe's unique name (unique_name)
+
+### Recipe information [GET]
+
+Get the album representation.
+
++ Relation: self
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+
+## Ingredient [/paska]
+
+## Step [/step]
+  
 #Group Meals
 
 ## Meals Collection  [/meals]
