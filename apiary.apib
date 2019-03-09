@@ -307,10 +307,10 @@ You may create new recipe using this action.
                 }
             }
 
-## Recipes [/recipes/{recipe}/]
+## Recipe [/api/recipes/{id}/]
 + Parameters
 
-    + recipe (string) - recipe's unique name (unique_name)
+    + id (integer) - recipe's unique id (id)
 
 ### Recipe information [GET]
 
@@ -329,7 +329,7 @@ Get the album representation.
   
 #Group Meals
 
-## Meals Collection  [/meals]
+## Meals Collection  [/api/meals/]
 
 ### List All Meals [GET]
 
@@ -355,3 +355,8 @@ Get the album representation.
         
         [
         ]
+## Meal  [/api/meals/{id}/]
+
++ Parameters
+
+    + id (integer) - meals's unique id (id)
