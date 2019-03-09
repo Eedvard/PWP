@@ -100,76 +100,211 @@ The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link
  
 #Group Recipes
 
-## Recipes Collection [/recipes]
+## Recipes Collection [/api/recipes/?sortby={field}]
+
++ Parameters
+
+    + field (string, optional) - Field to use for sorting
+    
+        + Default: `name`
+        + Members
+        
+            + `name`
+            + `recipeCategory`
+            + `author`
+            + `datePublished`
 
 ### List All Recipes [GET]
 
-+ Response 200 (application/json)
 
-        [
+Get a list of all recipes known to the API.
+
++ Relation: collection
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+    
+    + Body
+
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
+                "@namespaces": {
+                    "dontstarve": {
+                        "name": "/dontstarve/link-relations#"
+                    }
+                },
+                "@controls": {
+                    "self": {
+                        "href": "/api/recipes/"
+                    },
+                    "mumeta:artists-all": {
+                        "href": "/api/artists/",
+                        "title": "All artists"
+                    },
+                    "mumeta:albums-va": {
+                        "href": "/api/artists/VA/albums/",
+                        "title": "All VA albums"
+                    }
+                },
+                "items": [
                     {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
+                        "title": "Hello World",
+                        "artist": "Scandal",
+                        "@controls": {
+                            "self": {
+                                "href": "/api/artists/scandal/Hello World/"
+                            }, 
+                            "profile": {
+                                "href": "/profiles/album/"
+                            }
+                        },
+                    }, 
+                    {
+                        "title": "Thorns vs Emperor",
+                        "artist": "VA",
+                        "@controls": {
+                            "self": {
+                                "href": "/api/artists/VA/Thorns vs Emperor/"
+                            },
+                            "profile": {
+                                "href": "/profiles/album/"
+                            }
+                        }
                     }
                 ]
             }
-        ]
 
 ### Create a New Recipe [POST]
 
 You may create new recipe using this action.
 
++ Relation: add-recipe
 + Request (application/json)
 
-        {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
-        }
-
-+ Response 201 (application/json)
 
     + Headers
 
-            Location: /questions/2
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                "name": "chickensoup",
+                "description": "nice soup",
+                "recipeYield": "9 servings",
+                "cookTime": "5 hours",
+                "recipeCategory": "soup",
+                "author": "Ville",
+                "datePubished": "2015-10-23"
+            }
+
++ Response 201
+
+    + Headers
+    
+            Location: /api/recipes
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
 
     + Body
-
+    
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
+                "resource_url": "/api/artists/scandal/albums/",
+                "@error": {
+                    "@message": "Invalid JSON document",
+                    "@messages": [                    
+                        "'release' is a required property
+                        
+                        Failed validating 'required' in schema:
+                        {'properties': {'discs': {'default': 1,
+                        'description': 'Number of discs',
+                        'type': 'integer'},
+                        'genre': {'description': \"Album's genre(s)\",
+                        'type': 'string'},
+                        'release': {'description': 'Release date',
+                        'pattern': '^[0-9]{4}(?:-[01][0-9])?(?:-[0-3][0-9])?$',
+                        'type': 'string'},
+                        'title': {'description': 'Album title',
+                        'type': 'string'}},
+                        'required': ['title', 'release'],
+                        'type': 'object'}
+                        
+                        On instance:
+                        {'title': 'Best Scandal'}"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
                     }
-                ]
+                }
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+    The client is trying to add an album for an artist that doesn't exist.
+
+    + Body
+    
+            {
+                "resource_url": "/api/artists/hemuli/albums/",
+                "@error": {
+                    "@message": "Artist not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    The client is trying to add an album with a title that's already used by another album for the same artist.
+
+    + Body
+    
+            {
+                "resource_url": "/api/artists/scandal/albums/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "Artist 'scandal' already has album with title 'Hello World'"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+            
+
++ Response 415 (application/vnd.mason+json)
+
+    The client did not use the proper content type, or the request body was not valid JSON.
+
+    + Body
+        
+            {
+                "resource_url": "/api/artists/scandal/albums/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Use JSON"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error-profile/"
+                    }
+                }
             }
 
 ## Recipes [/recipes/{recipe}/]
