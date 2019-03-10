@@ -816,6 +816,109 @@ Get a list of all meals known to the API.
                 ]
             }
 
+### Edit Meal information [PUT]
+
++ Relation: edit
++ Request (application/json)
+
+    + Headers
+        
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                "id": "1"
+                "name": "chickensoup and something",
+                "description": "nice soup with something",
+                "author": "Ville",
+                "datePublished": "2015-10-23"
+                "type": "dinner"
+            }
+        
++ Response 204
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
+
+    + Body
+    
+            {
+                "resource_url": "/api/meals/1/",
+                "@error": {
+                    "@message": "Invalid date format",
+                    "@messages": [
+                        "Release date must be written in ISO format (YYYY-MM-DD)"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+    Trying to edit recipe that does not exist
+
+    + Body
+    
+            {
+                "resource_url": "/api/meals/2/",
+                "@error": {
+                    "@message": "Meal not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+            
++ Response 409 (application/vnd.mason+json)
+
+    The client is trying to change the album's title to a one that is already in use for the artist.
+
+    + Body
+    
+            {
+                "resource_url": "/api/meals/1/",
+                "@error": {
+                    "@message": "Meal id in use",
+                    "@messages": [
+                        "Meal exists with the same id'"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+        
++ Response 415 (application/vnd.mason+json)
+
+    The client sent a request with the wrong content type or the request body was not valid JSON.
+
+    + Body
+        
+            {
+                "resource_url": "/api/meals/1/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Use JSON"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error-profile/"
+                    }
+                }
+            }
 
 ### Delete Meal [DELETE]
 
@@ -848,6 +951,7 @@ Get a list of all meals known to the API.
             }
     
     
+
     
 #Group Users
 
