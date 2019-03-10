@@ -140,7 +140,7 @@ Get a list of all recipes known to the API.
                     "self": {
                         "href": "/api/recipes/"
                     },
-                    "mumeta:recipes-all": {
+                    "dontstarve:recipes-all": {
                         "href": "/api/recipes/",
                         "title": "All recipes"
                     },
@@ -323,6 +323,136 @@ Get the album representation.
     
             Accept: application/vnd.mason+json
 
+### Create a New Recipe [POST]
+
+You may create new recipe using this action.
+
++ Relation: add-recipe
++ Request (application/json)
+
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                "name": "chickensoup",
+                "description": "nice soup",
+                "recipeYield": "9 servings",
+                "cookTime": "5 hours",
+                "recipeCategory": "soup",
+                "author": "Ville",
+                "datePubished": "2015-10-23"
+            }
+
++ Response 201
+
+    + Headers
+    
+            Location: /api/recipes
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
+
+    + Body
+    
+            {
+                "resource_url": "/api/artists/scandal/albums/",
+                "@error": {
+                    "@message": "Invalid JSON document",
+                    "@messages": [                    
+                        "'release' is a required property
+                        
+                        Failed validating 'required' in schema:
+                        {'properties': {'discs': {'default': 1,
+                        'description': 'Number of discs',
+                        'type': 'integer'},
+                        'genre': {'description': \"Album's genre(s)\",
+                        'type': 'string'},
+                        'release': {'description': 'Release date',
+                        'pattern': '^[0-9]{4}(?:-[01][0-9])?(?:-[0-3][0-9])?$',
+                        'type': 'string'},
+                        'title': {'description': 'Album title',
+                        'type': 'string'}},
+                        'required': ['title', 'release'],
+                        'type': 'object'}
+                        
+                        On instance:
+                        {'title': 'Best Scandal'}"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+    The client is trying to add an album for an artist that doesn't exist.
+
+    + Body
+    
+            {
+                "resource_url": "/api/artists/hemuli/albums/",
+                "@error": {
+                    "@message": "Artist not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    The client is trying to add an album with a title that's already used by another album for the same artist.
+
+    + Body
+    
+            {
+                "resource_url": "/api/artists/scandal/albums/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "Artist 'scandal' already has album with title 'Hello World'"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+            
+
++ Response 415 (application/vnd.mason+json)
+
+    The client did not use the proper content type, or the request body was not valid JSON.
+
+    + Body
+        
+            {
+                "resource_url": "/api/artists/scandal/albums/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Use JSON"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error-profile/"
+                    }
+                }
+            }
+
 ## Ingredient [/paska]
 
 ## Step [/step]
@@ -360,3 +490,11 @@ Get the album representation.
 + Parameters
 
     + id (integer) - meals's unique id (id)
+    
+#Group Users
+
+## Users [/api/users/{id}]
+
+## Weekly plan [/api/users/{user_id}/plans/{plan_id}]
+
+## Shopping list [/api/users/{user_id}/plans/{plan_id}/shoppinglist]
