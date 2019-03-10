@@ -1152,7 +1152,198 @@ You may create new user using this action.
                     }
                 }
             }
-    
+            
 ## Weekly plan [/api/users/{user_id}/plans/{plan_id}]
++ Parameters
+
+    + plan_id (integer) - weekly plan's unique id (id)
+
+
+### Get Weekly Plans [GET]
+
++ Relation: collection
++ Request
+
+    + Headers
+        
+            Accept: application/vnd.mason+jason
+        
+
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+
+            {
+                "@namespaces": {
+                    "dontstarve": {
+                        "name": "/dontstarve/link-relations#"
+                    }
+                },
+                "@controls": {
+                    "self": {
+                        "href": "/api/users/{user_id}/plans/"
+                    },
+                    "dontstarve:plans-all": {
+                        "href": "/api/users/{user-id}/plans/",
+                        "title": "All plans"
+                    },
+                },
+                "items": [
+                    {
+                        "id": "1",
+                        "week": "1",
+                        "notes": "Delicious plan",
+                        "user_id": "1"
+
+                        "@controls": {
+                            "self": {
+                                "href": "/api/users/1/plans/1"
+                            }, 
+                            "profile": {
+                                "href": "/users/{user_id}/plans/"
+                            }
+                        },
+                    }, 
+                    {
+                        "id": "2",
+                        "week": "3",
+                        "notes": "Spicy plan",
+                        "user_id": "2"
+
+                        "@controls": {
+                            "self": {
+                                "href": "/api/users/2/plans/2"
+                            }, 
+                            "profile": {
+                                "href": "/users/{user_id}/plans/"
+                            }
+                        }
+                    }
+                ]
+            }
+            
+### Create a New Plan [POST]
+
+You may create new plan using this action.
+
++ Relation: add-plan
++ Request (application/json)
+
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                        "id": "1",
+                        "week": "1",
+                        "notes": "Delicious plan",
+                        "user_id": "1"
+            }
+
++ Response 201
+
+    + Headers
+    
+            Location: /api/users/{user_id}/plans/
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
+
+    + Body
+    
+            {
+                "resource_url": "/api/users/{user_id}/plans/",
+                "@error": {
+                    "@message": "Invalid JSON document",
+                    "@messages": [                    
+                        "'release' is a required property
+                        
+                        Failed validating 'required' in schema:
+                        {'properties': 
+                        {'id': {'default': 1,
+                        'description': 'plan id',
+                        'type': 'integer'},
+                        'week': {'default': 1,
+                        'description': 'plan week',
+                        'type': 'integer'},
+                        'note': {'description': \"Notes\",
+                        'type': 'string'},
+                        'user_id': {'default': 1,
+                        'description': 'user id',
+                        'type': 'integer'},
+                        On instance:
+                        {'id': '1'}"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+
+    + Body
+    
+            {
+                "resource_url": "/api/users/{user_id}/plans/2",
+                "@error": {
+                    "@message": "Plan not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+
+    + Body
+    
+            {
+                "resource_url": "/api/users/{user_id}/plans/1/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "Plan with that id already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+            
+
++ Response 415 (application/vnd.mason+json)
+
+    The client did not use the proper content type, or the request body was not valid JSON.
+
+    + Body
+        
+            {
+                "resource_url": "/api/users/{user_id}/plans/1/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Use JSON"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error-profile/"
+                    }
+                }
+            }
 
 ## Shopping list [/api/users/{user_id}/plans/{plan_id}/shoppinglist]
