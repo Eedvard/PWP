@@ -349,11 +349,63 @@ You may create new recipe using this action.
 Get the album representation.
 
 + Relation: self
++ Relation: collection
 + Request
 
     + Headers
     
             Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+    
+    + Body
+
+            {
+                "@namespaces": {
+                    "dontstarve": {
+                        "name": "/dontstarve/link-relations#"
+                    }
+                },
+                "@controls": {
+                    "self": {
+                        "href": "/api/recipes/"
+                    },
+                    "dontstarve:recipes-all": {
+                        "href": "/api/recipes/",
+                        "title": "All recipes"
+                    },
+                },
+                "items": [
+                    {
+                        "name": "Mashed Potatoes",
+                        "recipeCategory": "Dinner",
+                        "author": "Erkki Esimerkki",
+                        "datePublished": "9.3.2019",
+                        "@controls": {
+                            "self": {
+                                "href": "/api/recipes/Mashed Potatoes/"
+                            }, 
+                            "profile": {
+                                "href": "/recipe/"
+                            }
+                        },
+                    }, 
+                    {
+                        "title": "Meat Sauce",
+                        "recipeCategory": "Dinner",
+                        "author": "Seppo Soppa",
+                        "datePublished": "3.9.2018",
+                        "@controls": {
+                            "self": {
+                                "href": "/api/recipes/Meat Sauce/"
+                            },
+                            "profile": {
+                                "href": "/recipe/"
+                            }
+                        }
+                    }
+                ]
+            }
 
 ### Create a New Recipe [POST]
 
@@ -481,6 +533,36 @@ You may create new recipe using this action.
                 "@controls": {
                     "profile": {
                         "href": "/profiles/error-profile/"
+                    }
+                }
+            }
+
+### Delete Recipe [DELETE]
+
++ Relation: delete
++ Request
+
+    + Headers
+        
+            Accept: application/vnd.mason+json
+        
++ Response 204
+
++ Response 404 (application/vnd.mason+json)
+
+    The client is trying to delete an recipe that doesn't exist.
+
+    + Body
+    
+            {
+                "resource_url": "/api/recipe/2/",
+                "@error": {
+                    "@message": "Recipe not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
                     }
                 }
             }
@@ -684,7 +766,6 @@ You may create new meal using this action.
                     }
                 }
             }
-
 
 
 ## Meal  [/api/meals/{id}/]
