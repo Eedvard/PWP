@@ -97,7 +97,35 @@ The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link
  * `author`: Name of the creator of the meal. Mandatory.
  * `datePublished`: The date when the recipe was published in following format: (YYYY-MM-DD). Optional
  * `type`: Type of the recipe (breakfast, lunch or dinner). Mandatory.
+
+## Users profile
+
+### Link Relations
+
+All link relations related to users.
+
+ * [add-meal](reference/link-relations/add-meal)
+ * [delete](reference/link-relations/delete)
+ * [create-plan](reference/link-relations/create-plan)
+ * [update](reference/link-relations/update)
+
+
+The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml) link relations are also used:
+
+ * author
+ * collection
+ * edit
+ * self
  
+ 
+### Semantic Descriptors
+
+#### Data Type Recipe
+
+ * `id`: Unique id of the user. Mandatory.
+ * `username`: Name of the user. Mandatory.
+ Users
+
 #Group Recipes
 
 ## Recipes Collection [/api/recipes/?sortby={field}]
