@@ -1346,4 +1346,151 @@ You may create new plan using this action.
                 }
             }
 
-## Shopping list [/api/users/{user_id}/plans/{plan_id}/shoppinglist]
+## Shopping list [/api/users/{user_id}/plans/{plan_id}/shoppinglist/{list_id}]
+
++ Parameters
+
+    + list_id (integer) - shopping list's unique id (id)
+
+### Get Shopping Lists [GET]
+
++ Relation: collection
++ Request
+
+    + Headers
+        
+            Accept: application/vnd.mason+jason
+        
+
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+
+            {
+                "@namespaces": {
+                    "dontstarve": {
+                        "name": "/dontstarve/link-relations#"
+                    }
+                },
+                "@controls": {
+                    "self": {
+                        "href": "/api/users/{user_id}/plans/{plan_id}/shoppinglist/"
+                    },
+                    "dontstarve:plans-all": {
+                        "href": "/api/users/{user_id}/plans/{plan_id}/shoppinglist/",
+                        "title": "All plans"
+                    },
+                },
+                "items": [
+                    {
+                        "id": "1",
+                        "plan_id": "1",
+                        "notes": "Potato week",
+
+                        "@controls": {
+                            "self": {
+                                "href": "/api/users/1/plans/1/shoppinglist/1"
+                            }, 
+                            "profile": {
+                                "href": "/users/{user_id}/plans/{plan_id}/shoppinglist/"
+                            }
+                        },
+                    }, 
+                    {
+                        "id": "2",
+                        "plan_id": "2",
+                        "notes": "Soup week",
+
+                        "@controls": {
+                            "self": {
+                                "href": "/api/users/2/plans/2/shoppinglist/2"
+                            }, 
+                            "profile": {
+                                "href": "/users/{user_id}/plans/{plan_id}/shoppinglist/"
+                            }
+                        }
+                    }
+                ]
+            }
+
+### Edit Shopping List [PUT]
+You may create new user using this action.
+
++ Relation: edit
++ Request (application/json)
+
+ + Headers
+        
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                "id": "1"
+                "plan_id": "1"
+                "week": "1",
+                "notes": "notes"
+            }
+        
++ Response 204
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
+
+    + Body
+    
+            {
+                "resource_url": "/api/users/1/plan/1/shoppinglist/1/",
+                "@error": {
+                    "@message": "Invalid notes size",
+                    "@messages": [
+                        "Too many characters in notes"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+    Trying to edit shopping list that does not exist
+
+    + Body
+    
+            {
+                "resource_url": "/api/users/2/plan/2/shoppinglist/2/",
+                "@error": {
+                    "@message": "Shopping list not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+            
++ Response 415 (application/vnd.mason+json)
+
+    The client sent a request with the wrong content type or the request body was not valid JSON.
+
+    + Body
+        
+            {
+                "resource_url": "/api/users/1/plan/1/shoppinglist/1/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Use JSON"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error-profile/"
+                    }
+                }
+            }
