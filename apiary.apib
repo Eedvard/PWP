@@ -407,35 +407,29 @@ Get the album representation.
                 ]
             }
 
-### Create a New Recipe [POST]
+### Edit Recipe information [PUT]
 
-You may create new recipe using this action.
-
-+ Relation: add-recipe
++ Relation: edit
 + Request (application/json)
 
-
     + Headers
-
+        
             Accept: application/vnd.mason+json
         
     + Body
     
             {
+                "id": "1"
                 "name": "chickensoup",
                 "description": "nice soup",
                 "recipeYield": "9 servings",
                 "cookTime": "5 hours",
                 "recipeCategory": "soup",
                 "author": "Ville",
-                "datePubished": "2015-10-23"
+                "datePublished": "2015-10-23"
             }
-
-+ Response 201
-
-    + Headers
-    
-            Location: /api/recipes
+        
++ Response 204
 
 + Response 400 (application/vnd.mason+json)
 
@@ -444,28 +438,11 @@ You may create new recipe using this action.
     + Body
     
             {
-                "resource_url": "/api/artists/scandal/albums/",
+                "resource_url": "/api/recipes/1/",
                 "@error": {
-                    "@message": "Invalid JSON document",
-                    "@messages": [                    
-                        "'release' is a required property
-                        
-                        Failed validating 'required' in schema:
-                        {'properties': {'discs': {'default': 1,
-                        'description': 'Number of discs',
-                        'type': 'integer'},
-                        'genre': {'description': \"Album's genre(s)\",
-                        'type': 'string'},
-                        'release': {'description': 'Release date',
-                        'pattern': '^[0-9]{4}(?:-[01][0-9])?(?:-[0-3][0-9])?$',
-                        'type': 'string'},
-                        'title': {'description': 'Album title',
-                        'type': 'string'}},
-                        'required': ['title', 'release'],
-                        'type': 'object'}
-                        
-                        On instance:
-                        {'title': 'Best Scandal'}"
+                    "@message": "Invalid date format",
+                    "@messages": [
+                        "Release date must be written in ISO format (YYYY-MM-DD)"
                     ]
                 },
                 "@controls": {
@@ -477,14 +454,14 @@ You may create new recipe using this action.
 
 + Response 404 (application/vnd.mason+json)
 
-    The client is trying to add an album for an artist that doesn't exist.
+    Trying to edit recipe that does not exist
 
     + Body
     
             {
-                "resource_url": "/api/artists/hemuli/albums/",
+                "resource_url": "/api/recipes/2/",
                 "@error": {
-                    "@message": "Artist not found",
+                    "@message": "Recipe not found",
                     "@messages": [null]
                 },
                 "@controls": {
@@ -493,19 +470,19 @@ You may create new recipe using this action.
                     }
                 }
             }
-
+            
 + Response 409 (application/vnd.mason+json)
 
-    The client is trying to add an album with a title that's already used by another album for the same artist.
+    The client is trying to change the album's title to a one that is already in use for the artist.
 
     + Body
     
             {
-                "resource_url": "/api/artists/scandal/albums/",
+                "resource_url": "/api/recipes/1/",
                 "@error": {
-                    "@message": "Already exists",
+                    "@message": "Recipe id in use",
                     "@messages": [
-                        "Artist 'scandal' already has album with title 'Hello World'"
+                        "Recipe exists with the same id'"
                     ]
                 },
                 "@controls": {
@@ -514,16 +491,15 @@ You may create new recipe using this action.
                     }
                 }
             }
-            
-
+        
 + Response 415 (application/vnd.mason+json)
 
-    The client did not use the proper content type, or the request body was not valid JSON.
+    The client sent a request with the wrong content type or the request body was not valid JSON.
 
     + Body
         
             {
-                "resource_url": "/api/artists/scandal/albums/",
+                "resource_url": "/api/recipes/1/",
                 "@error": {
                     "@message": "Unsupported media type",
                     "@messages": [
@@ -773,17 +749,105 @@ You may create new meal using this action.
 + Parameters
 
     + id (integer) - meals's unique id (id)
-    
+
 ### Meal information [GET]
 
-Get the album representation.
 
-+ Relation: self
+Get a list of all meals known to the API.
+
++ Relation: collection
 + Request
 
     + Headers
     
             Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+    
+    + Body
+
+            {
+                "@namespaces": {
+                    "dontstarve": {
+                        "name": "/dontstarve/link-relations#"
+                    }
+                },
+                "@controls": {
+                    "self": {
+                        "href": "/api/meals/"
+                    },
+                    "dontstarve:meals-all": {
+                        "href": "/api/meals/",
+                        "title": "All meals"
+                    },
+                },
+                "items": [
+                    {
+                        "name": "Mashed Potatoes and sauce",
+                        "description": "Nice mashed potatoes and sauce",
+                        "author": "Erkki Esimerkki",
+                        "datePublished": "9.3.2019",            
+                        "type": "lunch",
+
+                        "@controls": {
+                            "self": {
+                                "href": "/api/meals/1/"
+                            }, 
+                            "profile": {
+                                "href": "/meals/"
+                            }
+                        },
+                    }, 
+                    {
+                        "name": "Meat Sauce and boiled potatoes",
+                        "description": "Nice sauce and boiled potatoes",
+                        "author": "Seppo Soppa",
+                        "datePublished": "3.9.2018",
+                        "type": "dinner",
+                        "@controls": {
+                            "self": {
+                                "href": "/api/meals/2/"
+                            },
+                            "profile": {
+                                "href": "/recipe/"
+                            }
+                        }
+                    }
+                ]
+            }
+
+
+### Delete Meal [DELETE]
+
++ Relation: delete
++ Request
+
+    + Headers
+        
+            Accept: application/vnd.mason+json
+        
++ Response 204
+
++ Response 404 (application/vnd.mason+json)
+
+    The client is trying to delete an recipe that doesn't exist.
+
+    + Body
+    
+            {
+                "resource_url": "/api/meal/2/",
+                "@error": {
+                    "@message": "Meal not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+    
+    
     
 #Group Users
 
