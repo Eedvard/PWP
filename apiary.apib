@@ -220,20 +220,21 @@ You may create new recipe using this action.
     + Body
     
             {
+                "id": "1"
                 "name": "chickensoup",
                 "description": "nice soup",
                 "recipeYield": "9 servings",
                 "cookTime": "5 hours",
                 "recipeCategory": "soup",
                 "author": "Ville",
-                "datePubished": "2015-10-23"
+                "datePublished": "2015-10-23"
             }
 
 + Response 201
 
     + Headers
     
-            Location: /api/recipes
+            Location: /api/recipes/1/
 
 + Response 400 (application/vnd.mason+json)
 
@@ -242,28 +243,33 @@ You may create new recipe using this action.
     + Body
     
             {
-                "resource_url": "/api/artists/scandal/albums/",
+                "resource_url": "/api/recipes/",
                 "@error": {
                     "@message": "Invalid JSON document",
                     "@messages": [                    
                         "'release' is a required property
                         
                         Failed validating 'required' in schema:
-                        {'properties': {'discs': {'default': 1,
-                        'description': 'Number of discs',
+                        {'properties': 
+                        {'id': {'default': 1,
+                        'description': 'recipe_id',
                         'type': 'integer'},
-                        'genre': {'description': \"Album's genre(s)\",
+                        'name': {'description': \"Recipe's name\",
                         'type': 'string'},
-                        'release': {'description': 'Release date',
+                        'description': {'description': 'Recipe's description',
+                        'type': 'string'}},
+                        'recipeYield': {'description': 'The ammount of servings',
+                        'type': 'string'}},
+                        'recipeCategory': {'description': 'Category of the recipe',
+                        'type': 'string'}},
+                        'author': {'description': 'author of the recipe',
+                        'type': 'string'}},
+                        'datePublished': {'description': 'Release date',
                         'pattern': '^[0-9]{4}(?:-[01][0-9])?(?:-[0-3][0-9])?$',
                         'type': 'string'},
-                        'title': {'description': 'Album title',
-                        'type': 'string'}},
-                        'required': ['title', 'release'],
-                        'type': 'object'}
                         
                         On instance:
-                        {'title': 'Best Scandal'}"
+                        {'id': '1'}"
                     ]
                 },
                 "@controls": {
@@ -275,14 +281,13 @@ You may create new recipe using this action.
 
 + Response 404 (application/vnd.mason+json)
 
-    The client is trying to add an album for an artist that doesn't exist.
 
     + Body
     
             {
-                "resource_url": "/api/artists/hemuli/albums/",
+                "resource_url": "/api/recipes/2",
                 "@error": {
-                    "@message": "Artist not found",
+                    "@message": "Recipe not found",
                     "@messages": [null]
                 },
                 "@controls": {
@@ -294,16 +299,15 @@ You may create new recipe using this action.
 
 + Response 409 (application/vnd.mason+json)
 
-    The client is trying to add an album with a title that's already used by another album for the same artist.
 
     + Body
     
             {
-                "resource_url": "/api/artists/scandal/albums/",
+                "resource_url": "/api/recipes/1/",
                 "@error": {
                     "@message": "Already exists",
                     "@messages": [
-                        "Artist 'scandal' already has album with title 'Hello World'"
+                        "Recipe with that id already exists"
                     ]
                 },
                 "@controls": {
@@ -321,7 +325,7 @@ You may create new recipe using this action.
     + Body
         
             {
-                "resource_url": "/api/artists/scandal/albums/",
+                "resource_url": "/api/recipes/1/",
                 "@error": {
                     "@message": "Unsupported media type",
                     "@messages": [
