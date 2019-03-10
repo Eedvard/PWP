@@ -485,9 +485,6 @@ You may create new recipe using this action.
                 }
             }
 
-## Ingredient [/paska]
-
-## Step [/step]
   
 #Group Meals
 
@@ -495,33 +492,217 @@ You may create new recipe using this action.
 
 ### List All Meals [GET]
 
-+ Response 200 (application/json)
 
-        [
-        ]
+Get a list of all meals known to the API.
 
++ Relation: collection
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+    
+    + Body
+
+            {
+                "@namespaces": {
+                    "dontstarve": {
+                        "name": "/dontstarve/link-relations#"
+                    }
+                },
+                "@controls": {
+                    "self": {
+                        "href": "/api/meals/"
+                    },
+                    "dontstarve:meals-all": {
+                        "href": "/api/meals/",
+                        "title": "All meals"
+                    },
+                },
+                "items": [
+                    {
+                        "name": "Mashed Potatoes and sauce",
+                        "description": "Nice mashed potatoes and sauce",
+                        "author": "Erkki Esimerkki",
+                        "datePublished": "9.3.2019",            
+                        "type": "lunch",
+
+                        "@controls": {
+                            "self": {
+                                "href": "/api/meals/1/"
+                            }, 
+                            "profile": {
+                                "href": "/meals/"
+                            }
+                        },
+                    }, 
+                    {
+                        "name": "Meat Sauce and boiled potatoes",
+                        "description": "Nice sauce and boiled potatoes",
+                        "author": "Seppo Soppa",
+                        "datePublished": "3.9.2018",
+                        "type": "dinner",
+                        "@controls": {
+                            "self": {
+                                "href": "/api/meals/2/"
+                            },
+                            "profile": {
+                                "href": "/recipe/"
+                            }
+                        }
+                    }
+                ]
+            }
+            
 ### Create a New Meal [POST]
 
+You may create new meal using this action.
+
++ Relation: add-meal
 + Request (application/json)
 
-        [
-        ]
 
-+ Response 201 (application/json)
-    
     + Headers
-        
-        Location: /meals/2
+
+            Accept: application/vnd.mason+json
         
     + Body
+    
+            {
+                "id": "1"
+                "name": "chickensoup and something",
+                "description": "nice soup with something",
+                "author": "Ville",
+                "datePublished": "2015-10-23"
+                "type": "dinner"
+            }
+
++ Response 201
+
+    + Headers
+    
+            Location: /api/meals/1/
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
+
+    + Body
+    
+            {
+                "resource_url": "/api/meals/",
+                "@error": {
+                    "@message": "Invalid JSON document",
+                    "@messages": [                    
+                        "'release' is a required property
+                        
+                        Failed validating 'required' in schema:
+                        {'properties': 
+                        {'id': {'default': 1,
+                        'description': 'meal_id',
+                        'type': 'integer'},
+                        'name': {'description': \"Meal's name\",
+                        'type': 'string'},
+                        'description': {'description': 'Meal's description',
+                        'type': 'string'}},
+                        'author': {'description': 'author of the recipe',
+                        'type': 'string'}},
+                        'datePublished': {'description': 'Release date',
+                        'pattern': '^[0-9]{4}(?:-[01][0-9])?(?:-[0-3][0-9])?$',
+                        'type': 'string'},
+                        'type': {'description': 'type of the meal',
+                        'type': 'string'}},
+                        On instance:
+                        {'id': '1'}"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+
+    + Body
+    
+            {
+                "resource_url": "/api/meals/2",
+                "@error": {
+                    "@message": "Recipe not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+
+    + Body
+    
+            {
+                "resource_url": "/api/meals/1/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "Meal with that id already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+            
+
++ Response 415 (application/vnd.mason+json)
+
+    The client did not use the proper content type, or the request body was not valid JSON.
+
+    + Body
         
-        [
-        ]
+            {
+                "resource_url": "/api/meals/1/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Use JSON"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error-profile/"
+                    }
+                }
+            }
+
+
+
 ## Meal  [/api/meals/{id}/]
 
 + Parameters
 
     + id (integer) - meals's unique id (id)
+    
+### Meal information [GET]
+
+Get the album representation.
+
++ Relation: self
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
     
 #Group Users
 
