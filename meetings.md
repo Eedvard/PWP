@@ -13,16 +13,14 @@ The design should be simplified and the remaining functionalities should be expl
 *ONLY USED BY COURSE STAFF: Additional comments from the course staff*
 
 ## Meeting 2.
-* **DATE:**
-* **ASSISTANTS:**
+* **DATE:** 27.2.2019
+* **ASSISTANTS:** Mika Oja
 * **GRADE:** *To be filled by course staff*
 
 ### Minutes
-*Summary of what was discussed during the meeting*
-
+The meeting was about the design of the database.
 ### Action points
-*List here the actions points discussed with assistants*
-
+The database design should be simplified and some funcitonalities should be added.
 
 ### Comments from staff
 *ONLY USED BY COURSE STAFF: Additional comments from the course staff*
