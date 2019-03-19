@@ -1,17 +1,14 @@
 # Meetings notes
 
 ## Meeting 1.
-* **DATE:**
-* **ASSISTANTS:**
+* **DATE:** 14.2.2019
+* **ASSISTANTS:** Ivan Sanchez
 * **GRADE:** *To be filled by course staff*
 
 ### Minutes
-*Summary of what was discussed during the meeting*
-
+The design was overly complex and it was not explained well enough.
 ### Action points
-*List here the actions points discussed with assistants*
-
-
+The design should be simplified and the remaining functionalities should be explained better. The original plan had oo much functionalities and they should be removed.
 ### Comments from staff
 *ONLY USED BY COURSE STAFF: Additional comments from the course staff*
 
