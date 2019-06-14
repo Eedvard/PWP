@@ -1,9 +1,8 @@
 # PWP SPRING 2019
 # Don't Starve - Meal planner API
 # Group information
-* Student 1. Jesse Korhonen <jesse.korhonen@student.oulu.fi>
-* Student 2. Eetu Haapamäki <eetu.haapamaki@gmail.com>
-* Student 3. Samuli Helttunen <samuli.helttunen@gmail.com>
+* Student 1. Eetu Haapamäki <eetu.haapamaki@gmail.com>
+* Student 2. Samuli Helttunen <samuli.helttunen@gmail.com>
 
 Following commands will create the database and fill it with example data. All the necessary files are found on the requirements.txt file.
 ```python
