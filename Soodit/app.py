@@ -1,114 +1,100 @@
-import json
-
-from flask import Flask, request
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
+
+class NutritionInformation(db.Model):
+    # db.Model defaults to nutrition_information
+    __tablename__ = "nutrition_information"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    servingSize = db.Column(db.Integer, nullable=False)
+    servingSizeUnit = db.Column(db.String(255), nullable=False)
+    calories = db.Column(db.Integer, nullable=True)
+    carbohydrateContent = db.Column(db.Integer, nullable=True)
+    cholesterolContent = db.Column(db.Integer, nullable=True)
+    fatContent = db.Column(db.Integer, nullable=True)
+    fiberContent = db.Column(db.Integer, nullable=True)
+    proteinContent = db.Column(db.Integer, nullable=True)
+    saturatedFatContent = db.Column(db.Integer, nullable=True)
+    sodiumContent = db.Column(db.Integer, nullable=True)
+    sugarContent = db.Column(db.Integer, nullable=True)
+    transFatContent = db.Column(db.Integer, nullable=True)
+    unsaturatedFatContent = db.Column(db.Integer, nullable=True)
+
+
 class Ingredient(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = "ingredient"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), nullable=False)
-    desciption = db.Column(db.String(255), db.ForeignKey("product.id"))
-    image_url = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+    nutrition_nformation_id = db.Column(db.Integer, db.ForeignKey("nutrition_information.id"), nullable=True)
+    nutrition_information = db.relationship("NutritionInformation", uselist=False)
+
 
 class Recipe(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = "recipe"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.String(255), nullable=False)
-    servings = db.Column(db.Float, nullable=False)
-    cooking_time = db.relationship("StorageItem", back_populates="product")
+    recipeYield = db.Column(db.String(255), nullable=False)
+    cookTime = db.Column(db.String(255), nullable=False)
+    recipeCategory = db.Column(db.String(255), nullable=False)
+    author = db.Column(db.String(255), nullable=False)
+    datePublished = db.Column(db.DateTime, nullable=False)
+    nutritionInformation_id = db.Column(db.Integer, db.ForeignKey("nutrition_information.id"), nullable=True)
+    nutrition_information = db.relationship("NutritionInformation", uselist=False)
+    number_of_likes = db.Column(db.Integer)
 
-class Meal(db.Model):
+
+class RecipeIngredient(db.Model):
+    __tablename__ = "recipe_ingredient"
+    recipe_id = db.Column(db.Integer, db.ForeignKey("recipe.id"), primary_key=True)
+    recipe = db.relationship('Recipe')
+    ingredient_id = db.Column(db.Integer, db.ForeignKey("ingredient.id"), primary_key=True)
+    ingredient = db.relationship('Ingredient')
+    amount = db.Column(db.Integer, nullable=False)
+    unit = db.Column(db.String(10), nullable=False)
+
+
+class RecipeInstructionStep(db.Model):
+    __tablename__ = "recipe_instruction_step"
+    recipe_id = db.Column(db.Integer, db.ForeignKey("recipe.id"), primary_key=True)
+    recipe = db.relationship('Recipe')
+    step = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(255), nullable=False)
+
+
+class ShoppingList(db.Model):
+    __tablename__ = "shopping_list"
     id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String(255), nullable=False)
-    name = db.Column(db.String(255), nullable=False)
-
-class Meal_Plan(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    start = db.Column(db.Integer, nullable=False)
-    end = db.Column(db.Integer, nullable=False)
-    notes = db.Column(db.String(255), nullable=False)
-
-@app.route('/products/add/', methods=["POST"])
-def add_product():
-    if request.method != "POST":
-        return "POST method required", 405
-    try:
-        handle = str(request.json["handle"])
-        weight = float(request.json["weight"])
-        price = float(request.json["price"])
-    except KeyError:
-        return "Incomplete request - missing fields", 400
-    except ValueError:
-        return "Weight and price must be numbers", 400
-    except TypeError:
-        return "request content type must be JSON", 415
-
-    # Database stuff
-    product = Product.query.filter_by(handle=handle).first()
-    if product is not None:
-        return "Handle already exists", 409
-    product = Product(
-        handle=handle,
-        weight=weight,
-        price=price
-    )
-    db.session.add(product)
-    db.session.commit()
-    return "", 201
-
-@app.route('/storage/<product>/add/', methods=["POST"])
-def add_to_storage(product):
-    if request.method != "POST":
-        return "POST method required", 405
-    # Check json data format
-    if not request.is_json:
-        return "request content type must be JSON", 415
-    try:
-        location = request.json["location"]
-        qty = int(request.json["qty"])
-    except KeyError:
-        return "Incomplete request - missing fields", 400
-    except ValueError:
-        return "Qty must be an integer", 400
-
-    # Database stuff
-    product = Product.query.filter_by(handle=product).first()
-    if product is None:
-        return "Product not found", 404
-    storage = StorageItem(
-        qty=qty,
-        location=location,
-        product=product
-    )
-    db.session.add(storage)
-    db.session.commit()
-    return "", 201
+    notes = db.Column(db.String(255), nullable=True)
 
 
-@app.route('/storage/')
-def get_inventory():
-    if request.method != "GET":
-        return "GET method required", 405
-    products = db.session.query(Product).all()
-    result = []
-    for product in products:
-        result.append({
-            "handle":product.handle,
-            "weight":product.weight,
-            "price":product.price,
-            "inventory":[]
-        })
-        storages = StorageItem.query.filter_by(product=product).all()
-        for storage in storages:
-            result[-1]["inventory"].append([storage.location, storage.qty])
+class ShoppingListIngredient(db.Model):
+    __tablename__ = "shoplistingredient"
+    shopping_list_id = db.Column(db.Integer, db.ForeignKey("shopping_list.id"), primary_key=True)
+    shopping_list = db.relationship('ShoppingList')
+    ingredient_id = db.Column(db.Integer, db.ForeignKey("ingredient.id"), primary_key=True)
+    ingredient = db.relationship('Ingredient')
+    amount = db.Column(db.Integer, nullable=False)
+    unit = db.Column(db.String(10), nullable=False)
 
-    response = app.response_class(
-        response=json.dumps(result),
-        status=200,
-        mimetype='application/json'
-    )
-    return response
+
+class User(db.Model):
+    __tablename__ = "user"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(255), nullable=False, unique=True)
+
+class Like(db.Model):
+    recipe_id = db.Column(db.Integer, db.ForeignKey("recipe.id"), primary_key=True)
+    recipe = db.relationship('Recipe')
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
+    user = db.relationship('User')
+    likes = db.Column(db.Boolean(), nullable=True, unique=True)
+
+

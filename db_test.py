@@ -195,7 +195,7 @@ def test_create_instances(db_handle):  # testing the creation of the database an
     assert like.user == User.query.first()
 
 
-"""This test will make sure that editing model will also have effect with the foreign keys"""
+#This test will make sure that editing model will also have effect with the foreign keys
 def test_edit_nutri(db_handle):
 
 
@@ -269,9 +269,9 @@ def test_edit_nutri(db_handle):
     #assert MealPlan.query.first().id == 8
     # assert ShoppingList.query.first().meal_plan_id == 8
 
-"""
-Following testcases are testing that the removal of existing model is handled properly by foreign keys
-"""
+
+#Following testcases are testing that the removal of existing model is handled properly by foreign keys
+
 def test_measurement_ondelete_nutri(db_handle): #delete NutritionInformation
 
     nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, weekplan, mealplan, meal, mealrecipe, like = createdb(db_handle)

@@ -8,7 +8,7 @@ from sqlalchemy import event
 from sqlalchemy.exc import IntegrityError, StatementError
 import app
 from app import db
-from app import NutritionInformation, Ingredient, Recipe, RecipeIngredient, RecipeInstructionStep, ShoppingList, ShoppingListIngredient, User, WeeklyPlan, Meal, MealRecipe, Like, MealPlan
+from app import NutritionInformation, Ingredient, Recipe, RecipeIngredient, RecipeInstructionStep, ShoppingList, ShoppingListIngredient, User, Like
 
 
 def set_sqlite_pragma(dbapi_connection, connection_record):
@@ -61,7 +61,8 @@ def _get_Recipe():
         cookTime = "5 hours",
         recipeCategory = "soup",
         author = "Ville",
-        datePublished = datetime(2019, 1, 1, 0, 0, 1)
+        datePublished = datetime(2019, 1, 1, 0, 0, 1),
+        number_of_likes = 10
     )
 def _get_RecipeIngredient():
     return RecipeIngredient(
@@ -86,32 +87,9 @@ def _get_User():
     return User(
         username = "rille"
     )
-def _get_WeeklyPlan():
-    return WeeklyPlan(
-        week = 8,
-        notes = "jsajsajas"
-    )
-def _get_MealPlan():
-    return MealPlan(
-        weekday = "friday",
-        type = "emt"
-    )
-def _get_Meal():
-    return Meal(
-        name = "meatballs and mashed potatoes",
-        description = "jeejee",
-        author = "masa",
-        type = "maindish",
-        datePublished = datetime(2020, 1, 1, 0, 0, 0)
-
-    )
-def _get_MealRecipe():
-    return MealRecipe(
-        type = "gfkfdsldsf"
-    )
-def _get_Like():
+def _get_Likes():
     return Like(
-        stars = "3"
+        likes = True
     )
 
 def createdb(db_handle):
@@ -123,33 +101,23 @@ def createdb(db_handle):
     shoplist = _get_ShoppingList()
     shoplisti = _get_ShoppingListIngredient()
     user = _get_User()
-    weekplan = _get_WeeklyPlan()
-    mealplan = _get_MealPlan()
-    meal = _get_Meal()
-    mealrecipe = _get_MealRecipe()
-    like = _get_Like()
+    likes = _get_Likes()
 
     ingredient.nutrition_information = nutri
     recipe.nutrition_information = nutri
     recipei.recipe = recipe
     recipei.ingredient = ingredient
     recipestep.recipe = recipe
-    shoplist.meal_plan = mealplan
     shoplisti.shopping_list = shoplist
     shoplisti.ingredient = ingredient
-    weekplan.user = user
-    mealplan.plan = weekplan
-    mealplan.meal = meal
-    mealrecipe.meal = meal
-    mealrecipe.recipe = recipe
-    like.meal = meal
-    like.user = user
+    likes.recipe = recipe
+    likes.user = user
 
-    return nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, weekplan, mealplan, meal, mealrecipe, like
+    return nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, likes
 
 def test_create_instances(db_handle):  # testing the creation of the database and that the relations are working properly. Making sure that the information can retrieved from the database
 
-    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, weekplan, mealplan, meal, mealrecipe, like = createdb(db_handle)
+    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, likes = createdb(db_handle)
 
     db_handle.session.add(nutri)
     db_handle.session.add(ingredient)
@@ -159,10 +127,8 @@ def test_create_instances(db_handle):  # testing the creation of the database an
     db_handle.session.add(shoplist)
     db_handle.session.add(shoplisti)
     db_handle.session.add(user)
-    db_handle.session.add(weekplan)
-    db_handle.session.add(meal)
-    db_handle.session.add(mealrecipe)
-    db_handle.session.add(like)
+    db_handle.session.add(likes)
+
 
     db_handle.session.commit()
 
@@ -183,23 +149,15 @@ def test_create_instances(db_handle):  # testing the creation of the database an
     assert recipestep.recipe == Recipe.query.first()
     assert recipestep.recipe_id == Recipe.query.first().id
 
-    assert shoplist.meal_plan == MealPlan.query.first()
     assert shoplisti.shopping_list == ShoppingList.query.first()
     assert shoplisti.ingredient == Ingredient.query.first()
-    assert weekplan.user == User.query.first()
-    assert mealplan.plan == WeeklyPlan.query.first()
-    assert mealplan.meal == Meal.query.first()
-    assert mealrecipe.meal == Meal.query.first()
-    assert mealrecipe.recipe == Recipe.query.first()
-    assert like.meal == Meal.query.first()
-    assert like.user == User.query.first()
 
 
-"""This test will make sure that editing model will also have effect with the foreign keys"""
+#This test will make sure that editing model will also have effect with the foreign keys
 def test_edit_nutri(db_handle): 
 
 
-    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, weekplan, mealplan, meal, mealrecipe, like = createdb(db_handle)
+    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, likes = createdb(db_handle)
     db_handle.session.add(nutri)
     db_handle.session.add(ingredient)
     db_handle.session.add(recipe)
@@ -208,10 +166,7 @@ def test_edit_nutri(db_handle):
     db_handle.session.add(shoplist)
     db_handle.session.add(shoplisti)
     db_handle.session.add(user)
-    db_handle.session.add(weekplan)
-    db_handle.session.add(meal)
-    db_handle.session.add(mealrecipe)
-    db_handle.session.add(like)
+    db_handle.session.add(likes)
 
     db_handle.session.commit()
 
@@ -237,17 +192,6 @@ def test_edit_nutri(db_handle):
     #assert RecipeIngredient.query.first().recipe_id == 4
     #assert MealRecipe.query.first().recipe_id == 4
 
-    test4 = Meal.query.first()
-    test4.id = 5
-    db_handle.session.commit()
-    assert Meal.query.first().id == 5
-    #assert MealPlan.query.first().meal_id == 5
-    #assert MealRecipe.query.first().meal_id == 5
-    #assert Like.query.first().meal_id == 5
-
-    assert mealplan.meal is None
-    assert mealrecipe.meal is None
-    assert like.meal is None
 
     test5 = ShoppingList.query.first()
     test5.id = 6
@@ -262,19 +206,13 @@ def test_edit_nutri(db_handle):
     #assert WeeklyPlan.query.first().user_id == 7
     #assert Like.query.first().user_id == 7
 
-    test7 = WeeklyPlan.query.first()
-    test7.id = 8
-    db_handle.session.commit()
-    assert WeeklyPlan.query.first().id == 8
-    #assert MealPlan.query.first().id == 8
-    # assert ShoppingList.query.first().meal_plan_id == 8
 
-"""
-Following testcases are testing that the removal of existing model is handled properly by foreign keys
-"""
+
+#Following testcases are testing that the removal of existing model is handled properly by foreign keys
+
 def test_measurement_ondelete_nutri(db_handle):
 
-    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, weekplan, mealplan, meal, mealrecipe, like = createdb(db_handle)
+    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, likes = createdb(db_handle)
 
 
     db_handle.session.add(nutri)
@@ -282,6 +220,7 @@ def test_measurement_ondelete_nutri(db_handle):
     db_handle.session.add(recipe)
     db_handle.session.add(recipei)
     db_handle.session.add(recipestep)
+    db_handle.session.add(user)
     db_handle.session.commit()
     db_handle.session.delete(nutri)
     db_handle.session.commit()
@@ -292,7 +231,7 @@ def test_measurement_ondelete_nutri(db_handle):
 
 def test_measurement_ondelete_ingredient(db_handle):
 
-    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, weekplan, mealplan, meal, mealrecipe, like = createdb(db_handle)
+    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, likes = createdb(db_handle)
 
     db_handle.session.add(nutri)
     db_handle.session.add(ingredient)
@@ -302,10 +241,8 @@ def test_measurement_ondelete_ingredient(db_handle):
     db_handle.session.add(shoplist)
     db_handle.session.add(shoplisti)
     db_handle.session.add(user)
-    db_handle.session.add(weekplan)
-    db_handle.session.add(meal)
-    db_handle.session.add(mealrecipe)
-    db_handle.session.add(like)
+    db_handle.session.add(likes)
+
 
     db_handle.session.commit()
 
@@ -317,7 +254,7 @@ def test_measurement_ondelete_ingredient(db_handle):
 
 def test_measurement_ondelete_recipe(db_handle):
 
-    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, weekplan, mealplan, meal, mealrecipe, like = createdb(db_handle)
+    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, likes = createdb(db_handle)
 
 
     db_handle.session.add(nutri)
@@ -328,10 +265,7 @@ def test_measurement_ondelete_recipe(db_handle):
     db_handle.session.add(shoplist)
     db_handle.session.add(shoplisti)
     db_handle.session.add(user)
-    db_handle.session.add(weekplan)
-    db_handle.session.add(meal)
-    db_handle.session.add(mealrecipe)
-    db_handle.session.add(like)
+    db_handle.session.add(likes)
 
     db_handle.session.commit()
 
@@ -340,37 +274,12 @@ def test_measurement_ondelete_recipe(db_handle):
 
     assert recipei.recipe is None
     assert recipestep.recipe is None
-    assert mealrecipe.recipe is None
 
-
-def test_measurement_ondelete_mealplan(db_handle):
-    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, weekplan, mealplan, meal, mealrecipe, like = createdb(db_handle)
-
-
-    db_handle.session.add(nutri)
-    db_handle.session.add(ingredient)
-    db_handle.session.add(recipe)
-    db_handle.session.add(recipei)
-    db_handle.session.add(recipestep)
-    db_handle.session.add(shoplist)
-    db_handle.session.add(shoplisti)
-    db_handle.session.add(user)
-    db_handle.session.add(weekplan)
-    db_handle.session.add(meal)
-    db_handle.session.add(mealrecipe)
-    db_handle.session.add(like)
-
-    db_handle.session.commit()
-
-    db_handle.session.delete(mealplan)
-    db_handle.session.commit()
-
-    assert shoplist.meal_plan is None
 
 def test_measurement_ondelete_shoplist(db_handle):
 
 
-    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, weekplan, mealplan, meal, mealrecipe, like = createdb(db_handle)
+    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, likes = createdb(db_handle)
     db_handle.session.add(nutri)
     db_handle.session.add(ingredient)
     db_handle.session.add(recipe)
@@ -379,10 +288,8 @@ def test_measurement_ondelete_shoplist(db_handle):
     db_handle.session.add(shoplist)
     db_handle.session.add(shoplisti)
     db_handle.session.add(user)
-    db_handle.session.add(weekplan)
-    db_handle.session.add(meal)
-    db_handle.session.add(mealrecipe)
-    db_handle.session.add(like)
+    db_handle.session.add(likes)
+
 
     db_handle.session.commit()
 
@@ -396,7 +303,7 @@ def test_measurement_ondelete_shoplist(db_handle):
 def test_measurement_ondelete_user(db_handle):
 
 
-    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, weekplan, mealplan, meal, mealrecipe, like = createdb(db_handle)
+    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, likes = createdb(db_handle)
     db_handle.session.add(nutri)
     db_handle.session.add(ingredient)
     db_handle.session.add(recipe)
@@ -405,65 +312,11 @@ def test_measurement_ondelete_user(db_handle):
     db_handle.session.add(shoplist)
     db_handle.session.add(shoplisti)
     db_handle.session.add(user)
-    db_handle.session.add(weekplan)
-    db_handle.session.add(meal)
-    db_handle.session.add(mealrecipe)
-    db_handle.session.add(like)
+    db_handle.session.add(likes)
+
 
     db_handle.session.commit()
 
     db_handle.session.delete(user)
     db_handle.session.commit()
-
-    assert weekplan.user is None
-    assert like.user is None
-
-def test_measurement_ondelete_weekplan(db_handle):
-
-
-    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, weekplan, mealplan, meal, mealrecipe, like = createdb(db_handle)
-    db_handle.session.add(nutri)
-    db_handle.session.add(ingredient)
-    db_handle.session.add(recipe)
-    db_handle.session.add(recipei)
-    db_handle.session.add(recipestep)
-    db_handle.session.add(shoplist)
-    db_handle.session.add(shoplisti)
-    db_handle.session.add(user)
-    db_handle.session.add(weekplan)
-    db_handle.session.add(meal)
-    db_handle.session.add(mealrecipe)
-    db_handle.session.add(like)
-
-    db_handle.session.commit()
-
-    db_handle.session.delete(weekplan)
-    db_handle.session.commit()
-
-    assert mealplan.plan is None
-
-def test_measurement_ondelete_meal(db_handle):
-
-
-    nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, weekplan, mealplan, meal, mealrecipe, like = createdb(db_handle)
-    db_handle.session.add(nutri)
-    db_handle.session.add(ingredient)
-    db_handle.session.add(recipe)
-    db_handle.session.add(recipei)
-    db_handle.session.add(recipestep)
-    db_handle.session.add(shoplist)
-    db_handle.session.add(shoplisti)
-    db_handle.session.add(user)
-    db_handle.session.add(weekplan)
-    db_handle.session.add(meal)
-    db_handle.session.add(mealrecipe)
-    db_handle.session.add(like)
-
-    db_handle.session.commit()
-
-    db_handle.session.delete(meal)
-    db_handle.session.commit()
-
-    assert mealplan.meal is None
-    assert mealrecipe.meal is None
-    assert like.meal is None
+    #assert user.id is None
