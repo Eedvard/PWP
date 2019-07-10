@@ -7,6 +7,7 @@ from sqlalchemy.engine import Engine
 from sqlalchemy import event
 from sqlalchemy.exc import IntegrityError, StatementError
 import app
+from sqlalchemy.orm.attributes import flag_modified
 from app import db
 from app import NutritionInformation, Ingredient, Recipe, RecipeIngredient, RecipeInstructionStep, ShoppingList, ShoppingListIngredient, User, Like
 
@@ -139,7 +140,7 @@ def test_create_instances(db_handle):  # testing the creation of the database an
     assert RecipeInstructionStep.query.count() == 1
 
     assert ingredient.nutrition_information == NutritionInformation.query.first()
-    assert ingredient.nutrition_nformation_id == NutritionInformation.query.first().id
+    assert ingredient.nutrition_information_id == NutritionInformation.query.first().id
     assert recipe.nutrition_information == NutritionInformation.query.first()
     assert recipe.nutritionInformation_id == NutritionInformation.query.first().id
     assert recipei.recipe == Recipe.query.first()
@@ -154,9 +155,7 @@ def test_create_instances(db_handle):  # testing the creation of the database an
 
 
 #This test will make sure that editing model will also have effect with the foreign keys
-def test_edit_nutri(db_handle): 
-
-
+def test_edit_nutri(db_handle):
     nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, likes = createdb(db_handle)
     db_handle.session.add(nutri)
     db_handle.session.add(ingredient)
@@ -171,14 +170,17 @@ def test_edit_nutri(db_handle):
     db_handle.session.commit()
 
     test = NutritionInformation.query.first()
-    test.id = 2
+    test.servingSize = 5
+    db_handle.session.merge(test)
+    flag_modified(test, "servingSize")
     db_handle.session.commit()
-    assert NutritionInformation.query.first().id == 2
-    #assert Ingredient.query.first().nutrition_nformation_id == 2
-    #assert Recipe.query.first().nutritionInformation_id == 2
+    assert NutritionInformation.query.first().servingSize == 5
+    assert Ingredient.query.first().nutrition_information.servingSize == 5
+    assert Recipe.query.first().nutrition_information.servingSize == 5
 
     test2 = Ingredient.query.first()
     test2.id = 3
+    db_handle.session.merge(test2)
     db_handle.session.commit()
     assert Ingredient.query.first().id == 3
     #assert RecipeIngredient.query.first().ingredient_id == 3
@@ -186,21 +188,23 @@ def test_edit_nutri(db_handle):
 
     test3 = Recipe.query.first()
     test3.id = 4
+    db_handle.session.merge(test3)
     db_handle.session.commit()
     assert Recipe.query.first().id == 4
     #assert RecipeInstructionStep.query.first().recipe_id == 4
     #assert RecipeIngredient.query.first().recipe_id == 4
     #assert MealRecipe.query.first().recipe_id == 4
 
-
     test5 = ShoppingList.query.first()
     test5.id = 6
+    db_handle.session.merge(test5)
     db_handle.session.commit()
     assert ShoppingList.query.first().id == 6
     #assert ShoppingListIngredient.query.first().shopping_list_id == 5
 
     test6 = User.query.first()
     test6.id = 7
+    db_handle.session.merge(test6)
     db_handle.session.commit()
     assert User.query.first().id == 7
     #assert WeeklyPlan.query.first().user_id == 7
