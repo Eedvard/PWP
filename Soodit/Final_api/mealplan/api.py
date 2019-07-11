@@ -6,9 +6,10 @@ api = Api(api_bp)
 
 # this import must be placed after we create api to avoid issues with
 # circular imports
-#from sensorhub.resources.sensor import SensorCollection, SensorItem
 
-#api.add_resource(SensorCollection, "/sensors/")
+from mealplan.resources.users import Users
+
+api.add_resource(Users, "/users/<user_id>/")
 #api.add_resource(SensorItem, "/sensors/<sensor>/")
 
 @api_bp.route("/")
