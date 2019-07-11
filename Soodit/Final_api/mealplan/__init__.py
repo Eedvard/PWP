@@ -7,6 +7,8 @@ from . import api
 
 # Based on http://flask.pocoo.org/docs/1.0/tutorial/factory/#the-application-factory
 # Modified to use Flask SQLAlchemy
+
+
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
@@ -26,8 +28,12 @@ def create_app(test_config=None):
         pass
     
     db.init_app(app)
+<<<<<<< Updated upstream
 
     from . import models
     app.cli.add_command(models.init_db_command)
 
     return app
+=======
+    return app
+>>>>>>> Stashed changes

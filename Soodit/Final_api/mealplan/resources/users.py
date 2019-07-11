@@ -23,7 +23,8 @@ class Users(Resource):
     def get(self, user_id):
         db_user = User.query.filter_by(id=user_id).first()
         if db_user is None:
-            return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(user))
+            return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(user)
+                                                             )
 
     def put(self, user):
         pass

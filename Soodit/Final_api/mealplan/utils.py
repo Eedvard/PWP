@@ -75,3 +75,34 @@ class RecipeBuilder(MasonBuilder):
         body.add_error(title, message)
         body.add_control("profile", href=ERROR_PROFILE)
         return Response(json.dumps(body), status_code, mimetype=MASON)
+
+    @staticmethod
+    def user_schema():
+        schema = {
+            "type": "object",
+            "required": ["username"]
+        }
+        props = schema["properties"] = {}
+        props["username"] = {
+            "description": "User's unique name",
+            "type": "string"
+        }
+        return schema
+
+    def add_control_add_user(self):
+        self.add_control(
+            "profile:add-user",
+            "/api/users/",
+            method="POST",
+            encoding="json",
+            title="Add a new user",
+            schema=self.user_schema()
+        )
+
+    def add_control_delete(self, href):
+        self.add_control(
+            "profile:delete",
+            hreh=href,
+            method="DELETE",
+            title="Delete this resource"
+        )
