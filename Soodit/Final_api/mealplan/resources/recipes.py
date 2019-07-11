@@ -26,15 +26,19 @@ class RecipeCollection(Resource):
 
     def get(self):
         recipes = db.session.query(models.Recipe).all()
-        body = utils.RecipeBuilder(items=[])
+        body = utils.RecipeBuilder(recipes=[])
         for recipe in recipes:
             item = utils.RecipeBuilder(
-                name = recipe.name
+                name = recipe.name,
+                description = recipe.description,
+                recipeYield = recipe.recipeYield,
+                cookTime = recipe.cookTime,
+                recipeCategory = recipe.recipeCategory,
+                author = recipe.author,
+                datePublished = str(recipe.datePublished)
             )
-            body["items"].append(item)
+            body["recipes"].append(item)
 
-            print("ribale")
-            print(recipe)
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
     def post(recipe):
         if request.method != "POST":
