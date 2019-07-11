@@ -99,6 +99,16 @@ class RecipeBuilder(MasonBuilder):
             schema=self.user_schema()
         )
 
+    def add_control_edit_user(self):
+        self.add_control(
+            "profile:edit-user",
+            "/api/users/{id}",
+            method="PUT",
+            encoding="json",
+            title="Edit an existing user",
+            schema=self.user_schema()
+        )
+
     def add_control_delete(self, href):
         self.add_control(
             "profile:delete",
