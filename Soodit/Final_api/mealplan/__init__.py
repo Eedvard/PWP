@@ -1,9 +1,9 @@
 import os
-from . import api
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+from . import api
 
 # Based on http://flask.pocoo.org/docs/1.0/tutorial/factory/#the-application-factory
 # Modified to use Flask SQLAlchemy
@@ -26,4 +26,8 @@ def create_app(test_config=None):
         pass
     
     db.init_app(app)
+
+    from . import models
+    app.cli.add_command(models.init_db_command)
+
     return app
