@@ -28,12 +28,8 @@ def create_app(test_config=None):
         pass
     
     db.init_app(app)
-<<<<<<< Updated upstream
 
     from . import models
     app.cli.add_command(models.init_db_command)
 
     return app
-=======
-    return app
->>>>>>> Stashed changes
