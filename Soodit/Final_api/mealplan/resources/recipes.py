@@ -17,6 +17,13 @@ class RecipeItem(Resource):
         db_recipe = models.Recipe.query.filter_by(id=recipe_id).first()
         if db_recipe is None:
             return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(recipe_id))
+        if db_recipe.nutrition_information is None:
+            servingSize = None
+            servingSizeUnit = None
+        else:
+            servingSize = db_recipe.nutrition_information.servingSize
+            servingSizeUnit = db_recipe.nutrition_information.servingSizeUnit
+
         body = utils.RecipeBuilder(
             name=db_recipe.name,
             description=db_recipe.description,
@@ -25,7 +32,9 @@ class RecipeItem(Resource):
             recipeCategory=db_recipe.recipeCategory,
             author=db_recipe.author,
             datePublished=str(db_recipe.datePublished),
-            number_of_likes = db_recipe.number_of_likes
+            number_of_likes = db_recipe.number_of_likes,
+            servingSize=servingSize,
+            servingSizeUnit=servingSizeUnit
         )
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
@@ -49,6 +58,12 @@ class RecipeItem(Resource):
             return utils.RecipeBuilder.create_error_response(400, "Invalid input", "Weight and price must be numbers")
         except TypeError:
             return utils.RecipeBuilder.create_error_response(415, "Invalid content", "request content type must be JSON")
+        if db_recipe.nutrition_information is None:
+            servingSize = None
+            servingSizeUnit = None
+        else:
+            servingSize = db_recipe.nutrition_information.servingSize
+            servingSizeUnit = db_recipe.nutrition_information.servingSizeUnit
 
         body = utils.RecipeBuilder(
             name=db_recipe.name,
@@ -58,7 +73,9 @@ class RecipeItem(Resource):
             recipeCategory=db_recipe.recipeCategory,
             author=db_recipe.author,
             datePublished=str(db_recipe.datePublished),
-            number_of_likes=db_recipe.number_of_likes
+            number_of_likes=db_recipe.number_of_likes,
+            servingSize=servingSize,
+            servingSizeUnit=servingSizeUnit
         )
 
         db_recipe.name = name
@@ -82,8 +99,14 @@ class RecipeItem(Resource):
             return utils.RecipeBuilder.create_error_response(405, "Invalid method", "DELETE method required")
         db_recipe = models.Recipe.query.filter_by(id=recipe_id).first()
         if db_recipe is None:
-            return utils.RecipeBuilder.create_error_response(404, "Not Found",
-                                                             "No user was found with the username {}".format(recipe_id))
+            return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(recipe_id))
+        if db_recipe.nutrition_information is None:
+            servingSize = None
+            servingSizeUnit = None
+        else:
+            servingSize = db_recipe.nutrition_information.servingSize
+            servingSizeUnit = db_recipe.nutrition_information.servingSizeUnit
+
         body = utils.RecipeBuilder(
             name=db_recipe.name,
             description=db_recipe.description,
@@ -92,7 +115,9 @@ class RecipeItem(Resource):
             recipeCategory=db_recipe.recipeCategory,
             author=db_recipe.author,
             datePublished=str(db_recipe.datePublished),
-            number_of_likes=db_recipe.number_of_likes
+            number_of_likes=db_recipe.number_of_likes,
+            servingSize=servingSize,
+            servingSizeUnit=servingSizeUnit
         )
 
         db.session.delete(db_recipe)
@@ -107,6 +132,13 @@ class RecipeCollection(Resource):
         recipes = db.session.query(models.Recipe).all()
         body = utils.RecipeBuilder(recipes=[])
         for recipe in recipes:
+            if recipe.nutrition_information is None:
+                servingSize = None
+                servingSizeUnit = None
+            else:
+                servingSize = recipe.nutrition_information.servingSize
+                servingSizeUnit = recipe.nutrition_information.servingSizeUnit
+
             item = utils.RecipeBuilder(
                 name = recipe.name,
                 description = recipe.description,
@@ -115,7 +147,9 @@ class RecipeCollection(Resource):
                 recipeCategory = recipe.recipeCategory,
                 author = recipe.author,
                 datePublished = str(recipe.datePublished),
-                number_of_likes = recipe.number_of_likes
+                number_of_likes = recipe.number_of_likes,
+                servingSize = servingSize,
+                servingSizeUnit = servingSizeUnit
             )
             body["recipes"].append(item)
 
