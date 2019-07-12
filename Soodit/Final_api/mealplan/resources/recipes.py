@@ -24,7 +24,8 @@ class RecipeItem(Resource):
             cookTime=db_recipe.cookTime,
             recipeCategory=db_recipe.recipeCategory,
             author=db_recipe.author,
-            datePublished=str(db_recipe.datePublished)
+            datePublished=str(db_recipe.datePublished),
+            number_of_likes = db_recipe.number_of_likes
         )
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
@@ -56,10 +57,10 @@ class RecipeItem(Resource):
             cookTime=db_recipe.cookTime,
             recipeCategory=db_recipe.recipeCategory,
             author=db_recipe.author,
-            datePublished=str(db_recipe.datePublished)
+            datePublished=str(db_recipe.datePublished),
+            number_of_likes=db_recipe.number_of_likes
         )
 
-        #url = api.url_for(ProductItem, handle=newhandle)
         db_recipe.name = name
         db_recipe.description = description
         db_recipe.recipeYield = name
@@ -90,7 +91,8 @@ class RecipeItem(Resource):
             cookTime=db_recipe.cookTime,
             recipeCategory=db_recipe.recipeCategory,
             author=db_recipe.author,
-            datePublished=str(db_recipe.datePublished)
+            datePublished=str(db_recipe.datePublished),
+            number_of_likes=db_recipe.number_of_likes
         )
 
         db.session.delete(db_recipe)
@@ -112,7 +114,8 @@ class RecipeCollection(Resource):
                 cookTime = recipe.cookTime,
                 recipeCategory = recipe.recipeCategory,
                 author = recipe.author,
-                datePublished = str(recipe.datePublished)
+                datePublished = str(recipe.datePublished),
+                number_of_likes = recipe.number_of_likes
             )
             body["recipes"].append(item)
 
@@ -138,8 +141,21 @@ class RecipeCollection(Resource):
             return utils.RecipeBuilder.create_error_response(400, "Invalid input", "Weight and price must be numbers")
         except TypeError:
             return utils.RecipeBuilder.create_error_response(415, "Invalid content", "request content type must be JSON")
-
-            # Database stuff
+        nutrition=None
+        try:
+            servingSize = int(request.json["servingsize"])
+            servingSizeUnit = str(request.json["servingsizeunit"])
+        except KeyError:
+            pass
+        except ValueError:
+            return utils.RecipeBuilder.create_error_response(400, "Invalid input", "Weight and price must be numbers")
+        except TypeError:
+            return utils.RecipeBuilder.create_error_response(415, "Invalid content", "request content type must be JSON")
+        else:
+            nutrition = models.NutritionInformation(
+                servingSize=servingSize,
+                servingSizeUnit=servingSizeUnit
+            )
 
         recipe = models.Recipe(
             name=name,
@@ -148,15 +164,14 @@ class RecipeCollection(Resource):
             cookTime = cookTime,
             recipeCategory = recipeCategory,
             author = author,
-            datePublished = datePublished
+            datePublished = datePublished,
+            number_of_likes = 0, # Number of likes is always 0 for a new recipe
+            nutrition_information = nutrition
         )
         db.session.add(recipe)
         db.session.commit()
         db.session.refresh(recipe)
         id = recipe.id
-
-        print(id)
-
         url = api.api.url_for(RecipeItem, recipe_id=recipe.id)
         return Response(headers={
             "Location": url
