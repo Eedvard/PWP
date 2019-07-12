@@ -68,6 +68,7 @@ class MasonBuilder(dict):
         self["@controls"][ctrl_name] = kwargs
         self["@controls"][ctrl_name]["href"] = href
 
+
 class RecipeBuilder(MasonBuilder):
     def create_error_response(status_code, title, message=None):
         resource_url = request.path
@@ -88,6 +89,67 @@ class RecipeBuilder(MasonBuilder):
             "type": "string"
         }
         return schema
+
+    @staticmethod
+    def recipe_schema():
+        schema = {
+            "type": "object",
+            "required": ["name", "description", "recipeYield", "cookTime", "recipeCategory", "author", "datePublished"]
+        }
+        props = schema["properties"] = {}
+        props["name"] = {
+            "description": "Recipe's name",
+            "type": "string"
+        }
+        props["description"] = {
+            "description": "A short description about the recipe",
+            "type": "string"
+        }
+        props["recipeYield"] = {
+            "description": "Number of portions the recipe will yield",
+            "type": "string"
+        }
+        props["cookTime"] = {
+            "description": "The time it takes to prepare the food",
+            "type": "string"
+        }
+        props["recipeCategory"] = {
+            "description": "The category the recipe belongs to",
+            "type": "string"
+        }
+        props["author"] = {
+            "description": "Username of the author of the recipe",
+            "type": "string"
+        }
+        props["datePublished"] = {
+            "description": "The date the recipe was published",
+            "type": "dateTime"
+        }
+        return schema
+
+    #RECIPE METHODS
+
+    def add_control_add_recipe(self):
+        self.add_control(
+            "profile:add-recipe",
+            "/api/recipes/",
+            method="POST",
+            encoding="json",
+            title="Add a new recipe",
+            schema=self.recipe_schema()
+        )
+
+    def add_control_edit_recipe(self):
+        self.add_control(
+            "profile:edit-recipe",
+            "api/recipes/{id}",
+            method="PUT",
+            encoding="json",
+            title="Edit an existing recipe",
+            schema=self.recipe_schema()
+        )
+
+    # USER METHODS
 
     def add_control_add_user(self):
         self.add_control(
