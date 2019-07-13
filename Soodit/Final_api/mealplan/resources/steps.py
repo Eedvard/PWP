@@ -15,9 +15,8 @@ class Step(Resource):
         if db_recipe is None:
             return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(recipe_id))
 
-        body = utils.RecipeInstructionStep(
+        body = utils.RecipeBuilder(
             recipe_id=db_recipe.recipe_id,
-            recipe=db_recipe.recipe,
             step=db_recipe.step,
             text=db_recipe.text
         )
@@ -38,7 +37,7 @@ class Step(Resource):
         except TypeError:
             return utils.RecipeBuilder.create_error_response(415, "Invalid content", "request content type must be JSON")
 
-        body = utils.RecipeInstructionStep(
+        body = utils.RecipeBuilder(
             recipe_id=db_recipe.recipe_id,
             recipe=db_recipe.recipe,
             step=db_recipe.step,
@@ -48,7 +47,7 @@ class Step(Resource):
         db_recipe.text=text
 
         db.session.commit()
-        url = api.api.url_for(Step, id=db_recipe.id, step_id=db_recipe.step)
+        url = api.api.url_for(Step, recipe_id=db_recipe.recipe_id, step_id=db_recipe.step)
         return Response(headers={
             "Location": url
         },
@@ -61,10 +60,9 @@ class Step(Resource):
         db_recipe = models.RecipeInstructionStep.query.filter_by(recipe_id=recipe_id, step=step_id).first()
         if db_recipe is None:
             return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(recipe_id))
-        
-        body = utils.RecipeInstructionStep(
+
+        body = utils.RecipeBuilder(
             recipe_id=db_recipe.recipe_id,
-            recipe=db_recipe.recipe,
             step=db_recipe.step,
             text=db_recipe.text
         )

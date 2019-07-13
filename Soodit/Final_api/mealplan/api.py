@@ -14,7 +14,7 @@ from mealplan.resources.steps import Step
 api.add_resource(Users, "/users/<user_id>/")
 api.add_resource(RecipeCollection, "/recipes/")
 api.add_resource(RecipeItem, "/recipes/<recipe_id>/")
-api.add_resource(Step, "/recipes/<recipe_id>/steps/step_id/")
+api.add_resource(Step, "/recipes/<recipe_id>/steps/<step_id>/")
 
 #api.add_resource(SensorItem, "/sensors/<sensor>/")
 
