@@ -40,7 +40,7 @@ class RecipeItem(Resource):
 
     def put(self, recipe_id):
         if request.method != "PUT":
-            return utils.RecipeBuilder.create_error_response(405, "wrong method", "POST method required")
+            return utils.RecipeBuilder.create_error_response(405, "wrong method", "PUT method required")
         db_recipe = models.Recipe.query.filter_by(id=recipe_id).first()
         if db_recipe is None:
             return utils.RecipeBuilder.create_error_response(404, "Not found", "No recipe was found with the name {}".format(recipe_id))
