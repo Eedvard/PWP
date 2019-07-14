@@ -34,8 +34,16 @@ class RecipeItem(Resource):
             datePublished=str(db_recipe.datePublished),
             number_of_likes = db_recipe.number_of_likes,
             servingSize=servingSize,
-            servingSizeUnit=servingSizeUnit
+            servingSizeUnit=servingSizeUnit,
+            steps=[]
         )
+        steps = models.RecipeInstructionStep.query.filter_by(recipe_id=recipe_id).all()
+        for step in steps:
+            item = utils.RecipeBuilder(
+                step=step.step,
+                text=step.text
+            )
+            body["steps"].append(item)
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
     def put(self, recipe_id):
