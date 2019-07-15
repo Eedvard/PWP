@@ -19,19 +19,26 @@ class Ingredient(Resource):
             name=db_recipe.ingredient.name,
             description=db_recipe.ingredient.description,
             amount=db_recipe.amount,
-            unit=db_recipe.unit
+            unit=db_recipe.unit,
+            servingsize=db_recipe.ingredient.nutrition_information.servingSize,
+            servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit
         )
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
     def put(self, recipe_id, ingredient_id):
         if request.method != "PUT":
             return utils.RecipeBuilder.create_error_response(405, "wrong method", "PUT method required")
-        db_recipe = models.RecipeInstructionStep.query.filter_by(recipe_id=recipe_id, step=ingredient_id).first()
+        db_recipe = models.RecipeIngredient.query.filter_by(recipe_id=recipe_id, ingredient_id=ingredient_id).first()
         if db_recipe is None:
             return utils.RecipeBuilder.create_error_response(404, "Not found", "No recipe was found with the name {}".format(recipe_id))
         try:
             name = str(request.json["name"])
             description = str(request.json["description"])
+            amount = int(request.json["amount"])
+            unit = str(request.json["unit"])
+
+            servingsize = int(request.json["servingsize"])
+            servingsizeunit = str(request.json["servingsizeunit"])
         except KeyError:
             return utils.RecipeBuilder.create_error_response(400, "Missing fields", "Incomplete request - missing fields")
         except ValueError:
@@ -40,16 +47,23 @@ class Ingredient(Resource):
             return utils.RecipeBuilder.create_error_response(415, "Invalid content", "request content type must be JSON")
 
         body = utils.RecipeBuilder(
-            id=db_recipe.id,
-            name=db_recipe.name,
-            descrption=db_recipe.description,
-            nutrition_information_id=db_recipe.nutrition_information_id,
-            nutrition_information=db_recipe.nutrition_information
+            name=db_recipe.ingredient.name,
+            description=db_recipe.ingredient.description,
+            amount=db_recipe.amount,
+            unit=db_recipe.unit,
+            servingsize=db_recipe.ingredient.nutrition_information.servingSize,
+            servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit
         )
-        db_recipe.name=name
-        db_recipe.description=description
+
+        db_recipe.ingredient.name=name
+        db_recipe.ingredient.description=description
+        db_recipe.amount=amount
+        db_recipe.unit=unit
+        db_recipe.ingredient.nutrition_information.servingSize=servingsize
+        db_recipe.ingredient.nutrition_information.servingSizeUnit=servingsizeunit
         db.session.commit()
-        url = api.api.url_for(Ingredient, recipe_id=db_recipe.recipe_id, step_id=db_recipe.step)
+
+        url = api.api.url_for(Ingredient, recipe_id=recipe_id, ingredient_id=ingredient_id)
         return Response(headers={
             "Location": url
         },
@@ -59,15 +73,86 @@ class Ingredient(Resource):
     def delete(self, recipe_id, ingredient_id):
         if request.method != "DELETE":
             return utils.RecipeBuilder.create_error_response(405, "Invalid method", "DELETE method required")
-        db_recipe = models.RecipeInstructionStep.query.filter_by(recipe_id=recipe_id, step=ingredient_id).first()
+        db_recipe = models.RecipeIngredient.query.filter_by(recipe_id=recipe_id, ingredient_id=ingredient_id).first()
         if db_recipe is None:
             return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(recipe_id))
 
         body = utils.RecipeBuilder(
-            name=db_recipe.name,
-            description=db_recipe.description
+            name=db_recipe.ingredient.name,
+            description=db_recipe.ingredient.description,
+            amount=db_recipe.amount,
+            unit=db_recipe.unit,
+            servingsize=db_recipe.ingredient.nutrition_information.servingSize,
+            servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit
         )
 
         db.session.delete(db_recipe)
         db.session.commit()
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
+
+class IngredientCollection(Resource):
+    def get(self, recipe_id):
+        if request.method != "GET":
+            return utils.RecipeBuilder.create_error_response(405, "Invalid method", "GET method required")
+        body = utils.RecipeBuilder(ingredients=[])
+
+        ingredients = models.RecipeIngredient.query.filter_by(recipe_id=recipe_id).all()
+        for ingredient in ingredients:
+            item = utils.RecipeBuilder(
+                name=ingredient.ingredient.name,
+                description=ingredient.ingredient.description,
+                amount=ingredient.amount,
+                unit=ingredient.unit
+            )
+            body["ingredients"].append(item)
+
+        return Response(json.dumps(body), 200, mimetype=utils.MASON)
+    def post(recipe, recipe_id):
+        if request.method != "POST":
+            return utils.RecipeBuilder.create_error_response(405, "Invalid method", "POST method required")
+        try:
+            name = str(request.json["name"])
+            description = str(request.json["description"])
+            amount = int(request.json["amount"])
+            unit = str(request.json["unit"])
+
+            servingsize = int(request.json["servingsize"])
+            servingsizeunit = str(request.json["servingsizeunit"])
+        except KeyError:
+            return utils.RecipeBuilder.create_error_response(400, "Missing fields", "Incomplete request - missing fields")
+        except ValueError:
+            return utils.RecipeBuilder.create_error_response(400, "Invalid input", "Weight and price must be numbers")
+        except TypeError:
+            return utils.RecipeBuilder.create_error_response(415, "Invalid content", "request content type must be JSON")
+
+        db_recipe = models.Recipe.query.filter_by(id=recipe_id).first()
+        if db_recipe is None:
+            return utils.RecipeBuilder.create_error_response(404, "Not found","No recipe was found with the name {}".format(recipe_id))
+
+        nutrition_information = models.NutritionInformation(
+            servingSize=servingsize,
+            servingSizeUnit=servingsizeunit
+        )
+        ingredient = models.Ingredient(
+            name=name,
+            description=description,
+            nutrition_information=nutrition_information
+        )
+        recipeingredient = models.RecipeIngredient(
+            recipe=db_recipe,
+            ingredient=ingredient,
+            amount=amount,
+            unit=unit
+        )
+        db.session.add(ingredient)
+        db.session.add(recipeingredient)
+        db.session.commit()
+        db.session.refresh(recipeingredient)
+        id = db_recipe.id
+        ingid = recipeingredient.ingredient_id
+        url = api.api.url_for(Ingredient, recipe_id=id, ingredient_id=ingid)
+        return Response(headers={
+            "Location": url
+        },
+            status=204
+        )

@@ -71,5 +71,52 @@ class Step(Resource):
         db.session.commit()
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
+class StepCollection(Resource):
+    def get(self, recipe_id):
+        if request.method != "GET":
+            return utils.RecipeBuilder.create_error_response(405, "Invalid method", "GET method required")
+        steps = models.RecipeInstructionStep.query.filter_by(recipe_id=recipe_id).all()
+        body = utils.RecipeBuilder(steps=[])
+        for step in steps:
 
+            item = utils.RecipeBuilder(
+                step=step.step,
+                text=step.text
+            )
+            body["steps"].append(item)
+
+        return Response(json.dumps(body), 200, mimetype=utils.MASON)
+    def post(recipe, recipe_id):
+        if request.method != "POST":
+            return utils.RecipeBuilder.create_error_response(405, "Invalid method", "POST method required")
+        try:
+            stepnum = int(request.json["step"])
+            text = str(request.json["text"])
+        except KeyError:
+            return utils.RecipeBuilder.create_error_response(400, "Missing fields", "Incomplete request - missing fields")
+        except ValueError:
+            return utils.RecipeBuilder.create_error_response(400, "Invalid input", "Weight and price must be numbers")
+        except TypeError:
+            return utils.RecipeBuilder.create_error_response(415, "Invalid content", "request content type must be JSON")
+
+        db_recipe = models.Recipe.query.filter_by(id=recipe_id).first()
+        if db_recipe is None:
+            return utils.RecipeBuilder.create_error_response(404, "Not found",
+                                                             "No recipe was found with the name {}".format(recipe_id))
+        step = models.RecipeInstructionStep(
+            recipe=db_recipe,
+            step=stepnum,
+            text=text
+        )
+        db.session.add(step)
+        db.session.commit()
+        db.session.refresh(step)
+        id = db_recipe.id
+        stepid = step.step
+        url = api.api.url_for(Step, recipe_id=id, step_id=stepid)
+        return Response(headers={
+            "Location": url
+        },
+            status=204
+        )
 
