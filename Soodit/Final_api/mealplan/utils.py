@@ -127,6 +127,47 @@ class RecipeBuilder(MasonBuilder):
         }
         return schema
 
+    @staticmethod
+    def step_schema():
+        schema = {
+            "type": "object",
+            "required": ["text"]
+        }
+        props = schema["properties"] = {}
+        props["text"] = {
+            "description": "The instruction of the step",
+            "type": "string"
+        }
+        return schema
+
+    @staticmethod
+    def shoppinglist_schema():
+        schema = {
+            "type": "object"
+        }
+        props = schema["properties"] = {}
+        props["notes"] = {
+            "description": "The shopping list note like foodstuff",
+            "type": "string"
+        }
+        return schema
+
+    @staticmethod
+    def shoppinglistingredient_schema():
+        schema = {
+            "type": "object",
+            "required": ["amount", "unit"]
+        }
+        props = schema["properties"] = {}
+        props["amount"] = {
+            "description": "The amount of foodstuff needed",
+            "type": "integer"
+        }
+        props["unit"] = {
+            "description": "grams, litres etc",
+            "type": "string"
+        }
+
     #RECIPE METHODS
 
     def add_control_add_recipe(self):
