@@ -172,6 +172,7 @@ class RecipeCollection(Resource):
             body["recipes"].append(item)
 
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
+
     def post(recipe):
         if request.method != "POST":
             return utils.RecipeBuilder.create_error_response(405, "Invalid method", "POST method required")

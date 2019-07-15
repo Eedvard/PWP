@@ -25,8 +25,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Final_api/mealplan/resources/users.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="71">
-              <caret line="42" column="23" selection-start-line="42" selection-start-column="23" selection-end-line="42" selection-end-column="23" />
+            <state relative-caret-position="411">
+              <caret line="118" column="9" selection-start-line="118" selection-start-column="9" selection-end-line="118" selection-end-column="9" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -37,8 +37,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Final_api/mealplan/resources/recipes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="411">
-              <caret line="115" column="25" lean-forward="true" selection-start-line="115" selection-start-column="25" selection-end-line="115" selection-end-column="25" />
+            <state relative-caret-position="377">
+              <caret line="232" column="9" lean-forward="true" selection-start-line="232" selection-start-column="9" selection-end-line="232" selection-end-column="9" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -125,6 +125,7 @@
         <option value="$PROJECT_DIR$/../../../Exercise 1/Task2/app.py" />
         <option value="$PROJECT_DIR$/Final_api/mealplan/__init__.py" />
         <option value="$PROJECT_DIR$/Final_api/mealplan/utils.py" />
+        <option value="$PROJECT_DIR$/Final_api/mealplan/resources/recipes.py" />
         <option value="$PROJECT_DIR$/Final_api/mealplan/resources/users.py" />
       </list>
     </option>
@@ -311,12 +312,12 @@
       <workItem from="1550151141883" duration="842000" />
       <workItem from="1561985551236" duration="23097000" />
       <workItem from="1562769216862" duration="13451000" />
-      <workItem from="1563198445670" duration="4128000" />
+      <workItem from="1563198445670" duration="6152000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="41518000" />
+    <option name="totallyTimeSpent" value="43542000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -457,8 +458,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Final_api/mealplan/resources/recipes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="411">
-          <caret line="115" column="25" lean-forward="true" selection-start-line="115" selection-start-column="25" selection-end-line="115" selection-end-column="25" />
+        <state relative-caret-position="377">
+          <caret line="232" column="9" lean-forward="true" selection-start-line="232" selection-start-column="9" selection-end-line="232" selection-end-column="9" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
@@ -467,8 +468,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Final_api/mealplan/resources/users.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="71">
-          <caret line="42" column="23" selection-start-line="42" selection-start-column="23" selection-end-line="42" selection-end-column="23" />
+        <state relative-caret-position="411">
+          <caret line="118" column="9" selection-start-line="118" selection-start-column="9" selection-end-line="118" selection-end-column="9" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
