@@ -111,8 +111,9 @@ def createdb(db_handle):
     recipestep.recipe = recipe
     shoplisti.shopping_list = shoplist
     shoplisti.ingredient = ingredient
+    shoplisti.owner = user.username
     likes.recipe = recipe
-    likes.user = user
+    likes.user = user.username
 
     return nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user, likes
 
