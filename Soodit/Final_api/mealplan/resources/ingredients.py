@@ -14,7 +14,7 @@ class Ingredient(Resource):
         if recipe_id is not None:
             db_recipe = models.RecipeIngredient.query.filter_by(recipe_id=recipe_id, ingredient_id=ingredient_id).first()
             if db_recipe is None:
-                return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(recipe_id))
+                return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(username))
 
             body = utils.RecipeBuilder(
                 name=db_recipe.ingredient.name,
@@ -25,12 +25,12 @@ class Ingredient(Resource):
                 servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit
             )
         elif list_id and username is not None:
-            db_list = models.ShoppingList.query.filter_by(id=list_id).first()
-            if db_list.owner != username:
-                return utils.RecipeBuilder.create_error_response(404, "Not Found","No shopping list with that id was found with the username {}".format(recipe_id))
+            db_list = models.ShoppingList.query.filter_by(owner_name=username).first()
+            if db_list is None:
+                return utils.RecipeBuilder.create_error_response(404, "Not Found","No shopping list with that id was found with the username {}".format(username))
             db_recipe = models.ShoppingListIngredient.query.filter_by(shopping_list_id=list_id, ingredient_id=ingredient_id, ).first()
             if db_recipe is None:
-                return utils.RecipeBuilder.create_error_response(404, "Not Found","No user was found with the username {}".format(recipe_id))
+                return utils.RecipeBuilder.create_error_response(404, "Not Found","No user was found with the username {}".format(username))
 
             body = utils.RecipeBuilder(
                 name=db_recipe.ingredient.name,
@@ -83,11 +83,11 @@ class Ingredient(Resource):
 
             url = api.api.url_for(Ingredient, recipe_id=recipe_id, ingredient_id=ingredient_id)
         elif list_id and username is not None:
-            db_list = models.ShoppingList.query.filter_by(id=list_id).first()
-            if db_list.owner != username:
+            db_list = models.ShoppingList.query.filter_by(owner_name=username).first()
+            if db_list is None:
                 return utils.RecipeBuilder.create_error_response(404, "Not Found",
                                                                  "No shopping list with that id was found with the username {}".format(
-                                                                     recipe_id))
+                                                                     username))
             db_recipe = models.ShoppingListIngredient.query.filter_by(shopping_list_id=list_id,
                                                                       ingredient_id=ingredient_id, ).first()
             if db_recipe is None:
@@ -154,11 +154,11 @@ class Ingredient(Resource):
             )
         elif list_id and username is not None:
 
-            db_list = models.ShoppingList.query.filter_by(id=list_id).first()
-            if db_list.owner != username:
+            db_list = models.ShoppingList.query.filter_by(owner_name=username).first()
+            if db_list is None:
                 return utils.RecipeBuilder.create_error_response(404, "Not Found",
                                                                  "No shopping list with that id was found with the username {}".format(
-                                                                     recipe_id))
+                                                                     username))
             db_recipe = models.ShoppingListIngredient.query.filter_by(shopping_list_id=list_id,
                                                                       ingredient_id=ingredient_id, ).first()
             if db_recipe is None:
@@ -277,7 +277,7 @@ class IngredientCollection(Resource):
                 return utils.RecipeBuilder.create_error_response(415, "Invalid content",
                                                                  "request content type must be JSON")
 
-            db_recipe = models.ShoppingList.query.filter_by(id=list_id).first()
+            db_recipe = models.ShoppingList.query.filter_by(owner_name=username, id=list_id).first()
             if db_recipe is None:
                 return utils.RecipeBuilder.create_error_response(404, "Not found","No shoppinglist was found with the name {}".format(list_id))
 

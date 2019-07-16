@@ -11,20 +11,20 @@ class Shoppinglist(Resource):
     def get(self, username, list_id):
         if request.method != "GET":
             return utils.RecipeBuilder.create_error_response(405, "wrong method", "GET method required")
-        db_recipe = models.ShoppingList.query.filter_by(owner=username, id=list_id).first()
+        db_recipe = models.ShoppingList.query.filter_by(owner_name=username, id=list_id).first()
         if db_recipe is None:
             return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(username))
 
         body = utils.RecipeBuilder(
             notes=db_recipe.notes,
-            owner=db_recipe.owner
+            owner=db_recipe.owner_name
         )
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
     def put(self, username, list_id):
         if request.method != "PUT":
             return utils.RecipeBuilder.create_error_response(405, "wrong method", "PUT method required")
-        db_recipe = models.ShoppingList.query.filter_by(owner=username, id=list_id).first()
+        db_recipe = models.ShoppingList.query.filter_by(owner_name=username, id=list_id).first()
         if db_recipe is None:
             return utils.RecipeBuilder.create_error_response(404, "Not found", "No recipe was found with the name {}".format(recipe_id))
         try:
@@ -38,7 +38,7 @@ class Shoppinglist(Resource):
 
         body = utils.RecipeBuilder(
             notes=db_recipe.notes,
-            owner=db_recipe.owner
+            owner=db_recipe.owner_name
         )
 
         db_recipe.notes=notes
@@ -54,13 +54,13 @@ class Shoppinglist(Resource):
     def delete(self, username, list_id):
         if request.method != "DELETE":
             return utils.RecipeBuilder.create_error_response(405, "Invalid method", "DELETE method required")
-        db_recipe = models.ShoppingList.query.filter_by(owner=username, id=list_id).first()
+        db_recipe = models.ShoppingList.query.filter_by(owner_name=username, id=list_id).first()
         if db_recipe is None:
             return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(username))
 
         body = utils.RecipeBuilder(
             notes=db_recipe.notes,
-            owner=db_recipe.owner
+            owner=db_recipe.owner_name
         )
 
         db.session.delete(db_recipe)
@@ -73,7 +73,7 @@ class ShoppingListCollection(Resource):
             return utils.RecipeBuilder.create_error_response(405, "Invalid method", "GET method required")
         body = utils.RecipeBuilder(shoppinglists=[])
 
-        shoppinglists = models.ShoppingList.query.filter_by(owner=username).all()
+        shoppinglists = models.ShoppingList.query.filter_by(owner_name=username).all()
         for shoppinglist in shoppinglists:
             item = utils.RecipeBuilder(
                 notes=shoppinglist.notes
@@ -81,7 +81,7 @@ class ShoppingListCollection(Resource):
             body["shoppinglists"].append(item)
 
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
-    def post(recipe, username):
+    def post(shoppinglist, username):
         if request.method != "POST":
             return utils.RecipeBuilder.create_error_response(405, "Invalid method", "POST method required")
         try:
@@ -96,10 +96,9 @@ class ShoppingListCollection(Resource):
         db_recipe = models.User.query.filter_by(username=username).first()
         if db_recipe is None:
             return utils.RecipeBuilder.create_error_response(404, "Not found","No recipe was found with the name {}".format(username))
-
         shoppinglist = models.ShoppingList(
             notes = notes,
-            owner = username
+            owner = db_recipe
         )
         db.session.add(shoppinglist)
         db.session.commit()
