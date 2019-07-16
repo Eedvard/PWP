@@ -87,6 +87,8 @@ class ShoppingList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     notes = db.Column(db.String(255), nullable=True)
     owner = db.relationship("User", cascade="save-update, merge, delete")
+    owner_name = db.Column(db.String, db.ForeignKey("user.username", onupdate="CASCADE", ondelete="RESTRICT"))
+
 
 
 class ShoppingListIngredient(db.Model):

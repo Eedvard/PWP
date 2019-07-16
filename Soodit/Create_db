@@ -71,8 +71,9 @@ recipei.ingredient = ingredient
 recipestep.recipe = recipe
 shoplisti.shopping_list = shoplist
 shoplisti.ingredient = ingredient
+shoplisti.owner = user.username
 like.recipe = recipe
-like.user = user
+like.user = user.username
 
 #create database
 
