@@ -20,11 +20,12 @@ api.add_resource(RecipeItem, "/recipes/<recipe_id>/")
 api.add_resource(Step, "/recipes/<recipe_id>/steps/<step_id>/")
 api.add_resource(StepCollection, "/recipes/<recipe_id>/steps/")
 
-api.add_resource(Ingredient, "/recipes/<recipe_id>/ingredients/<ingredient_id>/")
-api.add_resource(IngredientCollection, "/recipes/<recipe_id>/ingredients/")
+api.add_resource(Ingredient, "/recipes/<recipe_id>/ingredients/<ingredient_id>/", "/users/<username>/shoppinglist/<list_id>/ingredients/<ingredient_id>/")
+api.add_resource(IngredientCollection, "/recipes/<recipe_id>/ingredients/", "/users/<username>/shoppinglist/<list_id>/ingredients/")
 
 api.add_resource(Shoppinglist, "/users/<username>/shoppinglist/<list_id>/")
 api.add_resource(ShoppingListCollection, "/users/<username>/shoppinglist/")
+
 @api_bp.route("/")
 def index():
     return "paska"

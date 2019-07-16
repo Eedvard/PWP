@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c099d6ae-bada-4032-9f2d-2f7e07a24271" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/instance/development.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/instance/development.db" beforeDir="false" afterPath="$PROJECT_DIR$/instance/development.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mealplan/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/mealplan/api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mealplan/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/mealplan/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mealplan/resources/shoppinglists.py" beforeDir="false" afterPath="$PROJECT_DIR$/mealplan/resources/shoppinglists.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mealplan/resources/ingredients.py" beforeDir="false" afterPath="$PROJECT_DIR$/mealplan/resources/ingredients.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -46,7 +44,7 @@
         <entry file="file://$PROJECT_DIR$/mealplan/models.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="360">
-              <caret line="75" column="48" lean-forward="true" selection-start-line="75" selection-start-column="48" selection-end-line="75" selection-end-column="48" />
+              <caret line="81" column="20" selection-start-line="81" selection-start-column="4" selection-end-line="81" selection-end-column="20" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -54,11 +52,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mealplan/resources/shoppinglists.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="23" column="37" lean-forward="true" selection-start-line="23" selection-start-column="37" selection-end-line="23" selection-end-column="37" />
+            <state relative-caret-position="-15">
+              <caret line="29" column="12" lean-forward="true" selection-start-line="29" selection-start-column="12" selection-end-line="29" selection-end-column="12" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -99,11 +97,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/mealplan/resources/ingredients.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="113" selection-start-line="113" selection-end-line="114" selection-end-column="58" />
+            <state relative-caret-position="335">
+              <caret line="162" column="25" selection-start-line="162" selection-start-column="25" selection-end-line="162" selection-end-column="25" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -114,8 +112,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mealplan/api.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
-              <caret line="26" column="73" selection-start-line="26" selection-start-column="73" selection-end-line="26" selection-end-column="73" />
+            <state relative-caret-position="375">
+              <caret line="25" column="75" lean-forward="true" selection-start-line="25" selection-start-column="75" selection-end-line="25" selection-end-column="75" />
               <folding>
                 <element signature="e#0#27#0" expanded="true" />
               </folding>
@@ -138,7 +136,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mealplan/resources/steps.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="840">
+            <state relative-caret-position="180">
               <caret line="63" column="35" selection-start-line="63" selection-start-column="35" selection-end-line="63" selection-end-column="35" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
@@ -174,11 +172,11 @@
         <option value="$PROJECT_DIR$/mealplan/utils.py" />
         <option value="$PROJECT_DIR$/mealplan/resources/steps.py" />
         <option value="$PROJECT_DIR$/mealplan/resources/recipes.py" />
-        <option value="$PROJECT_DIR$/mealplan/resources/ingredients.py" />
         <option value="$PROJECT_DIR$/mealplan/resources/users.py" />
         <option value="$PROJECT_DIR$/mealplan/models.py" />
-        <option value="$PROJECT_DIR$/mealplan/api.py" />
         <option value="$PROJECT_DIR$/mealplan/resources/shoppinglists.py" />
+        <option value="$PROJECT_DIR$/mealplan/api.py" />
+        <option value="$PROJECT_DIR$/mealplan/resources/ingredients.py" />
       </list>
     </option>
   </component>
@@ -329,16 +327,15 @@
       <workItem from="1563090399922" duration="521000" />
       <workItem from="1563100387616" duration="4626000" />
       <workItem from="1563188597334" duration="10367000" />
-      <workItem from="1563265435997" duration="6617000" />
+      <workItem from="1563265435997" duration="10937000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="70816000" />
+    <option name="totallyTimeSpent" value="75136000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1680" y="27" width="1920" height="1053" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27534685" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -409,40 +406,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mealplan/resources/steps.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="840">
-          <caret line="63" column="35" selection-start-line="63" selection-start-column="35" selection-end-line="63" selection-end-column="35" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="3" column="9" selection-start-line="3" selection-start-column="9" selection-end-line="3" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mealplan/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="470">
-          <caret line="197" column="26" selection-start-line="197" selection-start-column="26" selection-end-line="197" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mealplan/resources/ingredients.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="113" selection-start-line="113" selection-end-line="114" selection-end-column="58" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -466,30 +433,60 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/mealplan/resources/shoppinglists.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-15">
+          <caret line="29" column="12" lean-forward="true" selection-start-line="29" selection-start-column="12" selection-end-line="29" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/mealplan/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
-          <caret line="75" column="48" lean-forward="true" selection-start-line="75" selection-start-column="48" selection-end-line="75" selection-end-column="48" />
+          <caret line="81" column="20" selection-start-line="81" selection-start-column="4" selection-end-line="81" selection-end-column="20" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/mealplan/resources/steps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="63" column="35" selection-start-line="63" selection-start-column="35" selection-end-line="63" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mealplan/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="470">
+          <caret line="197" column="26" selection-start-line="197" selection-start-column="26" selection-end-line="197" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/mealplan/api.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="73" selection-start-line="26" selection-start-column="73" selection-end-line="26" selection-end-column="73" />
+        <state relative-caret-position="375">
+          <caret line="25" column="75" lean-forward="true" selection-start-line="25" selection-start-column="75" selection-end-line="25" selection-end-column="75" />
           <folding>
             <element signature="e#0#27#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mealplan/resources/shoppinglists.py">
+    <entry file="file://$PROJECT_DIR$/mealplan/resources/ingredients.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="23" column="37" lean-forward="true" selection-start-line="23" selection-start-column="37" selection-end-line="23" selection-end-column="37" />
+        <state relative-caret-position="335">
+          <caret line="162" column="25" selection-start-line="162" selection-start-column="25" selection-end-line="162" selection-end-column="25" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
