@@ -11,6 +11,7 @@ from mealplan.resources.users import Users, UserCollection
 from mealplan.resources.recipes import RecipeItem, RecipeCollection
 from mealplan.resources.steps import Step, StepCollection
 from mealplan.resources.ingredients import  Ingredient, IngredientCollection
+from mealplan.resources.shoppinglists import  Shoppinglist, ShoppingListCollection
 
 api.add_resource(Users, "/users/<username>/")
 api.add_resource(UserCollection, "/users/")
@@ -22,7 +23,8 @@ api.add_resource(StepCollection, "/recipes/<recipe_id>/steps/")
 api.add_resource(Ingredient, "/recipes/<recipe_id>/ingredients/<ingredient_id>/")
 api.add_resource(IngredientCollection, "/recipes/<recipe_id>/ingredients/")
 
-
+api.add_resource(Shoppinglist, "/users/<username>/shoppinglist/<list_id>/")
+api.add_resource(ShoppingListCollection, "/users/<username>/shoppinglist/")
 @api_bp.route("/")
 def index():
     return "paska"

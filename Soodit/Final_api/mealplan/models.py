@@ -75,7 +75,7 @@ class ShoppingList(db.Model):
     __tablename__ = "shopping_list"
     id = db.Column(db.Integer, primary_key=True)
     notes = db.Column(db.String(255), nullable=True)
-
+    owner = db.Column(db.String(255), nullable=False)
 
 class ShoppingListIngredient(db.Model):
     __tablename__ = "shoplistingredient"
