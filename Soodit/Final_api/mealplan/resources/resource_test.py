@@ -75,7 +75,7 @@ def _check_control_get_method(ctrl, client, obj)
     resp = client.get(href)
     assert resp.status_code == 200
 
-def _check_control_delete_method(ctrl, client, obj)
+def _check_control_delete_method(ctrl, client, obj):
     """
     Checks a DELETE type control from a JSON object be it root document or an
     item in a collection. Checks the control's method in addition to its "href".
@@ -88,7 +88,7 @@ def _check_control_delete_method(ctrl, client, obj)
     resp = client.delete(href)
     assert resp.status_code == 204
 
-def _check_control_put_method(ctrl, client, obj)
+def _check_control_put_method(ctrl, client, obj):
     """
     Checks a PUT type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
@@ -110,3 +110,25 @@ def _check_control_put_method(ctrl, client, obj)
     validate(body, schema)
     resp = client.put(href, json=body)
     assert resp.status_code == 204
+
+def _check_control_post_method(ctrl, client, obj):
+    """
+    Checks a POST type control from a JSON object be it root document or an item
+    in a collection. In addition to checking the "href" attribute, also checks
+    that method, encoding and schema can be found from the control. Also
+    validates a valid sensor against the schema of the control to ensure that
+    they match. Finally checks that using the control results in the correct
+    status code of 201.
+    """
+
+    ctrl_obj = obj["@controls"][ctrl]
+    href = ctrl_obj["href"]
+    method = ctrl_obj["method"].lower()
+    encoding = ctrl_obj["encoding"].lower()
+    schema = ctrl_obj["schema"]
+    assert method == "post"
+    assert encoding == "json"
+    body = _get_user_json()
+    validate(body, schema)
+    resp = client.post(href, json=body)
+    assert resp.status_code == 201
