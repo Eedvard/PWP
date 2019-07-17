@@ -153,6 +153,23 @@ class RecipeBuilder(MasonBuilder):
         return schema
 
     @staticmethod
+    def ingredient_schema():
+        schema = {
+            "type": "object",
+            "required": "name, description"
+        }
+        props = schema["properties"] = {}
+        props["name"] = {
+            "description": "The name of the ingredient",
+            "type": "string"
+        }
+        props["description"] = {
+            "description": "The description of the ingredient",
+            "type": "string"
+        }
+        return schema
+
+    @staticmethod
     def shoppinglistingredient_schema():
         schema = {
             "type": "object",
@@ -167,6 +184,7 @@ class RecipeBuilder(MasonBuilder):
             "description": "grams, litres etc",
             "type": "string"
         }
+        return schema
 
     #RECIPE METHODS
 
