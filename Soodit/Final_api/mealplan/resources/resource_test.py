@@ -16,6 +16,7 @@ from .users import Users
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign keys=ON")
     cursor.close()
 
 # based on http://flask.pocoo.org/docs/1.0/testing/
@@ -132,3 +133,53 @@ def _check_control_post_method(ctrl, client, obj):
     validate(body, schema)
     resp = client.post(href, json=body)
     assert resp.status_code == 201
+
+class TestUserCollection(object):
+
+    RESOURCE_URL = "/api/users/"
+
+    def test_get(self, client):
+        """
+        Tests the GET method. Checks that the response status code is 200, and
+        then checks that all of the expected attributes and controls are
+        present, and the controls work. Also checks that all of the items from
+        the DB population are present, and their controls.
+        """
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        _check_namespace(client, body)
+        _check_control_post_method("profile:add-user", client, body)
+        assert len(body["items"]) == 3
+        for item in body["items"]:
+            _check_control_get_method("self", client, item)
+            _check_control_get_method("profile",client, item)
+            assert "username" in item
+
+    def test_post(self, client):
+        """
+        Tests the POST method. Checks all of the possible error codes, and
+        also checks that a valid request receives a 201 response with a
+        location header that leads into the newly created resource.
+        """
+
+        valid = _get_user_json()
+
+        #test with wrong content type
+        resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
+        assert resp.status_code == 415
+
+        #test with valid and see that it exists afterward
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 201
+        assert resp.headers["Location"].endswith(self.RESOURCE_URL + valid["username"] + "/")
+        resp = client.get(resp.headers["Location"])
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["username"] == "extra-user-1"
+
+        #send same data again for 409
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 409
+
+
