@@ -182,4 +182,62 @@ class TestUserCollection(object):
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
 
+class TestUser(object):
 
+    RESOURCE_URL = "/api/users/test-user-1/"
+    INVALID_URL = "/api/users/non-user-x/"
+    MODIFIED_URL = "/api/users/extra-user-1/"
+
+    def test_get(self, client):
+
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["username"] == "test-user-1"
+        _check_namespace(client, body)
+        _check_control_get_method("profile", client, body)
+       # _check_control_get_method()
+        resp = client.get(self.INVALID_URL)
+        assert resp.status_code == 404
+
+    def test_put(self, client):
+
+        valid = _get_user_json()
+
+        # test with wrong content type
+        resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
+        assert resp.status_code == 415
+
+        resp = client.put(self.INVALID_URL, json=valid)
+        assert resp.status_code == 404
+
+        #test with another user's name
+        valid["username"] = "test-user-2"
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 409
+
+        # test with valid (only change model)
+        valid["username"] = "test-user-1"
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+
+        # remove field for 400
+        valid.pop("username")
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+
+        valid = _get_user_json()
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        resp = client.get(self.MODIFIED_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["username"] == valid["username"]
+
+    def test_delete(self, client):
+
+        resp = client.delete(self.RESOURCE_URL)
+        assert resp.status_code == 204
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 404
+        resp = client.delete(self.INVALID_URL)
+        assert resp.status_code == 404
