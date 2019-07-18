@@ -19,6 +19,13 @@ class Users(Resource):
         body = utils.RecipeBuilder(
             username=db_user.username
         )
+        body.add_namespace("recipes", utils.LINK_RELATIONS_URL)
+        body.add_control("self", api.api.url_for(Users, username=username))
+        body.add_control("profile", utils.REC_PROFILE)
+        body.add_control("collection", "/api/users/")
+        body.add_control_delete_user(username)
+        body.add_control_edit_user(username)
+        body.add_control("storage:users-all", api.api.url_for(Users, username=username))
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
     def put(self, username):
@@ -77,7 +84,11 @@ class UserCollection (Resource):
             useritem = utils.RecipeBuilder(
                 username=user.username
             )
+            useritem.add_control("self", "/api/users/{}/".format(user.username))
+            useritem.add_control("profile", utils.REC_PROFILE)
             body["users"].append(useritem)
+        body.add_control_all_users()
+        body.add_control_add_user()
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
     def post(self):

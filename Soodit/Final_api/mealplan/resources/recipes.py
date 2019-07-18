@@ -61,7 +61,7 @@ class RecipeItem(Resource):
         body.add_control("collection", "/api/products/")
         body.add_control_delete_recipe(recipe_id)
         body.add_control_edit_recipe(recipe_id)
-        body.add_control("storage:products-all", api.api.url_for(RecipeItem, recipe_id=recipe_id))
+        body.add_control("storage:recipes-all", api.api.url_for(RecipeItem, recipe_id=recipe_id))
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
     def put(self, recipe_id):
@@ -84,12 +84,6 @@ class RecipeItem(Resource):
             return utils.RecipeBuilder.create_error_response(400, "Invalid input", "Weight and price must be numbers")
         except TypeError:
             return utils.RecipeBuilder.create_error_response(415, "Invalid content", "request content type must be JSON")
-        if db_recipe.nutrition_information is None:
-            servingSize = None
-            servingSizeUnit = None
-        else:
-            servingSize = db_recipe.nutrition_information.servingSize
-            servingSizeUnit = db_recipe.nutrition_information.servingSizeUnit
 
         body = utils.RecipeBuilder(
             name=db_recipe.name,
@@ -99,9 +93,7 @@ class RecipeItem(Resource):
             recipeCategory=db_recipe.recipeCategory,
             author=db_recipe.author,
             datePublished=str(db_recipe.datePublished),
-            number_of_likes=db_recipe.number_of_likes,
-            servingSize=servingSize,
-            servingSizeUnit=servingSizeUnit
+            number_of_likes=db_recipe.number_of_likes
         )
 
         db_recipe.name = name
@@ -195,31 +187,12 @@ class RecipeCollection(Resource):
             recipeCategory = str(request.json["category"])
             author = str(request.json["author"])
             datePublished = datetime.datetime.now()
-            #servingSize = int(request.json["servingsize"])
-            #servingSizeUnit = str(request.json["servingsizeunit"])
-            #weight = float(request.json["weight"])
-            #price = float(request.json["price"])
         except KeyError:
             return utils.RecipeBuilder.create_error_response(400, "Missing fields", "Incomplete request - missing fields")
         except ValueError:
             return utils.RecipeBuilder.create_error_response(400, "Invalid input", "Weight and price must be numbers")
         except TypeError:
             return utils.RecipeBuilder.create_error_response(415, "Invalid content", "request content type must be JSON")
-        nutrition=None
-        try:
-            servingSize = int(request.json["servingsize"])
-            servingSizeUnit = str(request.json["servingsizeunit"])
-        except KeyError:
-            pass
-        except ValueError:
-            return utils.RecipeBuilder.create_error_response(400, "Invalid input", "Weight and price must be numbers")
-        except TypeError:
-            return utils.RecipeBuilder.create_error_response(415, "Invalid content", "request content type must be JSON")
-        else:
-            nutrition = models.NutritionInformation(
-                servingSize=servingSize,
-                servingSizeUnit=servingSizeUnit
-            )
 
         recipe = models.Recipe(
             name=name,
@@ -229,8 +202,7 @@ class RecipeCollection(Resource):
             recipeCategory = recipeCategory,
             author = author,
             datePublished = datePublished,
-            number_of_likes = 0, # Number of likes is always 0 for a new recipe
-            nutrition_information = nutrition
+            number_of_likes = 0 # Number of likes is always 0 for a new recipe
         )
         db.session.add(recipe)
         db.session.commit()

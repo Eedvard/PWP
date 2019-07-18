@@ -1,7 +1,6 @@
 import json
-from flask import Flask, Response, request
-from . import api
-from mealplan.resources.recipes import RecipeItem, RecipeCollection
+from flask import Flask, Response, request, url_for
+from mealplan import api
 
 ERROR_PROFILE="/profiles/errors/"
 MASON="application/vnd.mason+json"
@@ -213,7 +212,7 @@ class RecipeBuilder(MasonBuilder):
     def add_control_edit_recipe(self, recipe_id):
         self.add_control(
             "profile:edit-recipe",
-            href=api.api.url_for(RecipeItem, recipe_id=recipe_id),
+            href=url_for("api.recipeitem", recipe_id=recipe_id),
             method="PUT",
             encoding="json",
             title="Edit an existing recipe",
@@ -223,12 +222,20 @@ class RecipeBuilder(MasonBuilder):
     def add_control_delete_recipe(self, recipe_id):
         self.add_control(
             "profile:delete",
-            href=api.api.url_for(RecipeItem, recipe_id=recipe_id),
+            href=url_for("api.recipeitem", recipe_id=recipe_id),
             method="DELETE",
             title="Delete this resource"
         )
 
     # USER METHODS
+
+    def add_control_all_users(self):
+        self.add_control(
+            "profile:users-all",
+            "/api/users/",
+            method="GET",
+            title="Get all recipes"
+        )
 
     def add_control_add_user(self):
         self.add_control(
@@ -240,20 +247,20 @@ class RecipeBuilder(MasonBuilder):
             schema=self.user_schema()
         )
 
-    def add_control_edit_user(self):
+    def add_control_edit_user(self, username):
         self.add_control(
             "profile:edit-user",
-            "/api/users/{id}",
+            href=url_for("api.users", username=username),
             method="PUT",
             encoding="json",
             title="Edit an existing user",
             schema=self.user_schema()
         )
 
-    def add_control_delete(self, href):
+    def add_control_delete_user(self, username):
         self.add_control(
             "profile:delete",
-            hreh=href,
+            href=url_for("api.users", username=username),
             method="DELETE",
             title="Delete this resource"
         )

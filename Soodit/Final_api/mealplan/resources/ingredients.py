@@ -22,7 +22,19 @@ class Ingredient(Resource):
                 amount=db_recipe.amount,
                 unit=db_recipe.unit,
                 servingsize=db_recipe.ingredient.nutrition_information.servingSize,
-                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit
+                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit,
+                calories=db_recipe.ingredient.nutrition_information.calories,
+                carbohydrateContent=db_recipe.ingredient.nutrition_information.carbohydrateContent,
+                cholesterolContent=db_recipe.ingredient.nutrition_information.cholesterolContent,
+                fatContent=db_recipe.ingredient.nutrition_information.fatContent,
+                fiberContent=db_recipe.ingredient.nutrition_information.fiberContent,
+                proteinContent=db_recipe.ingredient.nutrition_information.proteinContent,
+                saturatedFatContent=db_recipe.ingredient.nutrition_information.saturatedFatContent,
+                sodiumContent=db_recipe.ingredient.nutrition_information.sodiumContent,
+                sugarContent=db_recipe.ingredient.nutrition_information.sugarContent,
+                transFatContent=db_recipe.ingredient.nutrition_information.transFatContent,
+                unsaturatedFatContent=db_recipe.ingredient.nutrition_information.unsaturatedFatContent
+
             )
         elif list_id and username is not None:
             db_list = models.ShoppingList.query.filter_by(owner_name=username).first()
@@ -38,7 +50,18 @@ class Ingredient(Resource):
                 amount=db_recipe.amount,
                 unit=db_recipe.unit,
                 servingsize=db_recipe.ingredient.nutrition_information.servingSize,
-                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit
+                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit,
+                calories=db_recipe.ingredient.nutrition_information.calories,
+                carbohydrateContent=db_recipe.ingredient.nutrition_information.carbohydrateContent,
+                cholesterolContent=db_recipe.ingredient.nutrition_information.cholesterolContent,
+                fatContent=db_recipe.ingredient.nutrition_information.fatContent,
+                fiberContent=db_recipe.ingredient.nutrition_information.fiberContent,
+                proteinContent=db_recipe.ingredient.nutrition_information.proteinContent,
+                saturatedFatContent=db_recipe.ingredient.nutrition_information.saturatedFatContent,
+                sodiumContent=db_recipe.ingredient.nutrition_information.sodiumContent,
+                sugarContent=db_recipe.ingredient.nutrition_information.sugarContent,
+                transFatContent=db_recipe.ingredient.nutrition_information.transFatContent,
+                unsaturatedFatContent=db_recipe.ingredient.nutrition_information.unsaturatedFatContent
             )
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
@@ -185,11 +208,6 @@ class IngredientCollection(Resource):
         if request.method != "GET":
             return utils.RecipeBuilder.create_error_response(405, "Invalid method", "GET method required")
         body = utils.RecipeBuilder(ingredients=[])
-        db_list = models.ShoppingList.query.filter_by(id=list_id).first()
-        if db_list.owner != username:
-            return utils.RecipeBuilder.create_error_response(404, "Not Found",
-                                                             "No shopping list with that id was found with the username {}".format(
-                                                                 recipe_id))
         if recipe_id is not None:
 
             ingredients = models.RecipeIngredient.query.filter_by(recipe_id=recipe_id).all()
@@ -202,6 +220,11 @@ class IngredientCollection(Resource):
                 )
                 body["ingredients"].append(item)
         elif username and list_id is not None:
+            db_list = models.ShoppingList.query.filter_by(id=list_id).first()
+            if db_list.owner != username:
+                return utils.RecipeBuilder.create_error_response(404, "Not Found",
+                                                                 "No shopping list with that id was found with the username {}".format(
+                                                                     recipe_id))
             ingredients = models.ShoppingListIngredient.query.filter_by(shopping_list_id=list_id).all()
             for ingredient in ingredients:
                 item = utils.RecipeBuilder(
@@ -234,10 +257,35 @@ class IngredientCollection(Resource):
             db_recipe = models.Recipe.query.filter_by(id=recipe_id).first()
             if db_recipe is None:
                 return utils.RecipeBuilder.create_error_response(404, "Not found","No recipe was found with the name {}".format(recipe_id))
+            optional = ["calories", "carbohydratecontent", "cholesterolcontent", "fatcontent", "fibercontent", "proteincontent", "saturatedfatcontent", "sodiumcontent", "sugarcontent", "transfatcontent", "unsaturatedfatcontent"]
+            values = []
+            for jsonname in optional:
+                try:
+                    values.append(int(request.json[jsonname]))
+                except KeyError:
+                    values.append(None)
+                    pass
+                except ValueError:
+                    return utils.RecipeBuilder.create_error_response(400, "Invalid input",
+                                                                     "Weight and price must be numbers")
+                except TypeError:
+                    return utils.RecipeBuilder.create_error_response(415, "Invalid content",
 
+                                                                     "request content type must be JSON")
             nutrition_information = models.NutritionInformation(
                 servingSize=servingsize,
-                servingSizeUnit=servingsizeunit
+                servingSizeUnit=servingsizeunit,
+                calories=values[0],
+                carbohydrateContent=values[1],
+                cholesterolContent=values[2],
+                fatContent=values[3],
+                fiberContent=values[4],
+                proteinContent=values[5],
+                saturatedFatContent=values[6],
+                sodiumContent=values[7],
+                sugarContent=values[8],
+                transFatContent=values[9],
+                unsaturatedFatContent=values[10]
             )
             ingredient = models.Ingredient(
                 name=name,
@@ -250,6 +298,7 @@ class IngredientCollection(Resource):
                 amount=amount,
                 unit=unit
             )
+            db.recipe.nutrition_information = nutrition_information
             db.session.add(ingredient)
             db.session.add(recipeingredient)
             db.session.commit()
@@ -280,10 +329,37 @@ class IngredientCollection(Resource):
             db_recipe = models.ShoppingList.query.filter_by(owner_name=username, id=list_id).first()
             if db_recipe is None:
                 return utils.RecipeBuilder.create_error_response(404, "Not found","No shoppinglist was found with the name {}".format(list_id))
+            optional = ["calories", "carbohydratecontent", "cholesterolcontent", "fatcontent", "fibercontent",
+                        "proteincontent", "saturatedfatcontent", "sodiumcontent", "sugarcontent", "transfatcontent",
+                        "unsaturatedfatcontent"]
+            values = []
+            for jsonname in optional:
+                try:
+                    values.append(int(request.json[jsonname]))
+                except KeyError:
+                    values.append(None)
+                    pass
+                except ValueError:
+                    return utils.RecipeBuilder.create_error_response(400, "Invalid input",
+                                                                     "Weight and price must be numbers")
+                except TypeError:
+                    return utils.RecipeBuilder.create_error_response(415, "Invalid content",
 
+                                                                     "request content type must be JSON")
             nutrition_information = models.NutritionInformation(
                 servingSize=servingsize,
-                servingSizeUnit=servingsizeunit
+                servingSizeUnit=servingsizeunit,
+                calories=values[0],
+                carbohydrateContent=values[1],
+                cholesterolContent=values[2],
+                fatContent=values[3],
+                fiberContent=values[4],
+                proteinContent=values[5],
+                saturatedFatContent=values[6],
+                sodiumContent=values[7],
+                sugarContent=values[8],
+                transFatContent=values[9],
+                unsaturatedFatContent=values[10]
             )
             ingredient = models.Ingredient(
                 name=name,

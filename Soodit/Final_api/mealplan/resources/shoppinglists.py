@@ -79,7 +79,6 @@ class ShoppingListCollection(Resource):
                 notes=shoppinglist.notes
             )
             body["shoppinglists"].append(item)
-
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
     def post(shoppinglist, username):
         if request.method != "POST":
