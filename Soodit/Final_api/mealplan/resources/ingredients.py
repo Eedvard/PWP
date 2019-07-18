@@ -298,7 +298,27 @@ class IngredientCollection(Resource):
                 amount=amount,
                 unit=unit
             )
-            db.recipe.nutrition_information = nutrition_information
+
+            def None_sum(*args):
+                args = [a for a in args if not a is None]
+                return sum(args) if args else None
+            if db_recipe.nutrition_information is None:
+                db_recipe.nutrition_information = nutrition_information
+            else:
+                nutrition = db_recipe.nutrition_information
+                nutrition.servingSize = None_sum(nutrition.servingSize, servingsize)
+                nutrition.servingSizeUnit = servingsizeunit
+                nutrition.calories = None_sum(nutrition.calories, values[0])
+                nutrition.carbohydrateContent = None_sum(nutrition.carbohydrateContent, values[1])
+                nutrition.cholesterolContent = None_sum(nutrition.cholesterolContent, values[2])
+                nutrition.fatContent = None_sum(nutrition.fatContent, values[3])
+                nutrition.fiberContent = None_sum(nutrition.fiberContent, values[4])
+                nutrition.proteinContent = None_sum(nutrition.proteinContent, values[5])
+                nutrition.saturatedFatContent = None_sum(nutrition.saturatedFatContent, values[6])
+                nutrition.sodiumContent = None_sum(nutrition.sodiumContent, values[7])
+                nutrition.sugarContent = None_sum(nutrition.sugarContent, values[8])
+                nutrition.transFatContent = None_sum(nutrition.transFatContent, values[9])
+                nutrition.unsaturatedFatContent = None_sum(nutrition.unsaturatedFatContent, values[10])
             db.session.add(ingredient)
             db.session.add(recipeingredient)
             db.session.commit()

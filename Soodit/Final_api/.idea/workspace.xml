@@ -5,9 +5,6 @@
       <change beforePath="$PROJECT_DIR$/instance/development.db" beforeDir="false" afterPath="$PROJECT_DIR$/instance/development.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mealplan/resources/ingredients.py" beforeDir="false" afterPath="$PROJECT_DIR$/mealplan/resources/ingredients.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mealplan/resources/recipes.py" beforeDir="false" afterPath="$PROJECT_DIR$/mealplan/resources/recipes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mealplan/resources/shoppinglists.py" beforeDir="false" afterPath="$PROJECT_DIR$/mealplan/resources/shoppinglists.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mealplan/resources/users.py" beforeDir="false" afterPath="$PROJECT_DIR$/mealplan/resources/users.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mealplan/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/mealplan/utils.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -46,7 +43,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mealplan/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="305">
+            <state relative-caret-position="735">
               <caret line="49" column="58" lean-forward="true" selection-start-line="49" selection-start-column="58" selection-end-line="49" selection-end-column="58" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
@@ -88,11 +85,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mealplan/resources/ingredients.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="351">
-              <caret line="300" column="67" selection-start-line="300" selection-start-column="67" selection-end-line="300" selection-end-column="67" />
+            <state relative-caret-position="246">
+              <caret line="53" column="16" selection-start-line="53" selection-start-column="16" selection-end-line="63" selection-end-column="102" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -136,11 +133,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/mealplan/resources/recipes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2085">
-              <caret line="163" column="43" lean-forward="true" selection-start-line="163" selection-start-column="43" selection-end-line="163" selection-end-column="43" />
+            <state relative-caret-position="440">
+              <caret line="47" column="43" selection-start-line="47" selection-start-column="43" selection-end-line="47" selection-end-column="43" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -178,8 +175,8 @@
         <option value="$PROJECT_DIR$/mealplan/resources/shoppinglists.py" />
         <option value="$PROJECT_DIR$/mealplan/resources/users.py" />
         <option value="$PROJECT_DIR$/mealplan/utils.py" />
-        <option value="$PROJECT_DIR$/mealplan/resources/recipes.py" />
         <option value="$PROJECT_DIR$/mealplan/resources/ingredients.py" />
+        <option value="$PROJECT_DIR$/mealplan/resources/recipes.py" />
       </list>
     </option>
   </component>
@@ -335,16 +332,15 @@
       <workItem from="1563188597334" duration="10367000" />
       <workItem from="1563265435997" duration="14997000" />
       <workItem from="1563440944006" duration="1944000" />
-      <workItem from="1563464170714" duration="12185000" />
+      <workItem from="1563464170714" duration="15024000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="93325000" />
+    <option name="totallyTimeSpent" value="96164000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1680" y="27" width="1920" height="1053" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.28175026" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -405,16 +401,6 @@
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/mealplan/resources/recipeparts.py" />
-    <entry file="file://$PROJECT_DIR$/mealplan/resources/shoppinglists.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="80" column="46" selection-start-line="80" selection-start-column="46" selection-end-line="80" selection-end-column="46" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mealplan/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
@@ -425,20 +411,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mealplan/utils.py">
+    <entry file="file://$PROJECT_DIR$/README.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="261" column="29" lean-forward="true" selection-start-line="261" selection-start-column="29" selection-end-line="261" selection-end-column="29" />
+        <state relative-caret-position="45">
+          <caret line="3" column="9" selection-start-line="3" selection-start-column="9" selection-end-line="3" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mealplan/resources/users.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="27" column="58" lean-forward="true" selection-start-line="27" selection-start-column="58" selection-end-line="27" selection-end-column="58" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.txt">
+    <entry file="file://$PROJECT_DIR$/mealplan/resources/shoppinglists.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="9" selection-start-line="3" selection-start-column="9" selection-end-line="3" selection-end-column="9" />
+        <state relative-caret-position="320">
+          <caret line="80" column="46" selection-start-line="80" selection-start-column="46" selection-end-line="80" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mealplan/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="735">
+          <caret line="49" column="58" lean-forward="true" selection-start-line="49" selection-start-column="58" selection-end-line="49" selection-end-column="58" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -452,20 +458,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mealplan/models.py">
+    <entry file="file://$PROJECT_DIR$/mealplan/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="49" column="58" lean-forward="true" selection-start-line="49" selection-start-column="58" selection-end-line="49" selection-end-column="58" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mealplan/resources/users.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="27" column="58" lean-forward="true" selection-start-line="27" selection-start-column="58" selection-end-line="27" selection-end-column="58" />
+        <state relative-caret-position="440">
+          <caret line="261" column="29" lean-forward="true" selection-start-line="261" selection-start-column="29" selection-end-line="261" selection-end-column="29" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
@@ -482,20 +478,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mealplan/resources/recipes.py">
+    <entry file="file://$PROJECT_DIR$/mealplan/resources/ingredients.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2085">
-          <caret line="163" column="43" lean-forward="true" selection-start-line="163" selection-start-column="43" selection-end-line="163" selection-end-column="43" />
+        <state relative-caret-position="246">
+          <caret line="53" column="16" selection-start-line="53" selection-start-column="16" selection-end-line="63" selection-end-column="102" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mealplan/resources/ingredients.py">
+    <entry file="file://$PROJECT_DIR$/mealplan/resources/recipes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
-          <caret line="300" column="67" selection-start-line="300" selection-start-column="67" selection-end-line="300" selection-end-column="67" />
+        <state relative-caret-position="440">
+          <caret line="47" column="43" selection-start-line="47" selection-start-column="43" selection-end-line="47" selection-end-column="43" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
