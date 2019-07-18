@@ -54,6 +54,14 @@ class RecipeItem(Resource):
                 unit=ingredient.unit
             )
             body["ingredients"].append(item)
+
+        body.add_namespace("recipes", utils.LINK_RELATIONS_URL)
+        body.add_control("self", api.api.url_for(RecipeItem, recipe_id=recipe_id))
+        body.add_control("profile", utils.REC_PROFILE)
+        body.add_control("collection", "/api/products/")
+        body.add_control_delete_recipe(recipe_id)
+        body.add_control_edit_recipe(recipe_id)
+        body.add_control("storage:products-all", api.api.url_for(RecipeItem, recipe_id=recipe_id))
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
     def put(self, recipe_id):
@@ -169,8 +177,11 @@ class RecipeCollection(Resource):
                 servingSize = servingSize,
                 servingSizeUnit = servingSizeUnit
             )
+            item.add_control("self", "/api/recipes/{}/".format(recipe.id))
+            item.add_control("profile", utils.REC_PROFILE)
             body["recipes"].append(item)
-
+        body.add_control_all_recipes()
+        body.add_control_add_recipe()
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
     def post(recipe):

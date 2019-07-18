@@ -1,8 +1,12 @@
 import json
 from flask import Flask, Response, request
+from . import api
+from mealplan.resources.recipes import RecipeItem, RecipeCollection
 
 ERROR_PROFILE="/profiles/errors/"
 MASON="application/vnd.mason+json"
+REC_PROFILE="/profiles/recipe/"
+LINK_RELATIONS_URL = "/placeholder/link-relations/"
 
 class MasonBuilder(dict):
     """
@@ -188,6 +192,14 @@ class RecipeBuilder(MasonBuilder):
 
     #RECIPE METHODS
 
+    def add_control_all_recipes(self):
+        self.add_control(
+            "profile:recipes-all",
+            "/api/recipes/",
+            method="GET",
+            title="Get all recipes"
+        )
+
     def add_control_add_recipe(self):
         self.add_control(
             "profile:add-recipe",
@@ -198,14 +210,22 @@ class RecipeBuilder(MasonBuilder):
             schema=self.recipe_schema()
         )
 
-    def add_control_edit_recipe(self):
+    def add_control_edit_recipe(self, recipe_id):
         self.add_control(
             "profile:edit-recipe",
-            "api/recipes/{id}",
+            href=api.api.url_for(RecipeItem, recipe_id=recipe_id),
             method="PUT",
             encoding="json",
             title="Edit an existing recipe",
             schema=self.recipe_schema()
+        )
+
+    def add_control_delete_recipe(self, recipe_id):
+        self.add_control(
+            "profile:delete",
+            href=api.api.url_for(RecipeItem, recipe_id=recipe_id),
+            method="DELETE",
+            title="Delete this resource"
         )
 
     # USER METHODS
