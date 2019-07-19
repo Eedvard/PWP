@@ -266,7 +266,7 @@ class RecipeBuilder(MasonBuilder):
             title="Delete this resource"
         )
 
-    #Ingredient controls
+    #recipeIngredient controls
 
     def add_control_all_recipe_ingredients(self, recipe_id):
         self.add_control(
@@ -300,6 +300,43 @@ class RecipeBuilder(MasonBuilder):
         self.add_control(
             "profile:delete",
             href=url_for("api.ingredient", recipe_id=recipe_id, ingredient_id=ingredient_id),
+            method="DELETE",
+            title="Delete this resource"
+        )
+#Shoppinglist Ingredient controls
+
+    def add_control_all_shoplist_ingredients(self, username, list_id):
+        self.add_control(
+            "profile:ingredients-all",
+            href=url_for("api.ingredientcollection", username=username, list_id=list_id),
+            method="GET",
+            title="Get all ingredients of recipe"
+        )
+
+    def add_control_add_shoplist_ingredient(self, username, list_id):
+        self.add_control(
+            "profile:add-ingredient",
+            href=url_for("api.ingredientcollection", username=username, list_id=list_id),
+            method="POST",
+            encoding="json",
+            title="Add a new ingredient to recipe",
+            schema=self.ingredient_schema()
+        )
+
+    def add_control_edit_shoplist_ingredient(self, username, list_id, ingredient_id):
+        self.add_control(
+            "profile:edit-user",
+            href=url_for("api.ingredient", username=username, list_id=list_id, ingredient_id=ingredient_id),
+            method="PUT",
+            encoding="json",
+            title="Edit an existing ingredient",
+            schema=self.ingredient_schema()
+        )
+
+    def add_control_delete_shoplist_ingredient(self, username, list_id, ingredient_id):
+        self.add_control(
+            "profile:delete",
+            href=url_for("api.ingredient", username=username, list_id=list_id, ingredient_id=ingredient_id),
             method="DELETE",
             title="Delete this resource"
         )

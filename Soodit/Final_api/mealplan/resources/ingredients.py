@@ -74,8 +74,8 @@ class Ingredient(Resource):
             body.add_control("self", api.api.url_for(Ingredient, username=username, list_id=list_id, ingredient_id=ingredient_id))
             body.add_control("profile", utils.ING_PROFILE)
             body.add_control("collection", api.api.url_for(IngredientCollection, username=username, list_id=list_id))
-            body.add_control_delete_recipe_ingredient(recipe_id, ingredient_id)
-            body.add_control_edit_recipe_ingredient(recipe_id, ingredient_id)
+            body.add_control_delete_shoplist_ingredient(username, list_id, ingredient_id)
+            body.add_control_edit_shoplist_ingredient(username, list_id, ingredient_id)
             body.add_control("storage:recipe_ingredients-all",
                              api.api.url_for(IngredientCollection, username=username, list_id=list_id))
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
@@ -321,7 +321,11 @@ class IngredientCollection(Resource):
                     amount=ingredient.amount,
                     unit=ingredient.unit
                 )
+                item.add_control("self", "/api/recipes/{}/ingredients/{}/".format(recipe_id, ingredient.ingredient_id))
+                item.add_control("profile", utils.ING_PROFILE)
                 body["ingredients"].append(item)
+            body.add_control_all_recipe_ingredients(recipe_id)
+            body.add_control_add_recipe_ingredient(recipe_id)
         elif username and list_id is not None:
             db_list = models.ShoppingList.query.filter_by(id=list_id).first()
             if db_list.owner != username:
@@ -336,7 +340,11 @@ class IngredientCollection(Resource):
                     amount=ingredient.amount,
                     unit=ingredient.unit
                 )
+                item.add_control("self", "/api/users/{}/shoppinglist/{}/ingredients/{}/".format(username, list_id, ingredient.ingredient_id))
+                item.add_control("profile", utils.ING_PROFILE)
                 body["ingredients"].append(item)
+            body.add_control_all_shoplist_ingredients(username, list_id)
+            body.add_control_add_shoplist_ingredient(username, list_id)
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
     def post(recipe, recipe_id=None, username=None, list_id=None):
         if request.method != "POST":
