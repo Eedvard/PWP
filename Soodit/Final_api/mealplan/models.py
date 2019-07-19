@@ -35,7 +35,7 @@ class Ingredient(db.Model):
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.String(255), nullable=False)
     nutrition_information_id = db.Column(db.Integer, db.ForeignKey("nutrition_information.id", onupdate="CASCADE", ondelete="RESTRICT"), nullable=True)
-    nutrition_information = db.relationship("NutritionInformation", uselist=False, cascade="save-update, merge, delete")
+    nutrition_information = db.relationship("NutritionInformation", uselist=False, cascade="save-update, merge")
 
 
 class Recipe(db.Model):
@@ -56,7 +56,7 @@ class Recipe(db.Model):
 class RecipeIngredient(db.Model):
     __tablename__ = "recipe_ingredient"
     recipe_id = db.Column(db.Integer, db.ForeignKey("recipe.id", onupdate="CASCADE", ondelete="RESTRICT"), primary_key=True)
-    recipe = db.relationship('Recipe')
+    recipe = db.relationship('Recipe', cascade="save-update, merge, delete")
     ingredient_id = db.Column(db.Integer, db.ForeignKey("ingredient.id", onupdate="CASCADE", ondelete="RESTRICT"), primary_key=True)
     ingredient = db.relationship('Ingredient', cascade="save-update, merge, delete")
     amount = db.Column(db.Integer, nullable=False)

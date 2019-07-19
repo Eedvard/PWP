@@ -34,8 +34,15 @@ class Ingredient(Resource):
                 sugarContent=db_recipe.ingredient.nutrition_information.sugarContent,
                 transFatContent=db_recipe.ingredient.nutrition_information.transFatContent,
                 unsaturatedFatContent=db_recipe.ingredient.nutrition_information.unsaturatedFatContent
-
             )
+            body.add_namespace("recipe_ingredients", utils.LINK_RELATIONS_URL)
+            body.add_control("self", api.api.url_for(Ingredient, recipe_id=recipe_id, ingredient_id=ingredient_id))
+            body.add_control("profile", utils.ING_PROFILE)
+            body.add_control("collection", api.api.url_for(IngredientCollection, recipe_id=recipe_id))
+            body.add_control_delete_recipe_ingredient(recipe_id, ingredient_id)
+            body.add_control_edit_recipe_ingredient(recipe_id, ingredient_id)
+            body.add_control("storage:recipe_ingredients-all",
+                             api.api.url_for(IngredientCollection, recipe_id=recipe_id))
         elif list_id and username is not None:
             db_list = models.ShoppingList.query.filter_by(owner_name=username).first()
             if db_list is None:
@@ -63,6 +70,14 @@ class Ingredient(Resource):
                 transFatContent=db_recipe.ingredient.nutrition_information.transFatContent,
                 unsaturatedFatContent=db_recipe.ingredient.nutrition_information.unsaturatedFatContent
             )
+            body.add_namespace("list_ingredients", utils.LINK_RELATIONS_URL)
+            body.add_control("self", api.api.url_for(Ingredient, username=username, list_id=list_id, ingredient_id=ingredient_id))
+            body.add_control("profile", utils.ING_PROFILE)
+            body.add_control("collection", api.api.url_for(IngredientCollection, username=username, list_id=list_id))
+            body.add_control_delete_recipe_ingredient(recipe_id, ingredient_id)
+            body.add_control_edit_recipe_ingredient(recipe_id, ingredient_id)
+            body.add_control("storage:recipe_ingredients-all",
+                             api.api.url_for(IngredientCollection, username=username, list_id=list_id))
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
     def put(self, ingredient_id, recipe_id=None, list_id=None, username=None):
@@ -93,8 +108,36 @@ class Ingredient(Resource):
                 amount=db_recipe.amount,
                 unit=db_recipe.unit,
                 servingsize=db_recipe.ingredient.nutrition_information.servingSize,
-                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit
+                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit,
+                calories=db_recipe.ingredient.nutrition_information.calories,
+                carbohydrateContent=db_recipe.ingredient.nutrition_information.carbohydrateContent,
+                cholesterolContent=db_recipe.ingredient.nutrition_information.cholesterolContent,
+                fatContent=db_recipe.ingredient.nutrition_information.fatContent,
+                fiberContent=db_recipe.ingredient.nutrition_information.fiberContent,
+                proteinContent=db_recipe.ingredient.nutrition_information.proteinContent,
+                saturatedFatContent=db_recipe.ingredient.nutrition_information.saturatedFatContent,
+                sodiumContent=db_recipe.ingredient.nutrition_information.sodiumContent,
+                sugarContent=db_recipe.ingredient.nutrition_information.sugarContent,
+                transFatContent=db_recipe.ingredient.nutrition_information.transFatContent,
+                unsaturatedFatContent=db_recipe.ingredient.nutrition_information.unsaturatedFatContent
             )
+            optional = ["calories", "carbohydratecontent", "cholesterolcontent", "fatcontent", "fibercontent",
+                        "proteincontent", "saturatedfatcontent", "sodiumcontent", "sugarcontent", "transfatcontent",
+                        "unsaturatedfatcontent"]
+            values = []
+            for jsonname in optional:
+                try:
+                    values.append(int(request.json[jsonname]))
+                except KeyError:
+                    values.append(None)
+                    pass
+                except ValueError:
+                    return utils.RecipeBuilder.create_error_response(400, "Invalid input",
+                                                                     "Weight and price must be numbers")
+                except TypeError:
+                    return utils.RecipeBuilder.create_error_response(415, "Invalid content",
+
+                                                                     "request content type must be JSON")
 
             db_recipe.ingredient.name=name
             db_recipe.ingredient.description=description
@@ -102,8 +145,33 @@ class Ingredient(Resource):
             db_recipe.unit=unit
             db_recipe.ingredient.nutrition_information.servingSize=servingsize
             db_recipe.ingredient.nutrition_information.servingSizeUnit=servingsizeunit
+            def None_sum(a, b, c):
+                if a and b and c is None:
+                    return None
+                elif b and c is None:
+                    return a
+                elif c is None:
+                    return a
+                else:
+                    return (a+b-c)
+            if db_recipe.ingredient.nutrition_information is None:
+                pass
+            else:
+                nutrition = db_recipe.ingredient.nutrition_information
+                nutrition.servingSize = None_sum(nutrition.servingSize, servingsize, db_recipe.ingredient.nutrition_information.servingSize)
+                #nutrition.servingSizeUnit = servingsizeunit
+                nutrition.calories = None_sum(nutrition.calories, values[0], db_recipe.ingredient.nutrition_information.calories)
+                nutrition.carbohydrateContent = None_sum(nutrition.carbohydrateContent, values[1], db_recipe.ingredient.nutrition_information.carbohydrateContent)
+                nutrition.cholesterolContent = None_sum(nutrition.cholesterolContent, values[2], db_recipe.ingredient.nutrition_information.cholesterolContent)
+                nutrition.fatContent = None_sum(nutrition.fatContent, values[3], db_recipe.ingredient.nutrition_information.fatContent)
+                nutrition.fiberContent = None_sum(nutrition.fiberContent, values[4], db_recipe.ingredient.nutrition_information.fiberContent)
+                nutrition.proteinContent = None_sum(nutrition.proteinContent, values[5], db_recipe.ingredient.nutrition_information.proteinContent)
+                nutrition.saturatedFatContent = None_sum(nutrition.saturatedFatContent, values[6], db_recipe.ingredient.nutrition_information.saturatedFatContent)
+                nutrition.sodiumContent = None_sum(nutrition.sodiumContent, values[7], db_recipe.ingredient.nutrition_information.sodiumContent)
+                nutrition.sugarContent = None_sum(nutrition.sugarContent, values[8], db_recipe.ingredient.nutrition_information.sugarContent)
+                nutrition.transFatContent = None_sum(nutrition.transFatContent, values[9], db_recipe.ingredient.nutrition_information.transFatContent)
+                nutrition.unsaturatedFatContent = None_sum(nutrition.unsaturatedFatContent, values[10], db_recipe.ingredient.nutrition_information.unsaturatedFatContent)
             db.session.commit()
-
             url = api.api.url_for(Ingredient, recipe_id=recipe_id, ingredient_id=ingredient_id)
         elif list_id and username is not None:
             db_list = models.ShoppingList.query.filter_by(owner_name=username).first()
@@ -173,8 +241,43 @@ class Ingredient(Resource):
                 amount=db_recipe.amount,
                 unit=db_recipe.unit,
                 servingsize=db_recipe.ingredient.nutrition_information.servingSize,
-                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit
+                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit,
+                calories=db_recipe.ingredient.nutrition_information.calories,
+                carbohydrateContent=db_recipe.ingredient.nutrition_information.carbohydrateContent,
+                cholesterolContent=db_recipe.ingredient.nutrition_information.cholesterolContent,
+                fatContent=db_recipe.ingredient.nutrition_information.fatContent,
+                fiberContent=db_recipe.ingredient.nutrition_information.fiberContent,
+                proteinContent=db_recipe.ingredient.nutrition_information.proteinContent,
+                saturatedFatContent=db_recipe.ingredient.nutrition_information.saturatedFatContent,
+                sodiumContent=db_recipe.ingredient.nutrition_information.sodiumContent,
+                sugarContent=db_recipe.ingredient.nutrition_information.sugarContent,
+                transFatContent=db_recipe.ingredient.nutrition_information.transFatContent,
+                unsaturatedFatContent=db_recipe.ingredient.nutrition_information.unsaturatedFatContent
             )
+            def None_sum(a, b):
+                if a and b is None:
+                    return None
+                elif b is None:
+                    return a
+                else:
+                    return a-b
+            if db_recipe.ingredient.nutrition_information is None:
+                pass
+            else:
+                nutrition = db_recipe.ingredient.nutrition_information
+                nutrition.servingSize = None_sum(nutrition.servingSize, db_recipe.ingredient.nutrition_information.servingSize)
+                #nutrition.servingSizeUnit = servingsizeunit
+                nutrition.calories = None_sum(nutrition.calories, db_recipe.ingredient.nutrition_information.calories)
+                nutrition.carbohydrateContent = None_sum(nutrition.carbohydrateContent, db_recipe.ingredient.nutrition_information.carbohydrateContent)
+                nutrition.cholesterolContent = None_sum(nutrition.cholesterolContent, db_recipe.ingredient.nutrition_information.cholesterolContent)
+                nutrition.fatContent = None_sum(nutrition.fatContent, db_recipe.ingredient.nutrition_information.fatContent)
+                nutrition.fiberContent = None_sum(nutrition.fiberContent, db_recipe.ingredient.nutrition_information.fiberContent)
+                nutrition.proteinContent = None_sum(nutrition.proteinContent, db_recipe.ingredient.nutrition_information.proteinContent)
+                nutrition.saturatedFatContent = None_sum(nutrition.saturatedFatContent, db_recipe.ingredient.nutrition_information.saturatedFatContent)
+                nutrition.sodiumContent = None_sum(nutrition.sodiumContent, db_recipe.ingredient.nutrition_information.sodiumContent)
+                nutrition.sugarContent = None_sum(nutrition.sugarContent, db_recipe.ingredient.nutrition_information.sugarContent)
+                nutrition.transFatContent = None_sum(nutrition.transFatContent, db_recipe.ingredient.nutrition_information.transFatContent)
+                nutrition.unsaturatedFatContent = None_sum(nutrition.unsaturatedFatContent, db_recipe.ingredient.nutrition_information.unsaturatedFatContent)
         elif list_id and username is not None:
 
             db_list = models.ShoppingList.query.filter_by(owner_name=username).first()

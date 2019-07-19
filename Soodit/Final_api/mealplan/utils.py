@@ -5,6 +5,7 @@ from mealplan import api
 ERROR_PROFILE="/profiles/errors/"
 MASON="application/vnd.mason+json"
 REC_PROFILE="/profiles/recipe/"
+ING_PROFILE="/profiles/ingredient/"
 LINK_RELATIONS_URL = "/placeholder/link-relations/"
 
 class MasonBuilder(dict):
@@ -261,6 +262,44 @@ class RecipeBuilder(MasonBuilder):
         self.add_control(
             "profile:delete",
             href=url_for("api.users", username=username),
+            method="DELETE",
+            title="Delete this resource"
+        )
+
+    #Ingredient controls
+
+    def add_control_all_recipe_ingredients(self, recipe_id):
+        self.add_control(
+            "profile:ingredients-all",
+            href=url_for("api.ingredientcollection", recipe_id=recipe_id),
+            method="GET",
+            title="Get all ingredients of recipe"
+        )
+
+    def add_control_add_recipe_ingredient(self, recipe_id):
+        self.add_control(
+            "profile:add-ingredient",
+            href=url_for("api.ingredientcollection", recipe_id=recipe_id),
+            method="POST",
+            encoding="json",
+            title="Add a new ingredient to recipe",
+            schema=self.ingredient_schema()
+        )
+
+    def add_control_edit_recipe_ingredient(self, recipe_id, ingredient_id):
+        self.add_control(
+            "profile:edit-user",
+            href=url_for("api.ingredient", recipe_id=recipe_id,ingredient_id=ingredient_id),
+            method="PUT",
+            encoding="json",
+            title="Edit an existing ingredient",
+            schema=self.ingredient_schema()
+        )
+
+    def add_control_delete_recipe_ingredient(self, recipe_id, ingredient_id):
+        self.add_control(
+            "profile:delete",
+            href=url_for("api.ingredient", recipe_id=recipe_id, ingredient_id=ingredient_id),
             method="DELETE",
             title="Delete this resource"
         )

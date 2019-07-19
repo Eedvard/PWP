@@ -23,32 +23,43 @@ class RecipeItem(Resource):
         else:
             servingSize = db_recipe.nutrition_information.servingSize
             servingSizeUnit = db_recipe.nutrition_information.servingSizeUnit
-
-        body = utils.RecipeBuilder(
-            name=db_recipe.name,
-            description=db_recipe.description,
-            recipeYield=db_recipe.recipeYield,
-            cookTime=db_recipe.cookTime,
-            recipeCategory=db_recipe.recipeCategory,
-            author=db_recipe.author,
-            datePublished=str(db_recipe.datePublished),
-            number_of_likes = db_recipe.number_of_likes,
-            servingSize=db_recipe.nutrition_information.servingSize,
-            servingSizeUnit=db_recipe.nutrition_information.servingSizeUnit,
-            calories=db_recipe.nutrition_information.calories,
-            carbohydrateContent=db_recipe.nutrition_information.carbohydrateContent,
-            cholesterolContent=db_recipe.nutrition_information.cholesterolContent,
-            fatContent=db_recipe.nutrition_information.fatContent,
-            fiberContent=db_recipe.nutrition_information.fiberContent,
-            proteinContent=db_recipe.nutrition_information.proteinContent,
-            saturatedFatContent=db_recipe.nutrition_information.saturatedFatContent,
-            sodiumContent=db_recipe.nutrition_information.sodiumContent,
-            sugarContent=db_recipe.nutrition_information.sugarContent,
-            transFatContent=db_recipe.nutrition_information.transFatContent,
-            unsaturatedFatContent=db_recipe.nutrition_information.unsaturatedFatContent,
-            steps=[],
-            ingredients=[]
-        )
+        if db_recipe.nutrition_information is not None:
+            body = utils.RecipeBuilder(
+                name=db_recipe.name,
+                description=db_recipe.description,
+                recipeYield=db_recipe.recipeYield,
+                cookTime=db_recipe.cookTime,
+                recipeCategory=db_recipe.recipeCategory,
+                author=db_recipe.author,
+                datePublished=str(db_recipe.datePublished),
+                servingSize=db_recipe.nutrition_information.servingSize,
+                servingSizeUnit=db_recipe.nutrition_information.servingSizeUnit,
+                calories=db_recipe.nutrition_information.calories,
+                carbohydrateContent=db_recipe.nutrition_information.carbohydrateContent,
+                cholesterolContent=db_recipe.nutrition_information.cholesterolContent,
+                fatContent=db_recipe.nutrition_information.fatContent,
+                fiberContent=db_recipe.nutrition_information.fiberContent,
+                proteinContent=db_recipe.nutrition_information.proteinContent,
+                saturatedFatContent=db_recipe.nutrition_information.saturatedFatContent,
+                sodiumContent=db_recipe.nutrition_information.sodiumContent,
+                sugarContent=db_recipe.nutrition_information.sugarContent,
+                transFatContent=db_recipe.nutrition_information.transFatContent,
+                unsaturatedFatContent=db_recipe.nutrition_information.unsaturatedFatContent,
+                steps=[],
+                ingredients=[]
+            )
+        else:
+            body = utils.RecipeBuilder(
+                name=db_recipe.name,
+                description=db_recipe.description,
+                recipeYield=db_recipe.recipeYield,
+                cookTime=db_recipe.cookTime,
+                recipeCategory=db_recipe.recipeCategory,
+                author=db_recipe.author,
+                datePublished=str(db_recipe.datePublished),
+                steps=[],
+                ingredients=[]
+            )
         steps = models.RecipeInstructionStep.query.filter_by(recipe_id=recipe_id).all()
         for step in steps:
             item = utils.RecipeBuilder(
