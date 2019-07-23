@@ -51,12 +51,13 @@ class Recipe(db.Model):
     nutritionInformation_id = db.Column(db.Integer, db.ForeignKey("nutrition_information.id", onupdate="CASCADE", ondelete="RESTRICT"), nullable=True)
     nutrition_information = db.relationship("NutritionInformation", uselist=False, cascade="save-update, merge, delete")
     number_of_likes = db.Column(db.Integer)
+    ingredients = db.relationship('RecipeIngredient', cascade="delete")
 
 
 class RecipeIngredient(db.Model):
     __tablename__ = "recipe_ingredient"
     recipe_id = db.Column(db.Integer, db.ForeignKey("recipe.id", onupdate="CASCADE", ondelete="RESTRICT"), primary_key=True)
-    recipe = db.relationship('Recipe', cascade="save-update, merge, delete")
+    recipe = db.relationship('Recipe', cascade="save-update, merge")
     ingredient_id = db.Column(db.Integer, db.ForeignKey("ingredient.id", onupdate="CASCADE", ondelete="RESTRICT"), primary_key=True)
     ingredient = db.relationship('Ingredient', cascade="save-update, merge, delete")
     amount = db.Column(db.Integer, nullable=False)

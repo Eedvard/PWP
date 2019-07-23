@@ -7,6 +7,7 @@ from flask_restful import Resource
 from mealplan import utils, db, models, api
 import datetime
 
+
 class Users(Resource):
 
     def get(self, username):

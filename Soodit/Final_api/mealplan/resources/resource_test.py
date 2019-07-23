@@ -9,14 +9,17 @@ from jsonschema import validate
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
 from sqlalchemy.exc import IntegrityError, StatementError
+from flask_restful import Resource, Api
 
 from app import app, db
-from .users import Users
+from .users import UserCollection
+from app import User
+
 
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign keys=ON")
+    cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
 
 # based on http://flask.pocoo.org/docs/1.0/testing/
@@ -42,7 +45,7 @@ def client():
 
 def _populate_db():
     for i in range(1, 4):
-        u = Users(
+        u = User(
             username="user-{}".format(i)
         )
         db.session.add(u)
@@ -66,7 +69,8 @@ def _check_namespace(client, response):
     resp = client.get(ns_href)
     assert resp.status_code == 200
 
-def _check_control_get_method(ctrl, client, obj)
+
+def _check_control_get_method(ctrl, client, obj):
     """
     Checks a GET type control from a JSON object be it root document or an item
     in a collection. Also checks that the URL of the control can be accessed.
@@ -75,6 +79,7 @@ def _check_control_get_method(ctrl, client, obj)
     href = obj["@controls"][ctrl]["href"]
     resp = client.get(href)
     assert resp.status_code == 200
+
 
 def _check_control_delete_method(ctrl, client, obj):
     """
@@ -88,6 +93,7 @@ def _check_control_delete_method(ctrl, client, obj):
     assert method == "delete"
     resp = client.delete(href)
     assert resp.status_code == 204
+
 
 def _check_control_put_method(ctrl, client, obj):
     """
@@ -112,6 +118,7 @@ def _check_control_put_method(ctrl, client, obj):
     resp = client.put(href, json=body)
     assert resp.status_code == 204
 
+
 def _check_control_post_method(ctrl, client, obj):
     """
     Checks a POST type control from a JSON object be it root document or an item
@@ -134,6 +141,7 @@ def _check_control_post_method(ctrl, client, obj):
     resp = client.post(href, json=body)
     assert resp.status_code == 201
 
+
 class TestUserCollection(object):
 
     RESOURCE_URL = "/api/users/"
@@ -153,7 +161,7 @@ class TestUserCollection(object):
         assert len(body["items"]) == 3
         for item in body["items"]:
             _check_control_get_method("self", client, item)
-            _check_control_get_method("profile",client, item)
+            _check_control_get_method("profile", client, item)
             assert "username" in item
 
     def test_post(self, client):
