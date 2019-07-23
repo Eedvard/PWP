@@ -144,7 +144,7 @@ def _check_control_post_method(ctrl, client, obj):
 
 class TestUserCollection(object):
 
-    RESOURCE_URL = "/api/users/"
+    RESOURCE_URL = "/users/"
 
     def test_get(self, client):
         """
