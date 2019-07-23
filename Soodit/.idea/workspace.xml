@@ -171,6 +171,13 @@
               <item name="Final_api" type="462c0819:PsiDirectoryNode" />
               <item name="mealplan" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="Soodit" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Soodit" type="462c0819:PsiDirectoryNode" />
+              <item name="Final_api" type="462c0819:PsiDirectoryNode" />
+              <item name="mealplan" type="462c0819:PsiDirectoryNode" />
+              <item name="static" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -318,12 +325,12 @@
       <workItem from="1550151141883" duration="842000" />
       <workItem from="1561985551236" duration="23097000" />
       <workItem from="1562769216862" duration="13451000" />
-      <workItem from="1563198445670" duration="33728000" />
+      <workItem from="1563198445670" duration="34446000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="71118000" />
+    <option name="totallyTimeSpent" value="71836000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
