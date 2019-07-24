@@ -20,6 +20,14 @@ class Step(Resource):
             step=db_recipe.step,
             text=db_recipe.text
         )
+        body.add_namespace("recipe_steps", utils.LINK_RELATIONS_URL)
+        body.add_control("self", api.api.url_for(Step, recipe_id=recipe_id, step_id=step_id))
+        body.add_control("profile", utils.ING_PROFILE)
+        body.add_control("collection", api.api.url_for(StepCollection, recipe_id=recipe_id))
+        body.add_control_delete_step(recipe_id, step_id)
+        body.add_control_edit_step(recipe_id, step_id)
+        body.add_control("storage:recipe_steps-all",
+                         api.api.url_for(StepCollection, recipe_id=recipe_id))
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
     def put(self, recipe_id, step_id):
@@ -83,8 +91,12 @@ class StepCollection(Resource):
                 step=step.step,
                 text=step.text
             )
+            item.add_control("self", "/api/recipes/{}/ingredients/{}/".format(recipe_id, step.step))
+            item.add_control("profile", utils.STEPS_PROFILE)
             body["steps"].append(item)
 
+        body.add_control_all_steps(recipe_id)
+        body.add_control_add_step(recipe_id)
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
     def post(recipe, recipe_id):
         if request.method != "POST":

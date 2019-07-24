@@ -1,7 +1,7 @@
-from flask import Blueprint
+from flask import Blueprint, send_from_directory
 from flask_restful import Resource, Api
 
-api_bp = Blueprint("api", __name__, url_prefix="/api")
+api_bp = Blueprint("api", __name__, url_prefix="/api", static_folder='static')
 api = Api(api_bp)
 
 # this import must be placed after we create api to avoid issues with
@@ -29,3 +29,13 @@ api.add_resource(ShoppingListCollection, "/users/<username>/shoppinglist/")
 @api_bp.route("/")
 def index():
     return "paska"
+
+@api_bp.route("/profiles/<resource>/")
+def send_profile_html(resource):
+    print(api_bp.static_folder+"profiles")
+    return send_from_directory(api_bp.static_folder+"/profiles", "{}.html".format(resource))
+
+
+@api_bp.route("/profile/link-relations/")
+def send_link_relations_html():
+    return send_from_directory(api_bp.static_folder+"/profiles", "links-relations.html")

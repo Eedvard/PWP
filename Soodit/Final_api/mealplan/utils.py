@@ -6,6 +6,8 @@ ERROR_PROFILE="/profiles/errors/"
 MASON="application/vnd.mason+json"
 REC_PROFILE="/profiles/recipe/"
 ING_PROFILE="/profiles/ingredient/"
+STEPS_PROFILE = "/profiles/steps/"
+USER_PROFILE = "/profiles/users/"
 LINK_RELATIONS_URL = "/placeholder/link-relations/"
 
 class MasonBuilder(dict):
@@ -337,6 +339,45 @@ class RecipeBuilder(MasonBuilder):
         self.add_control(
             "profile:delete",
             href=url_for("api.ingredient", username=username, list_id=list_id, ingredient_id=ingredient_id),
+            method="DELETE",
+            title="Delete this resource"
+        )
+
+
+# Step controls
+
+    def add_control_all_steps(self, recipe_id):
+        self.add_control(
+            "profile:steps-all",
+            href=url_for("api.stepcollection", recipe_id=recipe_id),
+            method="GET",
+            title="Get all steps of recipe"
+        )
+
+    def add_control_add_step(self, recipe_id):
+        self.add_control(
+            "profile:add-step",
+            href=url_for("api.stepcollection", recipe_id=recipe_id),
+            method="POST",
+            encoding="json",
+            title="Add a new step to recipe",
+            schema=self.ingredient_schema()
+        )
+
+    def add_control_edit_step(self, recipe_id, step_id):
+        self.add_control(
+            "profile:edit-step",
+            href=url_for("api.step", recipe_id=recipe_id,step_id=step_id),
+            method="PUT",
+            encoding="json",
+            title="Edit an existing step",
+            schema=self.ingredient_schema()
+        )
+
+    def add_control_delete_step(self, recipe_id, step_id):
+        self.add_control(
+            "profile:delete",
+            href=url_for("api.ingredient", recipe_id=recipe_id, step_id=step_id),
             method="DELETE",
             title="Delete this resource"
         )
