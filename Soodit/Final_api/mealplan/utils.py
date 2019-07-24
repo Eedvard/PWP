@@ -8,7 +8,7 @@ REC_PROFILE="/profiles/recipe/"
 ING_PROFILE="/profiles/ingredient/"
 STEPS_PROFILE = "/profiles/steps/"
 USER_PROFILE = "/profiles/users/"
-LINK_RELATIONS_URL = "/placeholder/link-relations/"
+LINK_RELATIONS_URL = "/profiles/link-relations/"
 
 class MasonBuilder(dict):
     """
@@ -137,9 +137,13 @@ class RecipeBuilder(MasonBuilder):
     def step_schema():
         schema = {
             "type": "object",
-            "required": ["text"]
+            "required": ["step", "text"]
         }
         props = schema["properties"] = {}
+        props["step"] = {
+            "description": "The number of the step",
+            "type": "integer"
+        }
         props["text"] = {
             "description": "The instruction of the step",
             "type": "string"
@@ -361,7 +365,7 @@ class RecipeBuilder(MasonBuilder):
             method="POST",
             encoding="json",
             title="Add a new step to recipe",
-            schema=self.ingredient_schema()
+            schema=self.step_schema()
         )
 
     def add_control_edit_step(self, recipe_id, step_id):
@@ -377,7 +381,7 @@ class RecipeBuilder(MasonBuilder):
     def add_control_delete_step(self, recipe_id, step_id):
         self.add_control(
             "profile:delete",
-            href=url_for("api.ingredient", recipe_id=recipe_id, step_id=step_id),
+            href=url_for("api.step", recipe_id=recipe_id, step_id=step_id),
             method="DELETE",
             title="Delete this resource"
         )
