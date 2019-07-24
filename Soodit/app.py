@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
@@ -9,6 +9,24 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
+
+USER_PROFILE = "/profiles/users/"
+INGREDIENT_PROFILE = "/profiles/ingredients/"
+RECIPE_PROFILE = "/profiles/recipes/"
+SHOPLIST_PROFILE = "/profiles/shoppinglists/"
+STEPS_PROFILE = "/profiles/steps/"
+
+LINK_RELATIONS_URL = "/profile/link_relations/"
+
+
+@app.route("/profiles/<resource>")
+def send_profile_html(resource):
+    return send_from_directory(app.static_folder, "{}.html".format(resource))
+
+
+@app.route("/profile/link-relations/")
+def send_link_relations_html():
+    return send_from_directory(app.static_folder, "{}.html")
 
 
 # @event.listens_for(Engine, "connect")
