@@ -243,7 +243,7 @@ class RecipeBuilder(MasonBuilder):      # Recipebuilder is based on the inventor
             "profile:users-all",
             "/api/users/",
             method="GET",
-            title="Get all recipes"
+            title="Get all users"
         )
 
     def add_control_add_user(self):

@@ -328,10 +328,10 @@ class IngredientCollection(Resource):
             body.add_control_add_recipe_ingredient(recipe_id)
         elif username and list_id is not None:
             db_list = models.ShoppingList.query.filter_by(id=list_id).first()
-            if db_list.owner != username:
+            if db_list.owner_name != username:
                 return utils.RecipeBuilder.create_error_response(404, "Not Found",
                                                                  "No shopping list with that id was found with the username {}".format(
-                                                                     recipe_id))
+                                                                     username))
             ingredients = models.ShoppingListIngredient.query.filter_by(shopping_list_id=list_id).all()
             for ingredient in ingredients:
                 item = utils.RecipeBuilder(
