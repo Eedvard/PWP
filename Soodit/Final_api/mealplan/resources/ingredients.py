@@ -12,9 +12,11 @@ class Ingredient(Resource):
         if request.method != "GET":
             return utils.RecipeBuilder.create_error_response(405, "wrong method", "GET method required")
         if recipe_id is not None:
+            if not models.Recipe.query.filter_by(id=recipe_id).all():
+                return utils.RecipeBuilder.create_error_response(404,"Not found","No recipe was found with id {}".format(recipe_id))
             db_recipe = models.RecipeIngredient.query.filter_by(recipe_id=recipe_id, ingredient_id=ingredient_id).first()
             if db_recipe is None:
-                return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(username))
+                return utils.RecipeBuilder.create_error_response(404, "Not Found", "No ingredient was found with id {}".format(ingredient_id))
 
             body = utils.RecipeBuilder(
                 name=db_recipe.ingredient.name,
@@ -44,12 +46,17 @@ class Ingredient(Resource):
             body.add_control("storage:recipe_ingredients-all",
                              api.api.url_for(IngredientCollection, recipe_id=recipe_id))
         elif list_id and username is not None:
-            db_list = models.ShoppingList.query.filter_by(owner_name=username).first()
+            if not models.User.query.filter_by(username=username).all():
+                return utils.RecipeBuilder.create_error_response(404, "Not found","No user was found with the username {}".format(username))
+            db_list = models.ShoppingList.query.filter_by(owner_name=username, id=list_id).first()
             if db_list is None:
-                return utils.RecipeBuilder.create_error_response(404, "Not Found","No shopping list with that id was found with the username {}".format(username))
+                return utils.RecipeBuilder.create_error_response(404, "Not Found",
+                                                                 "No shopping list with id {} was found with the username {}".format(
+                                                                     list_id,
+                                                                     username))
             db_recipe = models.ShoppingListIngredient.query.filter_by(shopping_list_id=list_id, ingredient_id=ingredient_id, ).first()
             if db_recipe is None:
-                return utils.RecipeBuilder.create_error_response(404, "Not Found","No user was found with the username {}".format(username))
+                return utils.RecipeBuilder.create_error_response(404, "Not Found", "No ingredient was found with id {}".format(ingredient_id))
 
             body = utils.RecipeBuilder(
                 name=db_recipe.ingredient.name,
@@ -84,9 +91,11 @@ class Ingredient(Resource):
         if request.method != "PUT":
             return utils.RecipeBuilder.create_error_response(405, "wrong method", "PUT method required")
         if recipe_id is not None:
+            if not models.Recipe.query.filter_by(id=recipe_id).all():
+                return utils.RecipeBuilder.create_error_response(404,"Not found","No recipe was found with id {}".format(recipe_id))
             db_recipe = models.RecipeIngredient.query.filter_by(recipe_id=recipe_id, ingredient_id=ingredient_id).first()
             if db_recipe is None:
-                return utils.RecipeBuilder.create_error_response(404, "Not found", "No recipe was found with the name {}".format(recipe_id))
+                return utils.RecipeBuilder.create_error_response(404, "Not Found", "No ingredient was found with id {}".format(ingredient_id))
             try:
                 name = str(request.json["name"])
                 description = str(request.json["description"])
@@ -174,10 +183,11 @@ class Ingredient(Resource):
             db.session.commit()
             url = api.api.url_for(Ingredient, recipe_id=recipe_id, ingredient_id=ingredient_id)
         elif list_id and username is not None:
-            db_list = models.ShoppingList.query.filter_by(owner_name=username).first()
+            db_list = models.ShoppingList.query.filter_by(owner_name=username, id=list_id).first()
             if db_list is None:
                 return utils.RecipeBuilder.create_error_response(404, "Not Found",
-                                                                 "No shopping list with that id was found with the username {}".format(
+                                                                 "No shopping list with id {} was found with the username {}".format(
+                                                                     list_id,
                                                                      username))
             db_recipe = models.ShoppingListIngredient.query.filter_by(shopping_list_id=list_id,
                                                                       ingredient_id=ingredient_id, ).first()
@@ -231,10 +241,11 @@ class Ingredient(Resource):
             return utils.RecipeBuilder.create_error_response(405, "Invalid method", "DELETE method required")
 
         if recipe_id is not None:
+            if not models.Recipe.query.filter_by(id=recipe_id).all():
+                return utils.RecipeBuilder.create_error_response(404,"Not found","No recipe was found with id {}".format(recipe_id))
             db_recipe = models.RecipeIngredient.query.filter_by(recipe_id=recipe_id, ingredient_id=ingredient_id).first()
             if db_recipe is None:
-                return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(recipe_id))
-
+                return utils.RecipeBuilder.create_error_response(404, "Not Found","No ingredient was found with id {}".format(ingredient_id))
             body = utils.RecipeBuilder(
                 name=db_recipe.ingredient.name,
                 description=db_recipe.ingredient.description,
@@ -280,10 +291,11 @@ class Ingredient(Resource):
                 nutrition.unsaturatedFatContent = None_sum(nutrition.unsaturatedFatContent, db_recipe.ingredient.nutrition_information.unsaturatedFatContent)
         elif list_id and username is not None:
 
-            db_list = models.ShoppingList.query.filter_by(owner_name=username).first()
+            db_list = models.ShoppingList.query.filter_by(owner_name=username, id=list_id).first()
             if db_list is None:
                 return utils.RecipeBuilder.create_error_response(404, "Not Found",
-                                                                 "No shopping list with that id was found with the username {}".format(
+                                                                 "No shopping list with id {} was found with the username {}".format(
+                                                                     list_id,
                                                                      username))
             db_recipe = models.ShoppingListIngredient.query.filter_by(shopping_list_id=list_id,
                                                                       ingredient_id=ingredient_id, ).first()
@@ -312,7 +324,8 @@ class IngredientCollection(Resource):
             return utils.RecipeBuilder.create_error_response(405, "Invalid method", "GET method required")
         body = utils.RecipeBuilder(ingredients=[])
         if recipe_id is not None:
-
+            if not models.Recipe.query.filter_by(id=recipe_id).all():
+                return utils.RecipeBuilder.create_error_response(404,"Not found","No recipe was found with id {}".format(recipe_id))
             ingredients = models.RecipeIngredient.query.filter_by(recipe_id=recipe_id).all()
             for ingredient in ingredients:
                 item = utils.RecipeBuilder(
@@ -327,10 +340,11 @@ class IngredientCollection(Resource):
             body.add_control_all_recipe_ingredients(recipe_id)
             body.add_control_add_recipe_ingredient(recipe_id)
         elif username and list_id is not None:
-            db_list = models.ShoppingList.query.filter_by(id=list_id).first()
-            if db_list.owner_name != username:
+            db_list = models.ShoppingList.query.filter_by(owner_name=username, id=list_id).first()
+            if db_list is None:
                 return utils.RecipeBuilder.create_error_response(404, "Not Found",
-                                                                 "No shopping list with that id was found with the username {}".format(
+                                                                 "No shopping list with id {} was found with the username {}".format(
+                                                                     list_id,
                                                                      username))
             ingredients = models.ShoppingListIngredient.query.filter_by(shopping_list_id=list_id).all()
             for ingredient in ingredients:
@@ -350,6 +364,8 @@ class IngredientCollection(Resource):
         if request.method != "POST":
             return utils.RecipeBuilder.create_error_response(405, "Invalid method", "POST method required")
         if recipe_id is not None:
+            if not models.Recipe.query.filter_by(id=recipe_id).all():
+                return utils.RecipeBuilder.create_error_response(404,"Not found","No recipe was found with id {}".format(recipe_id))
             try:
                 name = str(request.json["name"])
                 description = str(request.json["description"])
@@ -439,6 +455,12 @@ class IngredientCollection(Resource):
             url = api.api.url_for(Ingredient, recipe_id=id, ingredient_id=ingid)
 
         elif username and list_id is not None:
+            db_list = models.ShoppingList.query.filter_by(owner_name=username, id=list_id).first()
+            if db_list is None:
+                return utils.RecipeBuilder.create_error_response(404, "Not Found",
+                                                                 "No shopping list with id {} was found with the username {}".format(
+                                                                     list_id,
+                                                                     username))
             try:
                 name = str(request.json["name"])
                 description = str(request.json["description"])
