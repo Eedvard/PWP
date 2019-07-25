@@ -19,6 +19,13 @@ class Shoppinglist(Resource):
             notes=db_recipe.notes,
             owner=db_recipe.owner_name
         )
+        body.add_namespace("shoppinglists", utils.LINK_RELATIONS_URL)
+        body.add_control("self", api.api.url_for(Shoppinglist, username=username, list_id=list_id))
+        body.add_control("profile", utils.SHOPLIST_PROFILE)
+        body.add_control("collection", api.api.url_for(ShoppingListCollection, username=username))
+        body.add_control_delete_recipe_ingredient(username, list_id)
+        body.add_control_edit_recipe_ingredient(username, list_id)
+        body.add_control("storage:shoppinglists-all", api.api.url_for(ShoppingListCollection, username=username))
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
     def put(self, username, list_id):
@@ -78,7 +85,11 @@ class ShoppingListCollection(Resource):
             item = utils.RecipeBuilder(
                 notes=shoppinglist.notes
             )
+            item.add_control("self", "/api/users/{}/shoppinglist/{}/".format(username, shoppinglist.id))
+            item.add_control("profile", utils.SHOPLIST_PROFILE)
             body["shoppinglists"].append(item)
+        body.add_control_all_shoplist_ingredients(username)
+        body.add_control_add_shoppinglist(username)
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
     def post(shoppinglist, username):
         if request.method != "POST":

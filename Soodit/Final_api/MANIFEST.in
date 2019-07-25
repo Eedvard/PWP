@@ -1,0 +1,2 @@
+graft mealplan/static
+global-exclude *.pyc

@@ -8,6 +8,7 @@ REC_PROFILE="/profiles/recipe/"
 ING_PROFILE="/profiles/ingredient/"
 STEPS_PROFILE = "/profiles/steps/"
 USER_PROFILE = "/profiles/users/"
+SHOPLIST_PROFILE= "/profiles/shoppinglists/"
 LINK_RELATIONS_URL = "/profiles/link-relations/"
 
 class MasonBuilder(dict):
@@ -75,7 +76,8 @@ class MasonBuilder(dict):
         self["@controls"][ctrl_name]["href"] = href
 
 
-class RecipeBuilder(MasonBuilder):
+class RecipeBuilder(MasonBuilder):      # Recipebuilder is based on the inventorybuilder that was in the course examples
+
     def create_error_response(status_code, title, message=None):
         resource_url = request.path
         body = MasonBuilder(resource_url=resource_url)
@@ -382,6 +384,44 @@ class RecipeBuilder(MasonBuilder):
         self.add_control(
             "profile:delete",
             href=url_for("api.step", recipe_id=recipe_id, step_id=step_id),
+            method="DELETE",
+            title="Delete this resource"
+        )
+
+# Shoppinglist controls
+
+    def add_control_all_shoppinglists(self, username):
+        self.add_control(
+            "profile:shoppinglists-all",
+            href=url_for("api.shoppinglistcollection", username=username),
+            method="GET",
+            title="Get all shoppinglists of user"
+        )
+
+    def add_control_add_shoppinglist(self, username):
+        self.add_control(
+            "profile:add-shoppinglist",
+            href=url_for("api.shoppinglistcollection", username=username),
+            method="POST",
+            encoding="json",
+            title="Create new shoppinglist",
+            schema=self.shoppinglist_schema()
+        )
+
+    def add_control_edit_shoppinglist(self, username, list_id):
+        self.add_control(
+            "profile:edit-step",
+            href=url_for("api.shoppinglist", username=username, list_id=list_id),
+            method="PUT",
+            encoding="json",
+            title="Edit an existing shoppinglist",
+            schema=self.shoppinglist_schema()
+        )
+
+    def add_control_delete_shoppinglist(self, username, list_id):
+        self.add_control(
+            "profile:delete",
+            href=url_for("api.shoppinglist", username=username, list_id=list_id),
             method="DELETE",
             title="Delete this resource"
         )
