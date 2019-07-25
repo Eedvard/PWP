@@ -16,7 +16,7 @@ class RecipeItem(Resource):
             return utils.RecipeBuilder.create_error_response(405, "wrong method", "GET method required")
         db_recipe = models.Recipe.query.filter_by(id=recipe_id).first()
         if db_recipe is None:
-            return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(recipe_id))
+            return utils.RecipeBuilder.create_error_response(404, "Not Found", "No recipe was found with id {}".format(recipe_id))
         if db_recipe.nutrition_information is None:
             servingSize = None
             servingSizeUnit = None
@@ -91,7 +91,7 @@ class RecipeItem(Resource):
             return utils.RecipeBuilder.create_error_response(405, "wrong method", "PUT method required")
         db_recipe = models.Recipe.query.filter_by(id=recipe_id).first()
         if db_recipe is None:
-            return utils.RecipeBuilder.create_error_response(404, "Not found", "No recipe was found with the name {}".format(recipe_id))
+            return utils.RecipeBuilder.create_error_response(404, "Not Found", "No recipe was found with id {}".format(recipe_id))
         try:
             name = str(request.json["name"])
             description = str(request.json["description"])
@@ -139,7 +139,7 @@ class RecipeItem(Resource):
             return utils.RecipeBuilder.create_error_response(405, "Invalid method", "DELETE method required")
         db_recipe = models.Recipe.query.filter_by(id=recipe_id).first()
         if db_recipe is None:
-            return utils.RecipeBuilder.create_error_response(404, "Not Found", "No user was found with the username {}".format(recipe_id))
+            return utils.RecipeBuilder.create_error_response(404, "Not Found", "No recipe was found with id {}".format(recipe_id))
         if db_recipe.nutrition_information is None:
             servingSize = None
             servingSizeUnit = None

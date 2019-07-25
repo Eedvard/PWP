@@ -54,7 +54,7 @@ class Ingredient(Resource):
                                                                  "No shopping list with id {} was found with the username {}".format(
                                                                      list_id,
                                                                      username))
-            db_recipe = models.ShoppingListIngredient.query.filter_by(shopping_list_id=list_id, ingredient_id=ingredient_id, ).first()
+            db_recipe = models.ShoppingListIngredient.query.filter_by(shopping_list=db_list, ingredient_id=ingredient_id, ).first()
             if db_recipe is None:
                 return utils.RecipeBuilder.create_error_response(404, "Not Found", "No ingredient was found with id {}".format(ingredient_id))
 

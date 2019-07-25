@@ -16,7 +16,7 @@ class Shoppinglist(Resource):
 
         db_recipe = models.ShoppingList.query.filter_by(owner_name=username, id=list_id).first()
         if db_recipe is None:
-            return utils.RecipeBuilder.create_error_response(404, "Not found", "No shoppinglist was found with id {}".format(list_id))
+            return utils.RecipeBuilder.create_error_response(404, "Not found", "User {} has no shoppinglist with id {}".format(username, list_id))
 
         body = utils.RecipeBuilder(
             notes=db_recipe.notes,
@@ -39,7 +39,7 @@ class Shoppinglist(Resource):
 
         db_recipe = models.ShoppingList.query.filter_by(owner_name=username, id=list_id).first()
         if db_recipe is None:
-            return utils.RecipeBuilder.create_error_response(404, "Not found", "No shoppinglist was found with id {}".format(list_id))
+            return utils.RecipeBuilder.create_error_response(404, "Not found", "User {} has no shoppinglist with id {}".format(username, list_id))
         try:
             notes = str(request.json["notes"])
         except KeyError:
@@ -71,7 +71,7 @@ class Shoppinglist(Resource):
             return utils.RecipeBuilder.create_error_response(404, "Not found", "No user was found with the username {}".format(username))
         db_recipe = models.ShoppingList.query.filter_by(owner_name=username, id=list_id).first()
         if db_recipe is None:
-            return utils.RecipeBuilder.create_error_response(404, "Not found", "No shoppinglist was found with id {}".format(list_id))
+            return utils.RecipeBuilder.create_error_response(404, "Not found", "User {} has no shoppinglist with id {}".format(username, list_id))
 
         body = utils.RecipeBuilder(
             notes=db_recipe.notes,
