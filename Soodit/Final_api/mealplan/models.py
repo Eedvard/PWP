@@ -36,6 +36,8 @@ class Ingredient(db.Model):
     description = db.Column(db.String(255), nullable=False)
     nutrition_information_id = db.Column(db.Integer, db.ForeignKey("nutrition_information.id", onupdate="CASCADE", ondelete="RESTRICT"), nullable=True)
     nutrition_information = db.relationship("NutritionInformation", uselist=False, cascade="save-update, merge")
+    recipe_ingredients = db.relationship('RecipeIngredient', cascade="delete")
+    ingredients = db.relationship('ShoppingListIngredient', cascade="delete")
 
 
 class Recipe(db.Model):

@@ -108,7 +108,7 @@ def createdb():
     recipestep.recipe = recipe
     shoplisti.shopping_list = shoplist
     shoplisti.ingredient = ingredient
-    shoplisti.owner = user.username
+    shoplist.owner = user
 
     return nutri, ingredient, recipe, recipei, recipestep, shoplist, shoplisti, user
 
@@ -225,8 +225,9 @@ def test_measurement_ondelete_nutri(app):
         db.session.delete(nutri)
         db.session.commit()
 
-        assert recipe.nutrition_information is None
-        assert recipe.nutrition_information is None
+        assert Recipe.query.first().nutrition_information is None
+        assert Ingredient.query.first().nutrition_information is None
+        assert NutritionInformation.query.first() is None
 
 def test_measurement_ondelete_ingredient(app):
 
@@ -248,8 +249,9 @@ def test_measurement_ondelete_ingredient(app):
         db.session.delete(ingredient)
         db.session.commit()
 
-        assert recipei.ingredient is None
-        assert shoplisti.ingredient is None
+        assert RecipeIngredient.query.first() is None
+        assert ShoppingListIngredient.query.first() is None
+        assert Ingredient.query.first() is None
 
 def test_measurement_ondelete_recipe(app):
 
@@ -300,6 +302,7 @@ def test_measurement_ondelete_shoplist(app):
 
         assert ShoppingList.query.first() is None
         assert ShoppingListIngredient.query.first() is None
+        assert Ingredient.query.first() is None
 
 
 def test_measurement_ondelete_user(app):
@@ -324,4 +327,4 @@ def test_measurement_ondelete_user(app):
         db.session.commit()
 
         assert User.query.first() is None
-        #assert ShoppingList.query.first() is None
+        assert ShoppingList.query.first() is None
