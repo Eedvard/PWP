@@ -222,6 +222,7 @@ def test_measurement_ondelete_nutri(app):
         db.session.add(recipestep)
         db.session.add(user)
         db.session.commit()
+
         db.session.delete(nutri)
         db.session.commit()
 

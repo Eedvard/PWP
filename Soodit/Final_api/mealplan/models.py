@@ -24,6 +24,8 @@ class NutritionInformation(db.Model):
     sugarContent = db.Column(db.Integer, nullable=True)
     transFatContent = db.Column(db.Integer, nullable=True)
     unsaturatedFatContent = db.Column(db.Integer, nullable=True)
+    recipe = db.relationship('Recipe', cascade="save-update, merge")
+    ingredient = db.relationship('Ingredient', cascade="save-update, merge")
 
     def __repr__(self):
         return "{}".format(self.id)
@@ -51,7 +53,7 @@ class Recipe(db.Model):
     author = db.Column(db.String(255), nullable=False)
     datePublished = db.Column(db.DateTime, nullable=False)
     nutritionInformation_id = db.Column(db.Integer, db.ForeignKey("nutrition_information.id", onupdate="CASCADE", ondelete="RESTRICT"), nullable=True)
-    nutrition_information = db.relationship("NutritionInformation", uselist=False, cascade="save-update, merge, delete")
+    nutrition_information = db.relationship("NutritionInformation", uselist=False, cascade="save-update, merge")
     ingredients = db.relationship('RecipeIngredient', cascade="delete")
     steps = db.relationship('RecipeInstructionStep', cascade="delete")
 
