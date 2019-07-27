@@ -36,6 +36,6 @@ def send_profile_html(resource):
     return send_from_directory(api_bp.static_folder+"/profiles", "{}.html".format(resource))
 
 
-@api_bp.route("/profile/link-relations/")
+@api_bp.route("/profiles/link-relations/")
 def send_link_relations_html():
     return send_from_directory(api_bp.static_folder+"/profiles", "links-relations.html")

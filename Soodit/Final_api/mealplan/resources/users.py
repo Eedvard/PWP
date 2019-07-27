@@ -20,7 +20,7 @@ class Users(Resource):
         body = utils.RecipeBuilder(
             username=db_user.username
         )
-        body.add_namespace("recipes", utils.LINK_RELATIONS_URL)
+        body.add_namespace("users", utils.LINK_RELATIONS_URL)
         body.add_control("self", api.api.url_for(Users, username=username))
         body.add_control("profile", utils.USER_PROFILE)
         body.add_control("collection", "/api/users/")
@@ -43,6 +43,8 @@ class Users(Resource):
             return utils.RecipeBuilder.create_error_response(400, "Invalid input", "Username must be a string")
         except TypeError:
             return utils.RecipeBuilder.create_error_response(415, "Invalid content", "Request content must be JSON")
+        if (models.User.query.filter_by(username=newusername).first() is not None) and username!=newusername:
+            return utils.RecipeBuilder.create_error_response(409, "Duplicate content", "User already exists")
 
         body = utils.RecipeBuilder(
             username=db_user.username
@@ -71,7 +73,7 @@ class Users(Resource):
 
         db.session.delete(db_user)
         db.session.commit()
-        return Response(json.dumps(body), 200, mimetype=utils.MASON)
+        return Response(json.dumps(body), 204, mimetype=utils.MASON)
 
 
 class UserCollection (Resource):

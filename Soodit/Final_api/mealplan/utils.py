@@ -2,14 +2,14 @@ import json
 from flask import Flask, Response, request, url_for
 from mealplan import api
 
-ERROR_PROFILE="/profiles/errors/"
-MASON="application/vnd.mason+json"
-REC_PROFILE="/profiles/recipe/"
-ING_PROFILE="/profiles/ingredient/"
-STEPS_PROFILE = "/profiles/steps/"
-USER_PROFILE = "/profiles/users/"
-SHOPLIST_PROFILE= "/profiles/shoppinglists/"
-LINK_RELATIONS_URL = "/profiles/link-relations/"
+ERROR_PROFILE="/api/profiles/errors/"
+MASON="/api/application/vnd.mason+json"
+REC_PROFILE="/api/profiles/recipe/"
+ING_PROFILE="/api/profiles/ingredient/"
+STEPS_PROFILE = "/api/profiles/steps/"
+USER_PROFILE = "/api/profiles/users/"
+SHOPLIST_PROFILE= "/api/profiles/shoppinglists/"
+LINK_RELATIONS_URL = "/api/profiles/link-relations/"
 
 class MasonBuilder(dict):
     """
