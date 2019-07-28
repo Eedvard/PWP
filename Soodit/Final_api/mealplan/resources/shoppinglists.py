@@ -80,7 +80,7 @@ class Shoppinglist(Resource):
 
         db.session.delete(db_recipe)
         db.session.commit()
-        return Response(json.dumps(body), 200, mimetype=utils.MASON)
+        return Response(json.dumps(body), 204, mimetype=utils.MASON)
 
 class ShoppingListCollection(Resource):
     def get(self, username):

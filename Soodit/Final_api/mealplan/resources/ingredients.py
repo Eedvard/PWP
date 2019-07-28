@@ -316,7 +316,7 @@ class Ingredient(Resource):
             )
         db.session.delete(db_recipe)
         db.session.commit()
-        return Response(json.dumps(body), 200, mimetype=utils.MASON)
+        return Response(json.dumps(body), 204, mimetype=utils.MASON)
 
 class IngredientCollection(Resource):
     def get(self, recipe_id=None, username=None, list_id=None):

@@ -14,7 +14,6 @@ mealplan.egg-info/top_level.txt
 mealplan/resources/__init__.py
 mealplan/resources/ingredients.py
 mealplan/resources/recipes.py
-mealplan/resources/resource_test.py
 mealplan/resources/shoppinglists.py
 mealplan/resources/steps.py
 mealplan/resources/users.py

@@ -77,7 +77,7 @@ class Step(Resource):
 
         db.session.delete(db_recipe)
         db.session.commit()
-        return Response(json.dumps(body), 200, mimetype=utils.MASON)
+        return Response(json.dumps(body), 204, mimetype=utils.MASON)
 
 class StepCollection(Resource):
     def get(self, recipe_id):
@@ -113,8 +113,9 @@ class StepCollection(Resource):
 
         db_recipe = models.Recipe.query.filter_by(id=recipe_id).first()
         if db_recipe is None:
-            return utils.RecipeBuilder.create_error_response(404, "Not found",
-                                                             "No recipe was found with the name {}".format(recipe_id))
+            return utils.RecipeBuilder.create_error_response(404, "Not found","No recipe was found with the name {}".format(recipe_id))
+        if models.RecipeInstructionStep.query.filter_by(recipe_id=recipe_id, step=stepnum).first():
+            return utils.RecipeBuilder.create_error_response(409, "Duplicate content", "Step already exists")
         step = models.RecipeInstructionStep(
             recipe=db_recipe,
             step=stepnum,
