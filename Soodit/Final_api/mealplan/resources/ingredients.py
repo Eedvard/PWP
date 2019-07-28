@@ -23,8 +23,6 @@ class Ingredient(Resource):
                 description=db_recipe.ingredient.description,
                 amount=db_recipe.amount,
                 unit=db_recipe.unit,
-                servingsize=db_recipe.ingredient.nutrition_information.servingSize,
-                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit,
                 calories=db_recipe.ingredient.nutrition_information.calories,
                 carbohydrateContent=db_recipe.ingredient.nutrition_information.carbohydrateContent,
                 cholesterolContent=db_recipe.ingredient.nutrition_information.cholesterolContent,
@@ -63,8 +61,6 @@ class Ingredient(Resource):
                 description=db_recipe.ingredient.description,
                 amount=db_recipe.amount,
                 unit=db_recipe.unit,
-                servingsize=db_recipe.ingredient.nutrition_information.servingSize,
-                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit,
                 calories=db_recipe.ingredient.nutrition_information.calories,
                 carbohydrateContent=db_recipe.ingredient.nutrition_information.carbohydrateContent,
                 cholesterolContent=db_recipe.ingredient.nutrition_information.cholesterolContent,
@@ -102,8 +98,6 @@ class Ingredient(Resource):
                 amount = int(request.json["amount"])
                 unit = str(request.json["unit"])
 
-                servingsize = int(request.json["servingsize"])
-                servingsizeunit = str(request.json["servingsizeunit"])
             except KeyError:
                 return utils.RecipeBuilder.create_error_response(400, "Missing fields", "Incomplete request - missing fields")
             except ValueError:
@@ -116,8 +110,6 @@ class Ingredient(Resource):
                 description=db_recipe.ingredient.description,
                 amount=db_recipe.amount,
                 unit=db_recipe.unit,
-                servingsize=db_recipe.ingredient.nutrition_information.servingSize,
-                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit,
                 calories=db_recipe.ingredient.nutrition_information.calories,
                 carbohydrateContent=db_recipe.ingredient.nutrition_information.carbohydrateContent,
                 cholesterolContent=db_recipe.ingredient.nutrition_information.cholesterolContent,
@@ -152,8 +144,6 @@ class Ingredient(Resource):
             db_recipe.ingredient.description=description
             db_recipe.amount=amount
             db_recipe.unit=unit
-            db_recipe.ingredient.nutrition_information.servingSize=servingsize
-            db_recipe.ingredient.nutrition_information.servingSizeUnit=servingsizeunit
             def None_sum(a, b, c):
                 if a and b and c is None:
                     return None
@@ -167,8 +157,6 @@ class Ingredient(Resource):
                 pass
             else:
                 nutrition = db_recipe.ingredient.nutrition_information
-                nutrition.servingSize = None_sum(nutrition.servingSize, servingsize, db_recipe.ingredient.nutrition_information.servingSize)
-                #nutrition.servingSizeUnit = servingsizeunit
                 nutrition.calories = None_sum(nutrition.calories, values[0], db_recipe.ingredient.nutrition_information.calories)
                 nutrition.carbohydrateContent = None_sum(nutrition.carbohydrateContent, values[1], db_recipe.ingredient.nutrition_information.carbohydrateContent)
                 nutrition.cholesterolContent = None_sum(nutrition.cholesterolContent, values[2], db_recipe.ingredient.nutrition_information.cholesterolContent)
@@ -201,8 +189,6 @@ class Ingredient(Resource):
                 amount = int(request.json["amount"])
                 unit = str(request.json["unit"])
 
-                servingsize = int(request.json["servingsize"])
-                servingsizeunit = str(request.json["servingsizeunit"])
             except KeyError:
                 return utils.RecipeBuilder.create_error_response(400, "Missing fields",
                                                                  "Incomplete request - missing fields")
@@ -218,16 +204,12 @@ class Ingredient(Resource):
                 description=db_recipe.ingredient.description,
                 amount=db_recipe.amount,
                 unit=db_recipe.unit,
-                servingsize=db_recipe.ingredient.nutrition_information.servingSize,
-                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit
             )
 
             db_recipe.ingredient.name = name
             db_recipe.ingredient.description = description
             db_recipe.amount = amount
             db_recipe.unit = unit
-            db_recipe.ingredient.nutrition_information.servingSize = servingsize
-            db_recipe.ingredient.nutrition_information.servingSizeUnit = servingsizeunit
             db.session.commit()
             url = api.api.url_for(Ingredient, username=username, list_id=list_id, ingredient_id=ingredient_id)
         return Response(headers={
@@ -251,8 +233,6 @@ class Ingredient(Resource):
                 description=db_recipe.ingredient.description,
                 amount=db_recipe.amount,
                 unit=db_recipe.unit,
-                servingsize=db_recipe.ingredient.nutrition_information.servingSize,
-                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit,
                 calories=db_recipe.ingredient.nutrition_information.calories,
                 carbohydrateContent=db_recipe.ingredient.nutrition_information.carbohydrateContent,
                 cholesterolContent=db_recipe.ingredient.nutrition_information.cholesterolContent,
@@ -276,8 +256,6 @@ class Ingredient(Resource):
                 pass
             else:
                 nutrition = db_recipe.ingredient.nutrition_information
-                nutrition.servingSize = None_sum(nutrition.servingSize, db_recipe.ingredient.nutrition_information.servingSize)
-                #nutrition.servingSizeUnit = servingsizeunit
                 nutrition.calories = None_sum(nutrition.calories, db_recipe.ingredient.nutrition_information.calories)
                 nutrition.carbohydrateContent = None_sum(nutrition.carbohydrateContent, db_recipe.ingredient.nutrition_information.carbohydrateContent)
                 nutrition.cholesterolContent = None_sum(nutrition.cholesterolContent, db_recipe.ingredient.nutrition_information.cholesterolContent)
@@ -311,8 +289,6 @@ class Ingredient(Resource):
                 description=db_recipe.ingredient.description,
                 amount=db_recipe.amount,
                 unit=db_recipe.unit,
-                servingsize=db_recipe.ingredient.nutrition_information.servingSize,
-                servingsizeunit=db_recipe.ingredient.nutrition_information.servingSizeUnit
             )
         db.session.delete(db_recipe)
         db.session.commit()
@@ -371,9 +347,6 @@ class IngredientCollection(Resource):
                 description = str(request.json["description"])
                 amount = int(request.json["amount"])
                 unit = str(request.json["unit"])
-
-                servingsize = int(request.json["servingsize"])
-                servingsizeunit = str(request.json["servingsizeunit"])
             except KeyError:
                 return utils.RecipeBuilder.create_error_response(400, "Missing fields", "Incomplete request - missing fields")
             except ValueError:
@@ -400,8 +373,6 @@ class IngredientCollection(Resource):
 
                                                                      "request content type must be JSON")
             nutrition_information = models.NutritionInformation(
-                servingSize=servingsize,
-                servingSizeUnit=servingsizeunit,
                 calories=values[0],
                 carbohydrateContent=values[1],
                 cholesterolContent=values[2],
@@ -433,8 +404,6 @@ class IngredientCollection(Resource):
                 db_recipe.nutrition_information = nutrition_information
             else:
                 nutrition = db_recipe.nutrition_information
-                nutrition.servingSize = None_sum(nutrition.servingSize, servingsize)
-                nutrition.servingSizeUnit = servingsizeunit
                 nutrition.calories = None_sum(nutrition.calories, values[0])
                 nutrition.carbohydrateContent = None_sum(nutrition.carbohydrateContent, values[1])
                 nutrition.cholesterolContent = None_sum(nutrition.cholesterolContent, values[2])
@@ -467,8 +436,6 @@ class IngredientCollection(Resource):
                 amount = int(request.json["amount"])
                 unit = str(request.json["unit"])
 
-                servingsize = int(request.json["servingsize"])
-                servingsizeunit = str(request.json["servingsizeunit"])
             except KeyError:
                 return utils.RecipeBuilder.create_error_response(400, "Missing fields",
                                                                  "Incomplete request - missing fields")
@@ -500,8 +467,6 @@ class IngredientCollection(Resource):
 
                                                                      "request content type must be JSON")
             nutrition_information = models.NutritionInformation(
-                servingSize=servingsize,
-                servingSizeUnit=servingsizeunit,
                 calories=values[0],
                 carbohydrateContent=values[1],
                 cholesterolContent=values[2],

@@ -17,12 +17,7 @@ class RecipeItem(Resource):
         db_recipe = models.Recipe.query.filter_by(id=recipe_id).first()
         if db_recipe is None:
             return utils.RecipeBuilder.create_error_response(404, "Not Found", "No recipe was found with id {}".format(recipe_id))
-        if db_recipe.nutrition_information is None:
-            servingSize = None
-            servingSizeUnit = None
-        else:
-            servingSize = db_recipe.nutrition_information.servingSize
-            servingSizeUnit = db_recipe.nutrition_information.servingSizeUnit
+
         if db_recipe.nutrition_information is not None:
             body = utils.RecipeBuilder(
                 name=db_recipe.name,
@@ -32,8 +27,6 @@ class RecipeItem(Resource):
                 recipeCategory=db_recipe.recipeCategory,
                 author=db_recipe.author,
                 datePublished=str(db_recipe.datePublished),
-                servingSize=db_recipe.nutrition_information.servingSize,
-                servingSizeUnit=db_recipe.nutrition_information.servingSizeUnit,
                 calories=db_recipe.nutrition_information.calories,
                 carbohydrateContent=db_recipe.nutrition_information.carbohydrateContent,
                 cholesterolContent=db_recipe.nutrition_information.cholesterolContent,
@@ -139,12 +132,7 @@ class RecipeItem(Resource):
         db_recipe = models.Recipe.query.filter_by(id=recipe_id).first()
         if db_recipe is None:
             return utils.RecipeBuilder.create_error_response(404, "Not Found", "No recipe was found with id {}".format(recipe_id))
-        if db_recipe.nutrition_information is None:
-            servingSize = None
-            servingSizeUnit = None
-        else:
-            servingSize = db_recipe.nutrition_information.servingSize
-            servingSizeUnit = db_recipe.nutrition_information.servingSizeUnit
+
 
         body = utils.RecipeBuilder(
             name=db_recipe.name,
@@ -154,8 +142,6 @@ class RecipeItem(Resource):
             recipeCategory=db_recipe.recipeCategory,
             author=db_recipe.author,
             datePublished=str(db_recipe.datePublished),
-            servingSize=servingSize,
-            servingSizeUnit=servingSizeUnit
         )
 
         db.session.delete(db_recipe)
@@ -170,12 +156,7 @@ class RecipeCollection(Resource):
         recipes = db.session.query(models.Recipe).all()
         body = utils.RecipeBuilder(recipes=[])
         for recipe in recipes:
-            if recipe.nutrition_information is None:
-                servingSize = None
-                servingSizeUnit = None
-            else:
-                servingSize = recipe.nutrition_information.servingSize
-                servingSizeUnit = recipe.nutrition_information.servingSizeUnit
+
 
             item = utils.RecipeBuilder(
                 name = recipe.name,
@@ -184,9 +165,7 @@ class RecipeCollection(Resource):
                 cookTime = recipe.cookTime,
                 recipeCategory = recipe.recipeCategory,
                 author = recipe.author,
-                datePublished = str(recipe.datePublished),
-                servingSize = servingSize,
-                servingSizeUnit = servingSizeUnit
+                datePublished = str(recipe.datePublished)
             )
             item.add_control("self", "/api/recipes/{}/".format(recipe.id))
             item.add_control("profile", utils.REC_PROFILE)

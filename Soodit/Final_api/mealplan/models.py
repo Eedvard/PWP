@@ -11,8 +11,6 @@ class NutritionInformation(db.Model):
     # db.Model defaults to nutrition_information
     __tablename__ = "nutrition_information"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    servingSize = db.Column(db.Integer, nullable=False)
-    servingSizeUnit = db.Column(db.String(255), nullable=False)
     calories = db.Column(db.Integer, nullable=True)
     carbohydrateContent = db.Column(db.Integer, nullable=True)
     cholesterolContent = db.Column(db.Integer, nullable=True)

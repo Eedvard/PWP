@@ -68,8 +68,6 @@ def _populate_db():
             )
             db.session.add(sl)
             ni = NutritionInformation(
-                servingSize=j,
-                servingSizeUnit="unit-{}".format(j)
             )
             db.session.add(ni)
             ing = Ingredient(
@@ -121,7 +119,13 @@ def _get_recipesteps_json(number=1):
     """
     return {"step": 5, "text": "extra-text-{}".format(number)}
 
-
+def _get_ingredient_json(number=1):
+    """
+    Creates a valid user JSON object to be used for PUT and POST tests.
+    """
+    return {"name": "extra-name-{}".format(number), "description": "extra-description-{}".format(number),
+            "amount": number,"unit": "extra-unit-{}".format(number)
+            }
 def _check_namespace(client, response):
     """
      Checks that the "profile" namespace is found from the response body, and
@@ -206,6 +210,8 @@ def _check_control_post_method(ctrl, client, obj):
         body = _get_shoppinglist_json()
     elif (ctrl == "profile:add-step"):
         body = _get_recipesteps_json()
+    elif (ctrl == "profile:add-ingredient"):
+        body = _get_ingredient_json()
     validate(body, schema)
     resp = client.post(href, json=body)
     assert resp.status_code == 204
@@ -567,6 +573,103 @@ class TestStep(object):
         body = json.loads(resp.data)
         print(body)
         assert body["step"] == 1 and body["text"] == "text-1"
+        #_check_namespace(client, body)
+        _check_control_get_method("profile", client, body)
+       # _check_control_get_method()
+        resp = client.get(self.INVALID_URL)
+        assert resp.status_code == 404
+
+        resp = client.get(self.INVALID_URL_2)
+        assert resp.status_code == 404
+
+    def test_put(self, client):
+
+        valid = _get_shoppinglist_json()
+
+        # test with wrong content type
+        resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
+        assert resp.status_code == 415
+
+        resp = client.put(self.INVALID_URL, json=valid)
+        assert resp.status_code == 404
+
+        resp = client.put(self.INVALID_URL_2, json=valid)
+        assert resp.status_code == 404
+
+    def test_delete(self, client):
+
+       resp = client.delete(self.RESOURCE_URL)
+       assert resp.status_code == 204
+
+       resp = client.get(self.RESOURCE_URL)
+       assert resp.status_code == 404
+
+       resp = client.delete(self.INVALID_URL)
+       assert resp.status_code == 404
+
+       resp = client.delete(self.INVALID_URL_2)
+       assert resp.status_code == 404
+
+class TestRecipeIngredientCollection(object):
+
+    RESOURCE_URL = "/api/recipes/1/ingredients/"
+
+    def test_get(self, client):
+        """
+        Tests the GET method. Checks that the response status code is 200, and
+        then checks that all of the expected attributes and controls are
+        present, and the controls work. Also checks that all of the items from
+        the DB population are present, and their controls.
+        """
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        #_check_namespace(client, body)
+        _check_control_post_method("profile:add-ingredient", client, body)
+        assert len(body["ingredients"]) == 3
+        for item in body["ingredients"]:
+            _check_control_get_method("self", client, item)
+            _check_control_get_method("profile", client, item)
+            assert "amount" and "name" and "unit" and "description" in item
+
+    def test_post(self, client):
+        """
+        Tests the POST method. Checks all of the possible error codes, and
+        also checks that a valid request receives a 201 response with a
+        location header that leads into the newly created resource.
+        """
+
+        valid = _get_ingredient_json()
+
+        #test with wrong content type
+        resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
+        assert resp.status_code == 415
+
+        #test with valid and see that it exists afterward
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+        assert resp.headers["Location"].endswith(self.RESOURCE_URL + "10" + "/")
+        resp = client.get(resp.headers["Location"])
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        print(body)
+        assert body["name"] == "extra-name-1" and body["description"] == "extra-description-1" and body["unit"] == "extra-unit-1" and body["amount"] == 1
+
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+
+class TestIngredient(object):
+
+    RESOURCE_URL = "/api/recipes/1/ingredients/1/"
+    INVALID_URL = "/api/recipes/1/ingredients/0/"
+    INVALID_URL_2 = "/api/recipes/0/ingredients/1/"
+
+    def test_get(self, client):
+
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["name"] == "ingredient-1" and body["description"] == "ingredient_description-1" and body["unit"] == "unit-1" and body["amount"] == 1
         #_check_namespace(client, body)
         _check_control_get_method("profile", client, body)
        # _check_control_get_method()

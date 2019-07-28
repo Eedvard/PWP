@@ -5,7 +5,7 @@ from mealplan import api
 ERROR_PROFILE="/api/profiles/errors/"
 MASON="/api/application/vnd.mason+json"
 REC_PROFILE="/api/profiles/recipes/"
-ING_PROFILE="/api/profiles/ingredient/"
+ING_PROFILE="/api/profiles/ingredients/"
 STEPS_PROFILE = "/api/profiles/steps/"
 USER_PROFILE = "/api/profiles/users/"
 SHOPLIST_PROFILE= "/api/profiles/shoppinglists/"
@@ -164,7 +164,7 @@ class RecipeBuilder(MasonBuilder):      # Recipebuilder is based on the inventor
     def ingredient_schema():
         schema = {
             "type": "object",
-            "required": "name, description"
+            "required": ["name", "description", "amount", "unit"]
         }
         props = schema["properties"] = {}
         props["name"] = {
@@ -173,6 +173,14 @@ class RecipeBuilder(MasonBuilder):      # Recipebuilder is based on the inventor
         }
         props["description"] = {
             "description": "The description of the ingredient",
+            "type": "string"
+        }
+        props["amount"] = {
+            "description": "The amount of foodstuff needed",
+            "type": "integer"
+        }
+        props["unit"] = {
+            "description": "grams, litres etc",
             "type": "string"
         }
         return schema
