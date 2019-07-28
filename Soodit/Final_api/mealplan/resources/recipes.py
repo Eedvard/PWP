@@ -114,8 +114,7 @@ class RecipeItem(Resource):
             cookTime=db_recipe.cookTime,
             recipeCategory=db_recipe.recipeCategory,
             author=db_recipe.author,
-            datePublished=str(db_recipe.datePublished),
-            number_of_likes=db_recipe.number_of_likes
+            datePublished=str(db_recipe.datePublished)
         )
 
         db_recipe.name = name
@@ -155,14 +154,13 @@ class RecipeItem(Resource):
             recipeCategory=db_recipe.recipeCategory,
             author=db_recipe.author,
             datePublished=str(db_recipe.datePublished),
-            number_of_likes=db_recipe.number_of_likes,
             servingSize=servingSize,
             servingSizeUnit=servingSizeUnit
         )
 
         db.session.delete(db_recipe)
         db.session.commit()
-        return Response(json.dumps(body), 200, mimetype=utils.MASON)
+        return Response(json.dumps(body), 204, mimetype=utils.MASON)
 
 class RecipeCollection(Resource):
 
@@ -187,7 +185,6 @@ class RecipeCollection(Resource):
                 recipeCategory = recipe.recipeCategory,
                 author = recipe.author,
                 datePublished = str(recipe.datePublished),
-                number_of_likes = recipe.number_of_likes,
                 servingSize = servingSize,
                 servingSizeUnit = servingSizeUnit
             )
@@ -223,8 +220,7 @@ class RecipeCollection(Resource):
             cookTime = cookTime,
             recipeCategory = recipeCategory,
             author = author,
-            datePublished = datePublished,
-            number_of_likes = 0 # Number of likes is always 0 for a new recipe
+            datePublished = datePublished
         )
         db.session.add(recipe)
         db.session.commit()

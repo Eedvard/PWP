@@ -4,7 +4,7 @@ from mealplan import api
 
 ERROR_PROFILE="/api/profiles/errors/"
 MASON="/api/application/vnd.mason+json"
-REC_PROFILE="/api/profiles/recipe/"
+REC_PROFILE="/api/profiles/recipes/"
 ING_PROFILE="/api/profiles/ingredient/"
 STEPS_PROFILE = "/api/profiles/steps/"
 USER_PROFILE = "/api/profiles/users/"
@@ -102,7 +102,7 @@ class RecipeBuilder(MasonBuilder):      # Recipebuilder is based on the inventor
     def recipe_schema():
         schema = {
             "type": "object",
-            "required": ["name", "description", "recipeYield", "cookTime", "recipeCategory", "author", "datePublished"]
+            "required": ["name", "description", "recipeyield", "cooktime", "category", "author"]
         }
         props = schema["properties"] = {}
         props["name"] = {
@@ -113,25 +113,21 @@ class RecipeBuilder(MasonBuilder):      # Recipebuilder is based on the inventor
             "description": "A short description about the recipe",
             "type": "string"
         }
-        props["recipeYield"] = {
+        props["recipeyield"] = {
             "description": "Number of portions the recipe will yield",
             "type": "string"
         }
-        props["cookTime"] = {
+        props["cooktime"] = {
             "description": "The time it takes to prepare the food",
             "type": "string"
         }
-        props["recipeCategory"] = {
+        props["category"] = {
             "description": "The category the recipe belongs to",
             "type": "string"
         }
         props["author"] = {
             "description": "Username of the author of the recipe",
             "type": "string"
-        }
-        props["datePublished"] = {
-            "description": "The date the recipe was published",
-            "type": "dateTime"
         }
         return schema
 

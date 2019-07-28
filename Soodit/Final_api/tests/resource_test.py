@@ -50,7 +50,17 @@ def _populate_db():
         u = User(
             username="user-{}".format(i)
         )
+        r = Recipe(
+            name="name-{}".format(i),
+            description = "description-{}".format(i),
+            recipeYield = "yield-{}".format(i),
+            cookTime ="cooktime-{}".format(i),
+            recipeCategory = "category-{}".format(i),
+            author ="user-{}".format(i),
+            datePublished =datetime(2019, i, i, i, i, i)
+        )
         db.session.add(u)
+        db.session.add(r)
     db.session.commit()
 
 
@@ -59,6 +69,14 @@ def _get_user_json(number=1):
     Creates a valid user JSON object to be used for PUT and POST tests.
     """
     return {"username": "extra-user-{}".format(number)}
+
+def _get_recipe_json(number=1):
+    """
+    Creates a valid user JSON object to be used for PUT and POST tests.
+    """
+    return {"name": "extra-name-{}".format(number),"description": "extra-description-{}".format(number),"recipeyield": "extra-yield-{}".format(number),
+            "cooktime": "extra-cooktime-{}".format(number),"category": "extra-category-{}".format(number),"author": "extra-user-{}".format(number)
+            }
 
 
 def _check_namespace(client, response):
@@ -137,7 +155,10 @@ def _check_control_post_method(ctrl, client, obj):
     schema = ctrl_obj["schema"]
     assert method == "post"
     assert encoding == "json"
-    body = _get_user_json()
+    if (ctrl == "profile:add-user"):
+        body = _get_user_json()
+    elif (ctrl == "profile:add-recipe"):
+        body = _get_recipe_json()
     validate(body, schema)
     resp = client.post(href, json=body)
     assert resp.status_code == 204
@@ -242,6 +263,91 @@ class TestUser(object):
         assert resp.status_code == 200
         body = json.loads(resp.data)
         assert body["username"] == valid["username"]
+
+    def test_delete(self, client):
+
+       resp = client.delete(self.RESOURCE_URL)
+       assert resp.status_code == 204
+       resp = client.get(self.RESOURCE_URL)
+       assert resp.status_code == 404
+       resp = client.delete(self.INVALID_URL)
+       assert resp.status_code == 404
+
+class TestRecipeCollection(object):
+
+    RESOURCE_URL = "/api/recipes/"
+
+    def test_get(self, client):
+        """
+        Tests the GET method. Checks that the response status code is 200, and
+        then checks that all of the expected attributes and controls are
+        present, and the controls work. Also checks that all of the items from
+        the DB population are present, and their controls.
+        """
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        #_check_namespace(client, body)
+        _check_control_post_method("profile:add-recipe", client, body)
+        assert len(body["recipes"]) == 3
+        for item in body["recipes"]:
+            _check_control_get_method("self", client, item)
+            _check_control_get_method("profile", client, item)
+            assert "name" in item
+
+    def test_post(self, client):
+        """
+        Tests the POST method. Checks all of the possible error codes, and
+        also checks that a valid request receives a 201 response with a
+        location header that leads into the newly created resource.
+        """
+
+        valid = _get_recipe_json()
+
+        #test with wrong content type
+        resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
+        assert resp.status_code == 415
+
+        #test with valid and see that it exists afterward
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+        assert resp.headers["Location"].endswith(self.RESOURCE_URL + "4" + "/")
+        resp = client.get(resp.headers["Location"])
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["name"] == "extra-name-1" and body["description"] == "extra-description-1" and body["cookTime"] == "extra-cooktime-1" and body["recipeCategory"] == "extra-category-1" and body["author"] == "extra-user-1"
+
+        #Sending same data again results in 204 because there are no unique restrictions!
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+
+class TestRecipe(object):
+
+    RESOURCE_URL = "/api/recipes/1/"
+    INVALID_URL = "/api/recipes/0/"
+
+    def test_get(self, client):
+
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["name"] == "name-1" and body["description"] == "description-1" and body["cookTime"] == "cooktime-1" and body["recipeCategory"] == "category-1" and body["author"] == "user-1"
+        #_check_namespace(client, body)
+        _check_control_get_method("profile", client, body)
+       # _check_control_get_method()
+        resp = client.get(self.INVALID_URL)
+        assert resp.status_code == 404
+
+    def test_put(self, client):
+
+        valid = _get_recipe_json()
+
+        # test with wrong content type
+        resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
+        assert resp.status_code == 415
+
+        resp = client.put(self.INVALID_URL, json=valid)
+        assert resp.status_code == 404
 
     def test_delete(self, client):
 
