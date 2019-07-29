@@ -67,6 +67,7 @@ def _populate_db():
                 owner=us
             )
             db.session.add(sl)
+
             ni = NutritionInformation(
             )
             db.session.add(ni)
@@ -90,6 +91,23 @@ def _populate_db():
             )
             db.session.add(ris)
 
+    for k in range(1, 4):
+        ni1 = NutritionInformation(
+        )
+        db.session.add(ni1)
+        sling = Ingredient(
+            name="shoplist-ingredient-{}".format(k),
+            description="shoplist-ingredient-description-{}".format(k),
+            nutrition_information=ni1
+        )
+        db.session.add(sling)
+        sli = ShoppingListIngredient(
+            shopping_list = ShoppingList.query.first(),
+            ingredient = sling,
+            amount = k,
+            unit = "slist-ingredient-unit-{}".format(k)
+        )
+        db.session.add(sli)
     db.session.commit()
 
 
@@ -648,7 +666,7 @@ class TestRecipeIngredientCollection(object):
         #test with valid and see that it exists afterward
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 204
-        assert resp.headers["Location"].endswith(self.RESOURCE_URL + "10" + "/")
+        assert resp.headers["Location"].endswith(self.RESOURCE_URL + "13" + "/")
         resp = client.get(resp.headers["Location"])
         assert resp.status_code == 200
         body = json.loads(resp.data)
@@ -681,7 +699,7 @@ class TestIngredient(object):
 
     def test_put(self, client):
 
-        valid = _get_shoppinglist_json()
+        valid = _get_ingredient_json()
 
         # test with wrong content type
         resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
@@ -706,3 +724,109 @@ class TestIngredient(object):
 
        resp = client.delete(self.INVALID_URL_2)
        assert resp.status_code == 404
+
+class TestShoppingListIngredientCollection(object):
+
+    RESOURCE_URL = "/api/users/user-1/shoppinglist/1/ingredients/"
+
+    def test_get(self, client):
+        """
+        Tests the GET method. Checks that the response status code is 200, and
+        then checks that all of the expected attributes and controls are
+        present, and the controls work. Also checks that all of the items from
+        the DB population are present, and their controls.
+        """
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        #_check_namespace(client, body)
+        _check_control_post_method("profile:add-ingredient", client, body)
+        print(body)
+        assert len(body["ingredients"]) == 3
+        for item in body["ingredients"]:
+            _check_control_get_method("self", client, item)
+            _check_control_get_method("profile", client, item)
+            assert "amount" and "name" and "unit" and "description" in item
+
+    def test_post(self, client):
+        """
+        Tests the POST method. Checks all of the possible error codes, and
+        also checks that a valid request receives a 201 response with a
+        location header that leads into the newly created resource.
+        """
+
+        valid = _get_ingredient_json()
+
+        #test with wrong content type
+        resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
+        assert resp.status_code == 415
+
+        #test with valid and see that it exists afterward
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+        assert resp.headers["Location"].endswith(self.RESOURCE_URL + "13" + "/")
+        resp = client.get(resp.headers["Location"])
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        print(body)
+        assert body["name"] == "extra-name-1" and body["description"] == "extra-description-1" and body["unit"] == "extra-unit-1" and body["amount"] == 1
+
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+
+class TestShoppingListIngredient(object):
+
+    RESOURCE_URL = "/api/users/user-1/shoppinglist/1/ingredients/10/"
+    INVALID_URL = "/api/users/user-1/shoppinglist/1/ingredients/0/"
+    INVALID_URL_2 = "/api/users/user-1/shoppinglist/0/ingredients/1/"
+    INVALID_URL_3 = "/api/users/user-0/shoppinglist/1/ingredients/1/"
+
+    def test_get(self, client):
+
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["name"] == "shoplist-ingredient-1" and body["description"] == "shoplist-ingredient-description-1" and body["unit"] == "slist-ingredient-unit-1" and body["amount"] == 1
+        #_check_namespace(client, body)
+        _check_control_get_method("profile", client, body)
+       # _check_control_get_method()
+        resp = client.get(self.INVALID_URL)
+        assert resp.status_code == 404
+
+        resp = client.get(self.INVALID_URL_2)
+        assert resp.status_code == 404
+
+    def test_put(self, client):
+
+        valid = _get_shoppinglist_json()
+
+        # test with wrong content type
+        resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
+        assert resp.status_code == 415
+
+        resp = client.put(self.INVALID_URL, json=valid)
+        assert resp.status_code == 404
+
+        resp = client.put(self.INVALID_URL_2, json=valid)
+        assert resp.status_code == 404
+
+        resp = client.put(self.INVALID_URL_3, json=valid)
+        assert resp.status_code == 404
+
+    def test_delete(self, client):
+
+       resp = client.delete(self.RESOURCE_URL)
+       assert resp.status_code == 204
+
+       resp = client.get(self.RESOURCE_URL)
+       assert resp.status_code == 404
+
+       resp = client.delete(self.INVALID_URL)
+       assert resp.status_code == 404
+
+       resp = client.delete(self.INVALID_URL_2)
+       assert resp.status_code == 404
+
+       resp = client.delete(self.INVALID_URL_3)
+       assert resp.status_code == 404
+
