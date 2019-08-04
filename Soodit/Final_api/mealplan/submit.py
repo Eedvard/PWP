@@ -8,7 +8,7 @@ import time
 from dataclasses import dataclass
 from tinytag import TinyTag, TinyTagexception
 
-API_URL =
+API_URL = "http://private-47b898-pwpkesa.apiary-mock.com"
 ISO_DATE = "%Y-%m-%d"
 ISO_TIME = "%H:%M:%S"
 DATE_FORMATS = ["%Y", ISO_DATE]
@@ -40,6 +40,7 @@ API_TAG_RECIPESTEP_MAPPING = {
     "text" : "instruction"
 }
 
+
 class APIError(Exception):
     """
     used when API responds with an error code
@@ -58,6 +59,7 @@ class APIError(Exception):
             msgs="\n".join(self.error["@error"]["@messages"])
         )
 
+
 def make_iso_format_date(value):
 
     for form in DATE_FORMATS:
@@ -71,9 +73,12 @@ def make_iso_format_date(value):
         value = input("Type ISO format date that matches {}".format(value))
     return value
 
+
 def make_iso_format_time(value):
 
     return time.strftime(ISO_TIME, time.gmtime(value))
+
+# valitaan haluttu resepti jos löytyy samalla nimellä useita
 
 def prompt_recipe_choice(name, hits):
 
@@ -82,3 +87,72 @@ def prompt_recipe_choice(name, hits):
         print("{i}: {name} ({description},{recipeyield},{cookTime},{recipeCategory},{author},{datePublished}}".format(i=i, **recipe))
     choice = int(input("Choose artist by typing a number: "))
     return items[choice - 1]
+
+# etsii collectionista reseptin. Jos samannimisiä reseptejä, niin tulostaa ne ja pyörittää prompt_recipe_choice()
+
+def find_recipe_href(name, collection):
+    name = name.lower()
+    hits = []
+    for item in collection:
+        if item["name"].lower() == name:
+            hits.append(item)
+    if len(hits) == 1:
+        return hits[0]["@controls"]["self"]["href"]
+    elif len(hits) >= 2:
+        return prompt_recipe_choice(name, hits)["@controls"]["self"]["href"]
+    else:
+        return None
+
+# etsii collectionista ruoka-aineen
+
+def find_ingredient_href(name, collection)
+    name = name.lower()
+    for item in collection:
+        if item["name"].lower()== name:
+            return item["@controls"]["self"]["href"]
+    return None
+
+# Etsii collectionista käyttäjän
+
+def find_user_href(username, collection)
+    username = username.lower()
+    for item in collection:
+        if item["username"].lower() == username:
+            return item["@controls"]["self"]["href"]
+    return None
+
+
+
+def find_recipe_item(tag, collection):
+    name = tag.name.lower()
+    hits = []
+    for item in collection:
+        if item["name"].lower() == name:
+            hits.append(item)
+    if len(hits) == 1:
+        return hits[0]
+    elif len(hits) >= 2:
+        author_n = tag.author or 1
+        date_n = tag.date
+        for item in hits:
+            if item["author"] == author_n and item["datePublished"] == date_n:
+                return item
+        return None
+    else:
+        author_n = tag.author or 1
+        date_n = tag.date
+        for item in collection:
+            if item["datePublished"] == date_n and item["author"] == author_n:
+                return item
+        return None
+
+def submit_data(s, ctrl, data):
+
+    resp = s.request(
+        ctrl["method"],
+        API_URL + ctrl["href"],
+        data=json.dumps(data),
+        headers = {"Content-type": "application/json"}
+    )
+    return resp
+
