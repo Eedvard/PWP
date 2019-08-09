@@ -1,4 +1,4 @@
-from flask import Blueprint, send_from_directory
+from flask import Blueprint, send_from_directory, Response, request
 from flask_restful import Resource, Api
 
 api_bp = Blueprint("api", __name__, url_prefix="/api", static_folder='static')
@@ -12,6 +12,8 @@ from mealplan.resources.recipes import RecipeItem, RecipeCollection
 from mealplan.resources.steps import Step, StepCollection
 from mealplan.resources.ingredients import  Ingredient, IngredientCollection
 from mealplan.resources.shoppinglists import  Shoppinglist, ShoppingListCollection
+from mealplan import utils
+import json
 
 api.add_resource(Users, "/users/<username>/")
 api.add_resource(UserCollection, "/users/")
@@ -28,7 +30,13 @@ api.add_resource(ShoppingListCollection, "/users/<username>/shoppinglist/")
 
 @api_bp.route("/")
 def index():
-    return "paska"
+    body = utils.RecipeBuilder()
+    body.add_control_all_recipes()
+    body.add_control_add_recipe()
+    body.add_control_all_users()
+    body.add_control_add_user()
+    return Response(json.dumps(body), 200, mimetype=utils.MASON)
+
 
 @api_bp.route("/profiles/<resource>/")
 def send_profile_html(resource):

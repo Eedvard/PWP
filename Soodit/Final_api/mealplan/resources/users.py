@@ -27,6 +27,8 @@ class Users(Resource):
         body.add_control_delete_user(username)
         body.add_control_edit_user(username)
         body.add_control("storage:users-all", api.api.url_for(Users, username=username))
+        body.add_control_add_shoppinglist(username)
+        body.add_control_all_shoppinglists(username)
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
     def put(self, username):

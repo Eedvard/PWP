@@ -77,6 +77,10 @@ class RecipeItem(Resource):
         body.add_control_delete_recipe(recipe_id)
         body.add_control_edit_recipe(recipe_id)
         body.add_control("storage:recipes-all", api.api.url_for(RecipeItem, recipe_id=recipe_id))
+        body.add_control_add_recipe_ingredient(recipe_id)
+        body.add_control_all_recipe_ingredients(recipe_id)
+        body.add_control_add_step(recipe_id)
+        body.add_control_all_steps(recipe_id)
         return Response(json.dumps(body), 200, mimetype=utils.MASON)
 
     def put(self, recipe_id):
