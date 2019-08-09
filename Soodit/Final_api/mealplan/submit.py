@@ -206,11 +206,38 @@ def submit_data(s, ctrl, data):
     )
     return resp
 
+def delete(s, ctrl):
+
+    delctrl = ctrl["profile:delete"]
+    resp = s.request(
+        delctrl["method"],
+        API_URL + delctrl["href"],
+        headers={"Content-type": "application/json"}
+    )
+    return resp
 
 def create_user(s, username, ctrl):
 
     body = {}
     ctrl = ctrl["profile:add-user"]
+    schema = ctrl["schema"]
+    for field in schema["required"]:
+        if field == "username":
+            body[field] = username
+        else:
+            print("Unknown required field '{}'".format(field))
+            body[field] = input("Provide value: ")
+    print(body)
+    resp = submit_data(s, ctrl, body)
+    if resp.status_code == 204:
+        return resp.headers["Location"]
+    else:
+        raise APIError(resp.status_code, resp.content)
+
+def change_user(s, username, ctrl):
+
+    body = {}
+    ctrl = ctrl["profile:edit-user"]
     schema = ctrl["schema"]
     for field in schema["required"]:
         if field == "username":
@@ -249,6 +276,8 @@ def create_recipe(s, recipeargs, ctrl):
         return resp.headers["Location"]
     else:
         raise APIError(resp.status_code, resp.content)
+
+
 
 
 
@@ -325,9 +354,12 @@ class Client():
     def openingView(self):
 
         layout = [
-            [sg.Button("Create new user"), sg.Button("Login"), sg.Button("Exit")]
+            [sg.Button("Create new user"), sg.Button("Login"), sg.Button("Exit")],
         ]
-        self.window = sg.Window('Dont starve').Layout(layout)
+        window1 = sg.Window('Dont starve').Layout(layout)
+        if(self.window is not None):
+            self.window.Close()
+        self.window = window1
         button, values = self.window.Read()
         if button is None or button == 'Exit':
             self.endloop = True
@@ -362,7 +394,7 @@ class Client():
             except Input_error:
                 sg.Popup('User not found')
             else:
-                self.userloc = find_user_href(values[0], users)
+                self.userloc = API_URL + find_user_href(values[0], users)
                 self.username = user["username"]
                 self.clientstate = 3
 
@@ -392,18 +424,20 @@ class Client():
             except Input_error:
                 sg.Popup('User with that name already exists')
             else:
-                userloc = create_user(s, values[0], body["@controls"])
-                username = values[0]
+                self.userloc = create_user(s, values[0], body["@controls"])
+                self.username = values[0]
                 self.clientstate = 3
 
     def userScreen(self):
 
-        resp = s.get(API_URL + self.userloc)
+        resp = s.get(self.userloc)
         userbody = resp.json()
-        print(userbody)
+        print("jaa")
+        print(userbody["@controls"])
         layout = [
             [sg.Text('Please enter your username')],
-            [sg.Button("Recipes"), sg.Button("Shoppinglists"), sg.Button("Back")]
+            [sg.Button("Recipes"), sg.Button("Shoppinglists"), sg.Button("Back")],
+            [sg.Button("Delete your user"), sg.Button("Change username")]
         ]
         window1 = sg.Window(self.username).Layout(layout)
         self.window.Close()
@@ -411,7 +445,38 @@ class Client():
         button, values = self.window.Read()
         if (button == "Recipes"):
             self.clientstate = 4
-
+        elif(button == "Shoppinglists"):
+            print("ja")
+        elif(button == "Delete your user"):
+            delete(s, userbody["@controls"])
+            self.clientstate=0
+        elif(button == "Change username"):
+            layout = [
+                [sg.Text('Please enter your new')],
+                [sg.Text('Name', size=(15, 1)), sg.InputText(self.username)],
+                [sg.Button("Change username"), sg.Button("Back")]
+            ]
+            window1 = sg.Window('Dont starve').Layout(layout)
+            self.window.Close()
+            self.window = window1
+            button, values = self.window.Read()
+            if (button == "Back"):
+                self.window.Close()
+                self.clientstate = 1
+            elif (button == "Change username"):
+                try:
+                    users = get_users(s, body["@controls"])
+                    user = find_user_item(values[0], users)
+                    if (user != None or values[0] == None):
+                        raise Input_error
+                    elif (button == None):
+                        self.endloop = True
+                except Input_error:
+                    sg.Popup('User with that name already exists')
+                else:
+                    self.userloc = change_user(s, values[0], userbody["@controls"])
+                    self.username = values[0]
+                    self.clientstate = 3
     def recipeScreen(self):
 
         recipes = get_recipes(s, body["@controls"])
