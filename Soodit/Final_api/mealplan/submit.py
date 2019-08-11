@@ -354,7 +354,6 @@ def modify_step(s, stepargs, ctrl):
             body[field] = int(stepargs[0])
         elif field == "text":
             body[field] = stepargs[1]
-    print(body)
     resp = submit_data(s, ctrl, body)
     if resp.status_code == 204:
         return resp.headers["Location"]
@@ -441,7 +440,6 @@ class Client():
             try:
                 users = get_users(s, body["@controls"])
                 user = find_user_item(values[0], users)
-                print(user)
                 if (user == None or values[0] == None):
                     raise Input_error
                 elif (button == None):
@@ -488,8 +486,6 @@ class Client():
 
         resp = s.get(self.userloc)
         userbody = resp.json()
-        print("jaa")
-        print(userbody["@controls"])
         layout = [
             [sg.Text('Please enter your username')],
             [sg.Button("Recipes"), sg.Button("Shoppinglists"), sg.Button("Back")],
@@ -626,8 +622,6 @@ class Client():
                 if(values[0]!=[]):
                     resp = s.get(API_URL + values[0][0]["@controls"]["self"]["href"])
                     ingredientbody = resp.json()
-                    print(ingredientbody)
-                    print("paska")
                     delete(s, ingredientbody["@controls"])
             elif (button == "Add step"):
                 self.addStep(recipebody)
@@ -756,7 +750,6 @@ class Client():
             while True:
                 try:
                     button, values = popwindow.Read()
-                    print(values)
                     if(button=="Back"):
                         break
                     elif(button=="Submit"):

@@ -37,6 +37,7 @@ class Step(Resource):
         if db_recipe is None:
             return utils.RecipeBuilder.create_error_response(404, "Not found", "No recipe was found with the name {}".format(recipe_id))
         try:
+            step = int(request.json["step"])
             text = str(request.json["text"])
         except KeyError:
             return utils.RecipeBuilder.create_error_response(400, "Missing fields", "Incomplete request - missing fields")
@@ -51,7 +52,7 @@ class Step(Resource):
             step=db_recipe.step,
             text=db_recipe.text
         )
-
+        db_recipe.step=step
         db_recipe.text=text
 
         db.session.commit()
