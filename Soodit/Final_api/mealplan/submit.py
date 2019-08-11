@@ -346,7 +346,6 @@ class Input_error(BaseException):
 class Client():
 
     def __init__(self):
-        self.clientstate = 0
         self.button = 0
         self.endloop = False
         self.window = None
@@ -364,9 +363,9 @@ class Client():
         if button is None or button == 'Exit':
             self.endloop = True
         elif (button == "Login"):
-            self.clientstate = 1
+            self.loginScreen()
         elif (button == "Create new user"):
-            self.clientstate = 2
+            self.userCreateScreen()
 
     def loginScreen(self):
 
@@ -381,7 +380,7 @@ class Client():
         button, values = self.window.Read()
         if (button == "Back"):
             self.window.Close()
-            self.clientstate = 0
+            self.openingView()
         elif (button == "Login"):
             try:
                 users = get_users(s, body["@controls"])
@@ -396,7 +395,7 @@ class Client():
             else:
                 self.userloc = API_URL + find_user_href(values[0], users)
                 self.username = user["username"]
-                self.clientstate = 3
+                self.userScreen()
 
 
     def userCreateScreen(self):
@@ -409,24 +408,25 @@ class Client():
         window1 = sg.Window('Dont starve').Layout(layout)
         self.window.Close()
         self.window = window1
-        button, values = self.window.Read()
-        if (button == "Back"):
-            self.window.Close()
-            self.clientstate = 0
-        elif (button == "Create user"):
+
+
+        while True:
             try:
-                users = get_users(s, body["@controls"])
-                user = find_user_item(values[0], users)
-                if (user != None or values[0] == None):
-                    raise Input_error
+                button, values = self.window.Read()
+                if (button == "Back"):
+                    self.window.Close()
+                    self.openingView()
+                elif (button == "Create user"):
+                    self.userloc = create_user(s, values[0], body["@controls"])
+
                 elif (button == None):
-                    self.endloop=True
-            except Input_error:
-                sg.Popup('User with that name already exists')
+                        self.endloop=True
+            except APIError as ae:
+                sg.Popup(str(ae.error["@error"]["@messages"]))
             else:
-                self.userloc = create_user(s, values[0], body["@controls"])
                 self.username = values[0]
-                self.clientstate = 3
+                self.userScreen()
+                break
 
     def userScreen(self):
 
@@ -444,12 +444,12 @@ class Client():
         self.window = window1
         button, values = self.window.Read()
         if (button == "Recipes"):
-            self.clientstate = 4
+            self.recipeScreen()
         elif(button == "Shoppinglists"):
             print("ja")
         elif(button == "Delete your user"):
             delete(s, userbody["@controls"])
-            self.clientstate=0
+            self.openingView()
         elif(button == "Change username"):
             layout = [
                 [sg.Text('Please enter your new')],
@@ -459,24 +459,24 @@ class Client():
             window1 = sg.Window('Dont starve').Layout(layout)
             self.window.Close()
             self.window = window1
-            button, values = self.window.Read()
-            if (button == "Back"):
-                self.window.Close()
-                self.clientstate = 1
-            elif (button == "Change username"):
+
+            while True:
                 try:
-                    users = get_users(s, body["@controls"])
-                    user = find_user_item(values[0], users)
-                    if (user != None or values[0] == None):
-                        raise Input_error
+                    button, values = self.window.Read()
+                    if (button == "Back"):
+                        self.window.Close()
+                        self.openingView()
+                    elif (button == "Change username"):
+                        self.userloc = change_user(s, values[0], userbody["@controls"])
                     elif (button == None):
                         self.endloop = True
-                except Input_error:
-                    sg.Popup('User with that name already exists')
+                        break
+                except APIError as ae:
+                    sg.Popup(str(ae.error["@error"]["@messages"]))
                 else:
-                    self.userloc = change_user(s, values[0], userbody["@controls"])
                     self.username = values[0]
-                    self.clientstate = 3
+                    self.userScreen()
+                    break
     def recipeScreen(self):
 
         recipes = get_recipes(s, body["@controls"])
@@ -525,7 +525,7 @@ class Client():
             window = window1
             button, values = window.Read()
             if (button == "Add ingredient"):
-                self.addingredient()
+                self.addingredient(recipebody)
 
         elif (button == "Create new recipe"):
             layout = [
@@ -540,57 +540,54 @@ class Client():
             window1 = sg.Window(self.username).Layout(layout).Finalize()
             window.Close()
             window = window1
-            button, values = window.Read()
-            values[5] = self.username
-            self.recipeloc = create_recipe(s, values, body["@controls"])
+            while True:
+                try:
+                    button, values = window.Read()
+                    values[5] = self.username
+                    self.recipeloc = create_recipe(s, values, body["@controls"])
+                except APIError as ae:
+                    sg.Popup(str(ae.error["@error"]["@messages"]))
+                else:
+                    break
 
-    def addingredient(self):
 
-        layout = [
-            [sg.Text('Required fields')],
-            [sg.Text('Name', size=(15, 1)), sg.InputText()],
-            [sg.Text("Description", size=(15, 1)), sg.InputText()],
-            [sg.Text("Amount", size=(15, 1)), sg.InputText()],
-            [sg.Text('Unit', size=(15, 1)), sg.InputText()],
-            [sg.Text('Optional fields')],
-            [sg.Text('Calories', size=(15, 1)), sg.InputText()],
-            [sg.Text('Carbonhydrate content', size=(15, 1)), sg.InputText()],
-            [sg.Text('Cholesterol content', size=(15, 1)), sg.InputText()],
-            [sg.Text('Fat content', size=(15, 1)), sg.InputText()],
-            [sg.Text('Fiber content', size=(15, 1)), sg.InputText()],
-            [sg.Text('Protein content', size=(15, 1)), sg.InputText()],
-            [sg.Text('Saturated fat content', size=(15, 1)), sg.InputText()],
-            [sg.Text('Sodium content', size=(15, 1)), sg.InputText()],
-            [sg.Text('Sugar content', size=(15, 1)), sg.InputText()],
-            [sg.Text('Transfat content', size=(15, 1)), sg.InputText()],
-            [sg.Text('Unsaturated fat content', size=(15, 1)), sg.InputText()],
-            [sg.Button("Submit"), sg.Button("Back")]
-        ]
+    def addingredient(self, recipebody):
 
-        window1 = sg.Window(self.username).Layout(layout).Finalize()
-        self.window.Close()
-        self.window = window1
-        button, values = self.window.Read()
-        self.ingredientloc = create_recipe(s, values, body["@controls"])
-
-    def run(self):
-
-        while True:
-            if(self.endloop==True):
-                break
-            if(self.clientstate==0):
-                self.openingView()
-            elif(self.clientstate==1):
-                self.loginScreen()
-            elif(self.clientstate==2):
-                self.userCreateScreen()
-            elif(self.clientstate==3):
-                self.userScreen()
-            elif (self.clientstate == 4):
-                self.recipeScreen()
-
-            elif (self.clientstate == 5):
-                print("paska")
+            layout = [
+                [sg.Text('Required fields')],
+                [sg.Text('Name', size=(15, 1)), sg.InputText()],
+                [sg.Text("Description", size=(15, 1)), sg.InputText()],
+                [sg.Text("Amount", size=(15, 1)), sg.InputText()],
+                [sg.Text('Unit', size=(15, 1)), sg.InputText()],
+                [sg.Text('Optional fields')],
+                [sg.Text('Calories', size=(15, 1)), sg.InputText()],
+                [sg.Text('Carbonhydrate content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Cholesterol content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Fat content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Fiber content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Protein content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Saturated fat content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Sodium content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Sugar content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Transfat content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Unsaturated fat content', size=(15, 1)), sg.InputText()],
+                [sg.Button("Submit"), sg.Button("Back")]
+            ]
+            window1 = sg.Window(self.username).Layout(layout).Finalize()
+            while True:
+                try:
+                    button, values = window1.Read()
+                    if(button=="Back"):
+                        break
+                    elif(button=="Submit"):
+                        self.ingredientloc = create_ingredient(s, values, recipebody["@controls"])
+                    else:
+                        break
+                except APIError as ae:
+                    sg.Popup(str(ae.error["@error"]["@messages"]))
+                else:
+                    window1.Close()
+                    break
 
 
 if __name__ == "__main__":
@@ -653,12 +650,11 @@ if __name__ == "__main__":
         for user in users:
             print(user["username"])
         """
-        clientstate = 0
         button = 0
         endloop = False
         client = Client()
-        client.run()
-
+        #client.run()
+        client.openingView()
             #print(user)
 
         """
