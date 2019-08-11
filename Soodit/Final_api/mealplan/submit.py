@@ -597,13 +597,27 @@ class Client():
             ]
             ingredients = get_ingredients(s, recipebody["@controls"])
             steps = get_steps(s, recipebody["@controls"])
-            tab2_layout = [[sg.Listbox(values=ingredients, size=(30, 6))],
+            tab2_layout = [
+                [sg.Text('Calories' + " : " + str(recipebody["calories"]))],
+                [sg.Text('Carbonhydrate content' + " : " + str(recipebody["carbohydrateContent"]))],
+                [sg.Text('Cholesterol content' + " : " + str(recipebody["cholesterolContent"]))],
+                [sg.Text('Fat content' + " : " + str(recipebody["fatContent"]))],
+                [sg.Text('Fiber content' + " : " + str(recipebody["fiberContent"]))],
+                [sg.Text('Protein content' + " : " + str(recipebody["proteinContent"]))],
+                [sg.Text('Saturated fat content' + " : " + str(recipebody["saturatedFatContent"]))],
+                [sg.Text('Sodium content' + " : " + str(recipebody["sodiumContent"]))],
+                [sg.Text('Sugar content' + " : " + str(recipebody["sugarContent"]))],
+                [sg.Text('Trans fat content' + " : " + str(recipebody["transFatContent"]))],
+                [sg.Text('Unsaturated fat content' + " : " + str(recipebody["unsaturatedFatContent"]))]
+
+            ]
+            tab3_layout = [[sg.Listbox(values=ingredients, size=(50, 6))],
                            [sg.Button("Add ingredient"), sg.Button("Modify ingredient"),
                             sg.Button("Delete ingredient")]]
-            tab3_layout = [[sg.Listbox(values=steps, size=(30, 6))],
+            tab4_layout = [[sg.Listbox(values=steps, size=(30, 6))],
                            [sg.Button("Add step"), sg.Button("Modify step"), sg.Button("Delete step")]]
-            layout = [[sg.TabGroup([[sg.Tab('Recipe information', tab1_layout), sg.Tab('Ingredients', tab2_layout),
-                                     sg.Tab('Steps', tab3_layout)]])],
+            layout = [[sg.TabGroup([[sg.Tab('Recipe information', tab1_layout), sg.Tab('Nutrition information', tab2_layout), sg.Tab('Ingredients', tab3_layout),
+                                     sg.Tab('Steps', tab4_layout)]])],
                       [sg.Button("Back")]]
             if(window1 is not None):
                 window1.Close()

@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="c099d6ae-bada-4032-9f2d-2f7e07a24271" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/instance/development.db" beforeDir="false" afterPath="$PROJECT_DIR$/instance/development.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mealplan/resources/steps.py" beforeDir="false" afterPath="$PROJECT_DIR$/mealplan/resources/steps.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mealplan/submit.py" beforeDir="false" afterPath="$PROJECT_DIR$/mealplan/submit.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -198,7 +196,8 @@
       <workItem from="1565513087664" duration="4034000" />
       <workItem from="1565525859059" duration="6925000" />
       <workItem from="1565548038380" duration="133000" />
-      <workItem from="1565556669989" duration="543000" />
+      <workItem from="1565556669989" duration="904000" />
+      <workItem from="1565558228636" duration="928000" />
     </task>
     <servers />
   </component>
@@ -219,7 +218,7 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Final_api$submit.coverage" NAME="submit Coverage Results" MODIFIED="1565557269791" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mealplan" />
+    <SUITE FILE_PATH="coverage/Final_api$submit.coverage" NAME="submit Coverage Results" MODIFIED="1565559254751" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mealplan" />
     <SUITE FILE_PATH="coverage/Final_api$Flask__mealplan___init___py_.coverage" NAME="Flask (mealplan/__init__.py) Coverage Results" MODIFIED="1564183066963" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/Final_api$__init__.coverage" NAME="__init__ Coverage Results" MODIFIED="1562770453321" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mealplan" />
   </component>
