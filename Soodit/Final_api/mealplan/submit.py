@@ -224,10 +224,6 @@ def create_user(s, username, ctrl):
     for field in schema["required"]:
         if field == "username":
             body[field] = username
-        else:
-            print("Unknown required field '{}'".format(field))
-            body[field] = input("Provide value: ")
-    print(body)
     resp = submit_data(s, ctrl, body)
     if resp.status_code == 204:
         return resp.headers["Location"]
@@ -242,10 +238,6 @@ def change_user(s, username, ctrl):
     for field in schema["required"]:
         if field == "username":
             body[field] = username
-        else:
-            print("Unknown required field '{}'".format(field))
-            body[field] = input("Provide value: ")
-    print(body)
     resp = submit_data(s, ctrl, body)
     if resp.status_code == 204:
         return resp.headers["Location"]
@@ -270,7 +262,6 @@ def create_recipe(s, recipeargs, ctrl):
             body[field] = recipeargs[4]
         elif field == "author":
             body[field] = recipeargs[5]
-    print(body)
     resp = submit_data(s, ctrl, body)
     if resp.status_code == 204:
         return resp.headers["Location"]
@@ -294,10 +285,75 @@ def create_ingredient(s, ingrargs, ctrl):
             body[field] = ingrargs[2]
         elif field == "unit":
             body[field] = ingrargs[3]
-        elif field == "servingsize":
-            body[field] = ingrargs[4]
-        elif field == "servingsizeunit":
-            body[field] = ingrargs[5]
+
+    optional = ["calories", "carbohydratecontent", "cholesterolcontent", "fatcontent", "fibercontent",
+                "proteincontent", "saturatedfatcontent", "sodiumcontent", "sugarcontent", "transfatcontent",
+                "unsaturatedfatcontent"]
+    i = 4
+    for field in optional:
+        if(ingrargs[i]!=""):
+            body[field] = ingrargs[i]
+        i += 1
+    resp = submit_data(s, ctrl, body)
+    if resp.status_code == 204:
+        return resp.headers["Location"]
+    else:
+        raise APIError(resp.status_code, resp.content)
+
+def modify_ingredient(s, ingrargs, ctrl):
+    body = {}
+    ctrl = ctrl["profile:edit-ingredient"]
+    schema = ctrl["schema"]
+    for field in schema["required"]:
+        if field == "name":
+            body[field] = ingrargs[0]
+        elif field == "description":
+            body[field] = ingrargs[1]
+        elif field == "amount":
+            body[field] = ingrargs[2]
+        elif field == "unit":
+            body[field] = ingrargs[3]
+
+    optional = ["calories", "carbohydratecontent", "cholesterolcontent", "fatcontent", "fibercontent",
+                "proteincontent", "saturatedfatcontent", "sodiumcontent", "sugarcontent", "transfatcontent",
+                "unsaturatedfatcontent"]
+    i = 4
+    for field in optional:
+        if(ingrargs[i]!=""):
+            body[field] = ingrargs[i]
+        i += 1
+    resp = submit_data(s, ctrl, body)
+    if resp.status_code == 204:
+        return resp.headers["Location"]
+    else:
+        raise APIError(resp.status_code, resp.content)
+
+def create_step(s, stepargs, ctrl):
+
+    body = {}
+    ctrl = ctrl["profile:add-step"]
+    schema = ctrl["schema"]
+    for field in schema["required"]:
+        if field == "step":
+            body[field] = stepargs[0]
+        elif field == "text":
+            body[field] = stepargs[1]
+    resp = submit_data(s, ctrl, body)
+    if resp.status_code == 204:
+        return resp.headers["Location"]
+    else:
+        raise APIError(resp.status_code, resp.content)
+
+def modify_step(s, stepargs, ctrl):
+
+    body = {}
+    ctrl = ctrl["profile:edit-step"]
+    schema = ctrl["schema"]
+    for field in schema["required"]:
+        if field == "step":
+            body[field] = int(stepargs[0])
+        elif field == "text":
+            body[field] = stepargs[1]
     print(body)
     resp = submit_data(s, ctrl, body)
     if resp.status_code == 204:
@@ -493,22 +549,55 @@ class Client():
         window1 = sg.Window(self.username).Layout(layout).Finalize()
         self.window.Close()
         window = window1
-        button, values = window.Read()
-        if (button == "Pick recipe"):
-            name = values[0][0].split(" ")
-            picked_recipe = recipes[int(name[0]) - 1]
-            resp = s.get(API_URL + picked_recipe["@controls"]["self"]["href"])
-            recipebody = resp.json()
-            print(recipes[int(name[0]) - 1])
-            print(recipebody)
+        while True:
+            button, values = window.Read()
+            if (button == "Pick recipe"):
+                if(values[0]!=[]):
+                    name = values[0][0].split(" ")
+                    picked_recipe = recipes[int(name[0]) - 1]
+                    resp = s.get(API_URL + picked_recipe["@controls"]["self"]["href"])
+                    recipebody = resp.json()
+                    self.singleRecipe(recipebody)
+
+            elif (button == "Create new recipe"):
+                layout = [
+                    [sg.Text('Please input the required fields')],
+                    [sg.Text('Name', size=(15, 1)), sg.InputText()],
+                    [sg.Text("Description", size=(15, 1)), sg.InputText()],
+                    [sg.Text('Recipe Yield', size=(15, 1)), sg.InputText()],
+                    [sg.Text('Cooktime', size=(15, 1)), sg.InputText()],
+                    [sg.Text('Category', size=(15, 1)), sg.InputText()],
+                    [sg.Button("Create user"), sg.Button("Back")]
+                ]
+                window1 = sg.Window(self.username).Layout(layout).Finalize()
+                window.Close()
+                window = window1
+                while True:
+                    try:
+                        button, values = window.Read()
+                        values[5] = self.username
+                        self.recipeloc = create_recipe(s, values, body["@controls"])
+                    except APIError as ae:
+                        sg.Popup(str(ae.error["@error"]["@messages"]))
+                    else:
+                        break
+            elif (button == "Back"):
+                self.userScreen()
+
+    def singleRecipe(self, recipebody):
+
+        #window.Close()
+        #window = window1
+        window1=None
+        while True:
             tab1_layout = [
-                [sg.Text('Name' + " : " + picked_recipe["name"])],
-                [sg.Text('Description' + " : " + picked_recipe["description"])],
-                [sg.Text('RecipeYield' + " : " + picked_recipe["recipeYield"])],
-                [sg.Text('Cooktime' + " : " + picked_recipe["cookTime"])],
-                [sg.Text('Recipe category' + " : " + picked_recipe["recipeCategory"])],
-                [sg.Text('Author' + " : " + picked_recipe["author"])],
-                [sg.Text('Date published' + " : " + picked_recipe["datePublished"])]
+                [sg.Text('Name' + " : " + recipebody["name"])],
+                [sg.Text('Description' + " : " + recipebody["description"])],
+                [sg.Text('RecipeYield' + " : " + recipebody["recipeYield"])],
+                [sg.Text('Cooktime' + " : " + recipebody["cookTime"])],
+                [sg.Text('Recipe category' + " : " + recipebody["recipeCategory"])],
+                [sg.Text('Author' + " : " + recipebody["author"])],
+                [sg.Text('Date published' + " : " + recipebody["datePublished"])]
             ]
             ingredients = get_ingredients(s, recipebody["@controls"])
             steps = get_steps(s, recipebody["@controls"])
@@ -520,38 +609,43 @@ class Client():
             layout = [[sg.TabGroup([[sg.Tab('Recipe information', tab1_layout), sg.Tab('Ingredients', tab2_layout),
                                      sg.Tab('Steps', tab3_layout)]])],
                       [sg.Button("Back")]]
+            if(window1 is not None):
+                window1.Close()
+
             window1 = sg.Window(self.username).Layout(layout).Finalize()
-            window.Close()
-            window = window1
-            button, values = window.Read()
+
+            button, values = window1.Read()
             if (button == "Add ingredient"):
-                self.addingredient(recipebody)
+                self.addIngredient(recipebody)
+            elif (button == "Modify ingredient"):
+                if(values[0]!=[]):
+                    resp = s.get(API_URL + values[0][0]["@controls"]["self"]["href"])
+                    ingredientbody = resp.json()
+                    self.editIngredient(ingredientbody)
+            elif(button == "Delete ingredient"):
+                if(values[0]!=[]):
+                    resp = s.get(API_URL + values[0][0]["@controls"]["self"]["href"])
+                    ingredientbody = resp.json()
+                    print(ingredientbody)
+                    print("paska")
+                    delete(s, ingredientbody["@controls"])
+            elif (button == "Add step"):
+                self.addStep(recipebody)
+            elif (button == "Modify step"):
+                if(values[1]!=[]):
+                    resp = s.get(API_URL + values[1][0]["@controls"]["self"]["href"])
+                    stepbody = resp.json()
+                    self.editStep(stepbody)
+            elif(button == "Delete step"):
+                if(values[1]!=[]):
+                    resp = s.get(API_URL + values[1][0]["@controls"]["self"]["href"])
+                    stepbody = resp.json()
+                    delete(s, stepbody["@controls"])
+            elif(button == "Back"):
+                window1.Close()
+                self.recipeScreen()
 
-        elif (button == "Create new recipe"):
-            layout = [
-                [sg.Text('Please input the required fields')],
-                [sg.Text('Name', size=(15, 1)), sg.InputText()],
-                [sg.Text("Description", size=(15, 1)), sg.InputText()],
-                [sg.Text('Recipe Yield', size=(15, 1)), sg.InputText()],
-                [sg.Text('Cooktime', size=(15, 1)), sg.InputText()],
-                [sg.Text('Category', size=(15, 1)), sg.InputText()],
-                [sg.Button("Create user"), sg.Button("Back")]
-            ]
-            window1 = sg.Window(self.username).Layout(layout).Finalize()
-            window.Close()
-            window = window1
-            while True:
-                try:
-                    button, values = window.Read()
-                    values[5] = self.username
-                    self.recipeloc = create_recipe(s, values, body["@controls"])
-                except APIError as ae:
-                    sg.Popup(str(ae.error["@error"]["@messages"]))
-                else:
-                    break
-
-
-    def addingredient(self, recipebody):
+    def addIngredient(self, recipebody):
 
             layout = [
                 [sg.Text('Required fields')],
@@ -573,10 +667,10 @@ class Client():
                 [sg.Text('Unsaturated fat content', size=(15, 1)), sg.InputText()],
                 [sg.Button("Submit"), sg.Button("Back")]
             ]
-            window1 = sg.Window(self.username).Layout(layout).Finalize()
+            popwindow = sg.Window(self.username).Layout(layout).Finalize()
             while True:
                 try:
-                    button, values = window1.Read()
+                    button, values = popwindow.Read()
                     if(button=="Back"):
                         break
                     elif(button=="Submit"):
@@ -586,9 +680,94 @@ class Client():
                 except APIError as ae:
                     sg.Popup(str(ae.error["@error"]["@messages"]))
                 else:
-                    window1.Close()
+                    popwindow.Close()
                     break
 
+    def editIngredient(self, ingredientbody):
+
+            layout = [
+                [sg.Text('Required fields')],
+                [sg.Text('Name', size=(15, 1)), sg.InputText(ingredientbody["name"])],
+                [sg.Text("Description", size=(15, 1)), sg.InputText(ingredientbody["description"])],
+                [sg.Text("Amount", size=(15, 1)), sg.InputText(ingredientbody["amount"])],
+                [sg.Text('Unit', size=(15, 1)), sg.InputText(ingredientbody["unit"])],
+                [sg.Text('Optional fields')],
+                [sg.Text('Calories', size=(15, 1)), sg.InputText(ingredientbody["calories"])],
+                [sg.Text('Carbonhydrate content', size=(15, 1)), sg.InputText(ingredientbody["carbohydrateContent"])],
+                [sg.Text('Cholesterol content', size=(15, 1)), sg.InputText(ingredientbody["cholesterolContent"])],
+                [sg.Text('Fat content', size=(15, 1)), sg.InputText(ingredientbody["fatContent"])],
+                [sg.Text('Fiber content', size=(15, 1)), sg.InputText(ingredientbody["fiberContent"])],
+                [sg.Text('Protein content', size=(15, 1)), sg.InputText(ingredientbody["proteinContent"])],
+                [sg.Text('Saturated fat content', size=(15, 1)), sg.InputText(ingredientbody["saturatedFatContent"])],
+                [sg.Text('Sodium content', size=(15, 1)), sg.InputText(ingredientbody["sodiumContent"])],
+                [sg.Text('Sugar content', size=(15, 1)), sg.InputText(ingredientbody["sugarContent"])],
+                [sg.Text('Transfat content', size=(15, 1)), sg.InputText(ingredientbody["transFatContent"])],
+                [sg.Text('Unsaturated fat content', size=(15, 1)), sg.InputText(ingredientbody["unsaturatedFatContent"])],
+                [sg.Button("Submit"), sg.Button("Back")]
+            ]
+            popwindow = sg.Window(self.username).Layout(layout).Finalize()
+            while True:
+                try:
+                    button, values = popwindow.Read()
+                    if(button=="Back"):
+                        break
+                    elif(button=="Submit"):
+                        self.ingredientloc = modify_ingredient(s, values, ingredientbody["@controls"])
+                    else:
+                        break
+                except APIError as ae:
+                    sg.Popup(str(ae.error["@error"]["@messages"]))
+                else:
+                    popwindow.Close()
+                    break
+
+    def addStep(self, recipebody):
+
+            layout = [
+                [sg.Text('Required fields')],
+                [sg.Text('Step', size=(15, 1)), sg.InputText()],
+                [sg.Text("Text", size=(15, 1)), sg.InputText()]
+            ]
+            popwindow = sg.Window(self.username).Layout(layout).Finalize()
+            while True:
+                try:
+                    button, values = popwindow.Read()
+                    if(button=="Back"):
+                        break
+                    elif(button=="Submit"):
+                        self.ingredientloc = create_step(s, values, recipebody["@controls"])
+                    else:
+                        break
+                except APIError as ae:
+                    sg.Popup(str(ae.error["@error"]["@messages"]))
+                else:
+                    popwindow.Close()
+                    break
+
+    def editStep(self, stepbody):
+
+            layout = [
+                [sg.Text('Required fields')],
+                [sg.Text('Step', size=(15, 1)), sg.InputText(stepbody["step"])],
+                [sg.Text("Text", size=(15, 1)), sg.InputText(stepbody["text"])],
+                [sg.Button("Submit"), sg.Button("Back")]
+            ]
+            popwindow = sg.Window(self.username).Layout(layout).Finalize()
+            while True:
+                try:
+                    button, values = popwindow.Read()
+                    print(values)
+                    if(button=="Back"):
+                        break
+                    elif(button=="Submit"):
+                        self.ingredientloc = modify_step(s, values, stepbody["@controls"])
+                    else:
+                        break
+                except APIError as ae:
+                    sg.Popup(str(ae.error["@error"]["@messages"]))
+                else:
+                    popwindow.Close()
+                    break
 
 if __name__ == "__main__":
     API_URL = "http://localhost:5000"

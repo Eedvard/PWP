@@ -381,7 +381,7 @@ class RecipeBuilder(MasonBuilder):      # Recipebuilder is based on the inventor
             method="PUT",
             encoding="json",
             title="Edit an existing step",
-            schema=self.ingredient_schema()
+            schema=self.step_schema()
         )
 
     def add_control_delete_step(self, recipe_id, step_id):
