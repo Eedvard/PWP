@@ -269,9 +269,6 @@ def create_recipe(s, recipeargs, ctrl):
         raise APIError(resp.status_code, resp.content)
 
 
-
-
-
 def create_ingredient(s, ingrargs, ctrl):
     body = {}
     ctrl = ctrl["profile:add-ingredient"]
@@ -361,12 +358,44 @@ def modify_step(s, stepargs, ctrl):
     else:
         raise APIError(resp.status_code, resp.content)
 
+
+def create_shoppinglist(s, ingrargs, ctrl):
+    body = {}
+    ctrl = ctrl["profile:add-shoppinglist"]
+    schema = ctrl["schema"]
+    optional = ["notes"]
+    for field in optional:
+        if field == "notes":
+            body[field] = ingrargs[0]
+    resp = submit_data(s, ctrl, body)
+    if resp.status_code == 204:
+        return resp.headers["Location"]
+    else:
+        raise APIError(resp.status_code, resp.content)
+
+
+def modify_shoppinglist(s, ingrargs, ctrl):
+    body = {}
+    ctrl = ctrl["profile:edit-shoppinglist"]
+    schema = ctrl["schema"]
+    optional = ["notes"]
+    for field in optional:
+        if field == "notes":
+            body[field] = ingrargs[0]
+    resp = submit_data(s, ctrl, body)
+    if resp.status_code == 204:
+        return resp.headers["Location"]
+    else:
+        raise APIError(resp.status_code, resp.content)
+
+
 def get_users(s, ctrl):
 
     href = ctrl["profile:users-all"]["href"]
     resp = s.get(API_URL + href)
     body = resp.json()
     return body["users"]
+
 
 def get_shoppinglists(s, ctrl):
 
@@ -375,12 +404,14 @@ def get_shoppinglists(s, ctrl):
     body = resp.json()
     return body["shoppinglists"]
 
+
 def get_recipes(s, ctrl):
 
     href = ctrl["profile:recipes-all"]["href"]
     resp = s.get(API_URL + href)
     body = resp.json()
     return body["recipes"]
+
 
 def get_ingredients(s, ctrl):
 
@@ -389,6 +420,7 @@ def get_ingredients(s, ctrl):
     body = resp.json()
     return body["ingredients"]
 
+
 def get_steps(s, ctrl):
 
     href = ctrl["profile:steps-all"]["href"]
@@ -396,8 +428,10 @@ def get_steps(s, ctrl):
     body = resp.json()
     return body["steps"]
 
+
 class Input_error(BaseException):
     pass
+
 
 class Client():
 
