@@ -532,7 +532,7 @@ class Client():
         if (button == "Recipes"):
             self.recipeScreen()
         elif(button == "Shoppinglists"):
-            print("ja")
+            self.shoppingListScreen()
         elif(button == "Delete your user"):
             delete(s, userbody["@controls"])
             self.openingView()
@@ -563,6 +563,127 @@ class Client():
                     self.username = values[0]
                     self.userScreen()
                     break
+
+    def shoppingListScreen(self):
+        lists = get_shoppinglists(s, body["@controls"])
+        listlist = []
+        k = 1
+        for shoppinglist in lists:
+            lnotes = (str(k) + " :  " + list.["notes"])
+            listlist.append(lnotes)
+        layout = [
+            [sg.Listbox(values=lnotes, size=(30,6))],
+            [sg.Button("Pick a list"), sg.Button("Create a new list"), sg.Button("Back")]
+        ]
+        window1 = sg.Window(self.username).Layout(layout).Finalize()
+        self.window.Close()
+        window = window1
+        while True:
+            button, values = window.Read()
+            if(button == "Pick a list"):
+                if(values[0]!= []):
+                    notes = values[0][0].split(" ")
+                    picked_list = lists[int(notes[0]) - 1]
+                    resp = s.get(API_URL + picked_list["@controls"]["self"]["href"])
+                    listbody = resp.json()
+                    self.singleRecipe(listbody)
+
+            elif (button == "Create new list"):
+                layout = [
+                    [sg.Text('Please input the fields')],
+                    [sg.Text('New List', size=(15, 1)), sg.InputText()],
+                    [sg.Button("Create user"), sg.Button("Back")]
+                ]
+                window1 = sg.Window(self.username).Layout(layout).Finalize()
+                window.Close()
+                window = window1
+                while True:
+                    try:
+                        button, values = window.Read()
+                        values[5] = self.username
+                        self.listloc = create_shoppinglist(s, values, body["@controls"])
+                    except APIError as ae:
+                        sg.Popup(str(ae.error["@error"]["@messages"]))
+                    else:
+                        break
+            elif (button == "Back"):
+                self.userScreen()
+
+    def singleList(self, listbody):
+        window1 = None
+        while True:
+            tab1_layout = [
+                [sg.Text('Notes' + " : " + listbody["notes"])]
+            ]
+            ingredients = get_ingredients(s, listbody["@controls"])
+            tab2_layout = [[sg.Listbox(values=ingredients, size=(50, 6))]]
+            layout = [[sg.TabGroup([[sg.Tab('List information', tab1_layout),
+                                        sg.Tab('Ingredients', tab2_layout),
+                      [sg.Button("Back")]]])]]
+            tab3_layout = [[sg.Listbox(values=ingredients, size=(50, 6))],
+                           [sg.Button("Add ingredient"), sg.Button("Modify ingredient"),
+                            sg.Button("Delete ingredient")]]
+            if (window1 is not None):
+                window1.Close()
+            window1 = sg.Window(self.username).Layout(layout).Finalize()
+
+            button, values = window1.Read()
+            if (button == "Add ingredient"):
+                self.addListIngredient(listbody)
+            elif (button == "Modify ingredient"):
+                if(values[0]!=[]):
+                    resp = s.get(API_URL + values[0][0]["@controls"]["self"]["href"])
+                    ingredientbody = resp.json()
+                    self.editIngredient(ingredientbody)
+            elif(button == "Delete ingredient"):
+                if(values[0]!=[]):
+                    resp = s.get(API_URL + values[0][0]["@controls"]["self"]["href"])
+                    ingredientbody = resp.json()
+                    delete(s, ingredientbody["@controls"])
+            elif(button == "Back"):
+                window1.Close()
+                self.shoppingListScreen()
+
+    def addListIngredient(self, listbody):
+
+            layout = [
+                [sg.Text('Required fields')],
+                [sg.Text('Name', size=(15, 1)), sg.InputText()],
+                [sg.Text("Description", size=(15, 1)), sg.InputText()],
+                [sg.Text("Amount", size=(15, 1)), sg.InputText()],
+                [sg.Text('Unit', size=(15, 1)), sg.InputText()],
+                [sg.Text('Optional fields')],
+                [sg.Text('Calories', size=(15, 1)), sg.InputText()],
+                [sg.Text('Carbonhydrate content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Cholesterol content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Fat content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Fiber content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Protein content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Saturated fat content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Sodium content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Sugar content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Transfat content', size=(15, 1)), sg.InputText()],
+                [sg.Text('Unsaturated fat content', size=(15, 1)), sg.InputText()],
+                [sg.Button("Submit"), sg.Button("Back")]
+            ]
+            popwindow = sg.Window(self.username).Layout(layout).Finalize()
+            while True:
+                try:
+                    button, values = popwindow.Read()
+                    if(button=="Back"):
+                        break
+                    elif(button=="Submit"):
+                        self.ingredientloc = create_ingredient(s, values, listbody["@controls"])
+                    else:
+                        break
+                except APIError as ae:
+                    sg.Popup(str(ae.error["@error"]["@messages"]))
+                else:
+                    popwindow.Close()
+                    break
+
+
+
     def recipeScreen(self):
 
         recipes = get_recipes(s, body["@controls"])
