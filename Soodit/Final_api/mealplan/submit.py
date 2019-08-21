@@ -158,34 +158,6 @@ def find_recipe_item(tag, collection):
                 return item
         return None
 
-
-def create_with_mapping(s, tag, ctrl, mapping):
-    """
-    create_with_mapping(s, tag, ctrl, mapping) -> string
-
-    Creates an album or track dictionary for submitting a resource to the API.
-    The data is constructed by using the *ctrl* object's schema as a template and
-    reading corresponding values from *tag* by using the *mapping* dictionary.
-    Values are converted to types and format required by the schema. If creation
-    is successful, the new resource's URI is returned. Otherwiser APIError is
-    raised.
-    """
-
-    body = {}
-    schema = ctrl["schema"]
-    for name, props in schema["properties"].items():
-        local_name = mapping[name]
-        value = getattr(tag, local_name)
-        if value is not None:
-            value = convert_value(value, props)
-            body[name] = value
-
-    resp = submit_data(s, ctrl, body)
-    if resp.status_code == 201:
-        return resp.headers["Location"]
-    else:
-        raise APIError(resp.status_code, resp.content)
-
 def sendreq(s, ctrl):
 
     resp = s.request(
@@ -532,7 +504,7 @@ class Client():
         if (button == "Recipes"):
             self.recipeScreen()
         elif(button == "Shoppinglists"):
-            self.shoppingListScreen()
+            self.shoppingListScreen(userbody)
         elif(button == "Delete your user"):
             delete(s, userbody["@controls"])
             self.openingView()
@@ -564,35 +536,36 @@ class Client():
                     self.userScreen()
                     break
 
-    def shoppingListScreen(self):
-        lists = get_shoppinglists(s, body["@controls"])
+    def shoppingListScreen(self, userbody):
+        lists = get_shoppinglists(s, userbody["@controls"])
         listlist = []
         k = 1
         for shoppinglist in lists:
-            lnotes = (str(k) + " :  " + list.["notes"])
+            lnotes = (str(k) + " :  " + shoppinglist["notes"])
             listlist.append(lnotes)
         layout = [
-            [sg.Listbox(values=lnotes, size=(30,6))],
-            [sg.Button("Pick a list"), sg.Button("Create a new list"), sg.Button("Back")]
+            [sg.Listbox(values=listlist, size=(30,6))],
+            [sg.Button("Pick a list"), sg.Button("Create new list"), sg.Button("Back")]
         ]
         window1 = sg.Window(self.username).Layout(layout).Finalize()
         self.window.Close()
         window = window1
         while True:
             button, values = window.Read()
+            print(button)
             if(button == "Pick a list"):
                 if(values[0]!= []):
                     notes = values[0][0].split(" ")
                     picked_list = lists[int(notes[0]) - 1]
                     resp = s.get(API_URL + picked_list["@controls"]["self"]["href"])
                     listbody = resp.json()
-                    self.singleRecipe(listbody)
+                    self.singleList(listbody, userbody)
 
             elif (button == "Create new list"):
                 layout = [
                     [sg.Text('Please input the fields')],
                     [sg.Text('New List', size=(15, 1)), sg.InputText()],
-                    [sg.Button("Create user"), sg.Button("Back")]
+                    [sg.Button("Create list"), sg.Button("Back")]
                 ]
                 window1 = sg.Window(self.username).Layout(layout).Finalize()
                 window.Close()
@@ -601,7 +574,7 @@ class Client():
                     try:
                         button, values = window.Read()
                         values[5] = self.username
-                        self.listloc = create_shoppinglist(s, values, body["@controls"])
+                        self.listloc = create_shoppinglist(s, values, userbody["@controls"])
                     except APIError as ae:
                         sg.Popup(str(ae.error["@error"]["@messages"]))
                     else:
@@ -609,7 +582,7 @@ class Client():
             elif (button == "Back"):
                 self.userScreen()
 
-    def singleList(self, listbody):
+    def singleList(self, listbody, userbody):
         window1 = None
         while True:
             tab1_layout = [
@@ -617,12 +590,12 @@ class Client():
             ]
             ingredients = get_ingredients(s, listbody["@controls"])
             tab2_layout = [[sg.Listbox(values=ingredients, size=(50, 6))]]
-            layout = [[sg.TabGroup([[sg.Tab('List information', tab1_layout),
-                                        sg.Tab('Ingredients', tab2_layout),
-                      [sg.Button("Back")]]])]]
+
             tab3_layout = [[sg.Listbox(values=ingredients, size=(50, 6))],
                            [sg.Button("Add ingredient"), sg.Button("Modify ingredient"),
                             sg.Button("Delete ingredient")]]
+            layout = [[sg.TabGroup([[sg.Tab('List information', tab1_layout), sg.Tab('Ingredients', tab3_layout)]])],
+                      [sg.Button("Back")]]
             if (window1 is not None):
                 window1.Close()
             window1 = sg.Window(self.username).Layout(layout).Finalize()
@@ -642,7 +615,7 @@ class Client():
                     delete(s, ingredientbody["@controls"])
             elif(button == "Back"):
                 window1.Close()
-                self.shoppingListScreen()
+                self.shoppingListScreen(userbody)
 
     def addListIngredient(self, listbody):
 
@@ -934,94 +907,7 @@ class Client():
 if __name__ == "__main__":
     API_URL = "http://localhost:5000"
     with requests.Session() as s:
-
-        #resp = s.get(API_URL + "/api/users/")
-        #body = resp.json()
-        #data = {"username":"ok"}
-        #submit_data(s, body["@controls"]["profile:add-user"], data)
-
-        #resp = s.get(API_URL + "/api/recipes/")
-        #body = resp.json()
-        #data = {
-        #      "name": "saatana",
-        #      "description": "hoii",
-        #      "recipeyield": "tyoo",
-        #      "cooktime": "kakka",
-        #      "category": "perkele",
-        #      "author": "ville"
-        #    }
-        #submit_data(s, body["@controls"]["profile:add-recipe"], data)
-
-        #resp = s.get(API_URL + "/api/users/")
         resp = s.get(API_URL + "/api/")
         body = resp.json()
-        print(body)
-        #recipeargs = ["paska", "vittu", "saatana", "asdasasd", "perkele", "ahahahahahhaha"]
-        #asd = create_recipe(s, recipeargs, body["@controls"])
-        """
-        print(body)
-        print(body["@controls"]["profile:recipes-all"])
-        href2 = body["@controls"]["profile:recipes-all"]["href"]
-        resp2 = s.get(API_URL + href2)
-        body2 = resp2.json()
-        print(body2["@controls"])
-        href3 = body["@controls"]["profile:users-all"]["href"]
-        resp3 = s.get(API_URL + href3)
-        body3 = resp3.json()
-        print(body3["users"][0]["@controls"]["self"]["href"])
-        href4 = body3["users"][0]["@controls"]["self"]["href"]
-        resp4 = s.get(API_URL + href4)
-        body4 = resp4.json()
-        print(body4["@controls"]["profile:add-shoppinglist"]["href"])
-        href5 = body4["@controls"]["profile:add-shoppinglist"]["href"]
-        resp5 = s.get(API_URL + href5)
-        body5 = resp5.json()
-        print(body5)
-        print(body2["recipes"][0]["@controls"]["self"]["href"])
-        href6 = body2["recipes"][0]["@controls"]["self"]["href"]
-        resp6 = s.get(API_URL + href6)
-        body6 = resp6.json()
-        print(body6["@controls"]["profile:ingredients-all"])
-        print(body6["@controls"]["profile:steps-all"])
-        print(body6["@controls"]["profile:add-ingredient"])
-        print(body6["@controls"]["profile:add-step"])
-        users = body3["users"]
-        print(users)
-        print("paska")
-        for user in users:
-            print(user["username"])
-        """
-        button = 0
-        endloop = False
         client = Client()
-        #client.run()
         client.openingView()
-            #print(user)
-
-        """
-        layout = [
-            [sg.Text('Please enter your Name, Address, Phone')],
-            [sg.Text('Name', size=(15, 1)), sg.InputText('name')],
-            [sg.Text('Address', size=(15, 1)), sg.InputText('address')],
-            [sg.Text('Phone', size=(15, 1)), sg.InputText('phone')],
-            [sg.Submit(), sg.Cancel()]
-        ]
-users = get_users(s, body["@controls"])
-        window = sg.Window('Dont starve').Layout(layout)
-        button, values = window.Read()
-
-        print(button, values[0], values[1], values[2])
-        """
-        #asd = create_user(s, -1, body["@controls"]["profile:add-user"])
-        #print(body)
-        #API_TAG_RECIPE_MAPPING["name"] = "sawatana"
-        #print(API_TAG_RECIPE_MAPPING)
-        #asd = create_with_mapping(s, )
-        #asd = find_recipe_href("saatana", body["recipes"])
-        #print(asd)
-
-        #resp = s.get(API_URL + "/api/users/")
-        #body = resp.json()
-        #data = "ok"
-        #asd = find_user_item(data, body["users"])
-        #print(asd)

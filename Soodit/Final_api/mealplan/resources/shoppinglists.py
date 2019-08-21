@@ -26,6 +26,8 @@ class Shoppinglist(Resource):
         body.add_control("self", api.api.url_for(Shoppinglist, username=username, list_id=list_id))
         body.add_control("profile", utils.SHOPLIST_PROFILE)
         body.add_control("collection", api.api.url_for(ShoppingListCollection, username=username))
+        body.add_control_add_shoplist_ingredient(username, list_id)
+        body.add_control_all_shoplist_ingredients(username, list_id)
         body.add_control_delete_shoppinglist(username, list_id)
         body.add_control_edit_shoppinglist(username, list_id)
         body.add_control("storage:shoppinglists-all", api.api.url_for(ShoppingListCollection, username=username))

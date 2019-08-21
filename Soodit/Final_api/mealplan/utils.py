@@ -337,7 +337,7 @@ class RecipeBuilder(MasonBuilder):      # Recipebuilder is based on the inventor
 
     def add_control_edit_shoplist_ingredient(self, username, list_id, ingredient_id):
         self.add_control(
-            "profile:edit-user",
+            "profile:edit-ingredient",
             href=url_for("api.ingredient", username=username, list_id=list_id, ingredient_id=ingredient_id),
             method="PUT",
             encoding="json",
