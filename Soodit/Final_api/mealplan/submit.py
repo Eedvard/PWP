@@ -1,46 +1,8 @@
-from flask import Flask
 import json
-import os
-import re
 import requests
-import sys
 import time
-from dataclasses import dataclass
-from tinytag import TinyTag, TinyTagException
 
 import PySimpleGUI as sg
-
-API_URL = "http://private-47b898-pwpkesa.apiary-mock.com"
-ISO_DATE = "%Y-%m-%d"
-ISO_TIME = "%H:%M:%S"
-DATE_FORMATS = ["%Y", ISO_DATE]
-
-API_TAG_RECIPE_MAPPING = {
-    "name" : "recipename",
-    "description" : "recipedesc",
-    "recipeYield" : "yield",
-    "cookTime": "time",
-    "author" : "authorname",
-    "datePublished" : "date"
-}
-
-API_TAG_INGREDIENT_MAPPING = {
-    "name" : "ingredient",
-    "description" : "ingredientdesc"
-}
-
-API_TAG_USER_MAPPING = {
-    "username" : "user"
-}
-
-API_TAG_SHOPLIST_TAGGING = {
-    "notes" : "note"
-}
-
-API_TAG_RECIPESTEP_MAPPING = {
-    "step" : "step",
-    "text" : "instruction"
-}
 
 
 class APIError(Exception):
@@ -62,23 +24,6 @@ class APIError(Exception):
         )
 
 
-def make_iso_format_date(value):
-
-    for form in DATE_FORMATS:
-        try:
-            date = time.strptime(value, form)
-            value = time.strftime(ISO_DATE, date)
-            break
-        except ValueError:
-            pass
-    else:
-        value = input("Type ISO format date that matches {}".format(value))
-    return value
-
-
-def make_iso_format_time(value):
-
-    return time.strftime(ISO_TIME, time.gmtime(value))
 
 # valitaan haluttu resepti jos löytyy samalla nimellä useita
 
