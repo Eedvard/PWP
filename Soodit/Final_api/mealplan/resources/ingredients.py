@@ -41,8 +41,6 @@ class Ingredient(Resource):
             body.add_control("collection", api.api.url_for(IngredientCollection, recipe_id=recipe_id))
             body.add_control_delete_recipe_ingredient(recipe_id, ingredient_id)
             body.add_control_edit_recipe_ingredient(recipe_id, ingredient_id)
-            body.add_control("storage:recipe_ingredients-all",
-                             api.api.url_for(IngredientCollection, recipe_id=recipe_id))
         elif list_id and username is not None:
             if not models.User.query.filter_by(username=username).all():
                 return utils.RecipeBuilder.create_error_response(404, "Not found","No user was found with the username {}".format(username))

@@ -20,8 +20,18 @@ class Shoppinglist(Resource):
 
         body = utils.RecipeBuilder(
             notes=db_recipe.notes,
-            owner=db_recipe.owner_name
+            owner=db_recipe.owner_name,
+            ingredients = []
         )
+        ingredients = models.ShoppingListIngredient.query.filter_by(shopping_list_id=list_id).all()
+        for ingredient in ingredients:
+            item = utils.RecipeBuilder(
+                name=ingredient.ingredient.name,
+                description=ingredient.ingredient.description,
+                amount=ingredient.amount,
+                unit=ingredient.unit
+            )
+            body["ingredients"].append(item)
         body.add_namespace("shoppinglists", utils.LINK_RELATIONS_URL)
         body.add_control("self", api.api.url_for(Shoppinglist, username=username, list_id=list_id))
         body.add_control("profile", utils.SHOPLIST_PROFILE)
