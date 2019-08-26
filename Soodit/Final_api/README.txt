@@ -1,3 +1,5 @@
+Required packages to run the api are found in the requirements.txt file.
+
 To run the api write following commands to console:
  
 Linux:
