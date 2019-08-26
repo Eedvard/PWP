@@ -21,18 +21,56 @@ Add new ingredient to recipe
 
 Add new step to a recipe
 
+## add-shoppinglist
+
+Add new shopping list
+
+## steps-all
+
+All steps of recipe
+
+## users-all
+
+All users
+
+## recipes-all
+
+All recipes
+
+## ingredients-all
+
+All ingredients of recipe/shopping list
+
+## edit-recipe
+
+Edit the recipe
+
+## edit-ingredient
+
+Edit the ingredient
+
+## edit-step
+
+Edit the step
+
+## edit-shoppinglist
+
+Edit the shopping list
+
+
+
 # Group Profiles
 
 ## Recipe profile
 
 ### Link Relations
 
-This section lists all possible link relations associated with albums; not all of them are necessarily present on each resource type. The following link relations from the mumeta namespace are used:
-
- * [add-ingredient](reference/link-relations/add-ingredient)
- * [add-step](reference/link-relations/add-step)
+ * [recipes-all](reference/link-relations/recipes-all)
  * [add-recipe](reference/link-relations/add-recipe)
- * [delete](reference/link-relations/delete)
+ * [ingredients-all](reference/link-relations/ingredients-all)
+ * [add-ingredient](reference/link-relations/add-ingredient)
+ * [steps-all](reference/link-relations/steps-all)
+ * [add-step](reference/link-relations/add-step)
 
 The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml) link relations are also used:
 
@@ -65,9 +103,10 @@ The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link
 
 All link relations related to users.
 
- * [delete](reference/link-relations/delete)
- * [update](reference/link-relations/update)
-
+ * [users-all](reference/link-relations/users-all)
+ * [add-user](reference/link-relations/add-user)
+ * [shoppinglists-all](reference/link-relations/shoppinglists-all)
+ * [add-shoppinglist](reference/link-relations/add-shoppinglist)
 
 The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml) link relations are also used:
 
@@ -81,18 +120,66 @@ The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link
 
 #### Data Type Recipe
 
- * `id`: Unique id of the user. Mandatory.
  * `username`: Name of the user. Mandatory.
+ Users
+
+## Shopping list profile
+
+### Link Relations
+
+All link relations related to users.
+
+ * [shoppinglists-all](reference/link-relations/shoppinglists-all)
+ * [add-shoppinglist](reference/link-relations/add-shoppinglist)
+ * [ingredients-all](reference/link-relations/ingredients-all)
+ * [add-ingredient](reference/link-relations/add-ingredient)
+
+The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml) link relations are also used:
+
+ * author
+ * collection
+ * edit
+ * self
+ 
+ 
+### Semantic Descriptors
+
+#### Data Type Recipe
+
+ * `notes`: Notes for the shopping list. Mandatory.
+
+ 
+ ## Steps profile
+
+### Link Relations
+
+All link relations related to users.
+
+ * [recipe_steps-all](reference/link-relations/recipe_steps-all)
+ * [add-steps](reference/link-relations/add-steps)
+
+The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml) link relations are also used:
+
+ * collection
+ * edit
+ * self
+ 
+ 
+### Semantic Descriptors
+
+#### Data Type Recipe
+
+ * `step`: Number of the step. Mandatory.
+ * `text`: Explanation of the step. Mandatory.
  Users
 
 #Group Recipes
 
-## Recipes Collection [/api/recipes/?sortby={field}]
+## Recipes Collection [/api/recipes/]
 
 + Parameters
 
-    + field (string, optional) - Field to use for sorting
-    
+
         + Default: `name`
         + Members
         
@@ -118,20 +205,6 @@ Get a list of all recipes known to the API.
     + Body
 
             {
-                "@namespaces": {
-                    "dontstarve": {
-                        "name": "/dontstarve/link-relations#"
-                    }
-                },
-                "@controls": {
-                    "self": {
-                        "href": "/api/recipes/"
-                    },
-                    "dontstarve:recipes-all": {
-                        "href": "/api/recipes/",
-                        "title": "All recipes"
-                    },
-                },
                 "items": [
                     {
                         "name": "Mashed Potatoes",
@@ -161,7 +234,17 @@ Get a list of all recipes known to the API.
                             }
                         }
                     }
-                ]
+                ],
+                "@controls":{
+                    "profile:recipes-all":{
+                        "method": "GET",
+                        "title": "Get all recipes",
+                        "href": "/api/recipes/"
+                    },
+                    "profile:add-recipe":{"method": "POST", "encoding": "json", "title": "Add a new recipe", "schema":{"type": "object",…}
+                    }
+                    }
+                
             }
 
 ### Create a New Recipe [POST]
@@ -189,7 +272,7 @@ You may create new recipe using this action.
                 "datePublished": "2015-10-23"
             }
 
-+ Response 201
++ Response 204
 
     + Headers
     
@@ -305,7 +388,7 @@ You may create new recipe using this action.
 
 ### Recipe information [GET]
 
-Get the album representation.
+Get the recipe representation.
 
 + Relation: self
 + Relation: collection
@@ -320,50 +403,72 @@ Get the album representation.
     + Body
 
             {
-                "@namespaces": {
-                    "dontstarve": {
-                        "name": "/dontstarve/link-relations#"
-                    }
-                },
-                "@controls": {
-                    "self": {
-                        "href": "/api/recipes/"
-                    },
-                    "dontstarve:recipes-all": {
-                        "href": "/api/recipes/",
-                        "title": "All recipes"
-                    },
-                },
-                "items": [
-                    {
-                        "name": "Mashed Potatoes",
-                        "recipeCategory": "Dinner",
-                        "author": "Erkki Esimerkki",
-                        "datePublished": "9.3.2019",
-                        "@controls": {
-                            "self": {
-                                "href": "/api/recipes/Mashed Potatoes/"
-                            }, 
-                            "profile": {
-                                "href": "/recipe/"
-                            }
-                        },
-                    }, 
-                    {
-                        "title": "Meat Sauce",
-                        "recipeCategory": "Dinner",
-                        "author": "Seppo Soppa",
-                        "datePublished": "3.9.2018",
-                        "@controls": {
-                            "self": {
-                                "href": "/api/recipes/Meat Sauce/"
-                            },
-                            "profile": {
-                                "href": "/recipe/"
-                            }
-                        }
-                    }
-                ]
+            "name": "Mashed Potatoes",
+            "description": "Dinner",
+            "recipeYield": "10",
+            "cookTime": "1 hours",
+            "recipeCategory": "Dinner",
+            "author": "Erkki Esimerkki",
+            "datePublished": "9.3.2019,
+            "calories": 0,
+            "carbohydrateContent": 0,
+            "cholesterolContent": 0,
+            "fatContent": 0,
+            "fiberContent": 0,
+            "proteinContent": 0,
+            "saturatedFatContent": 0,
+            "sodiumContent": 0,
+            "sugarContent": 0,
+            "transFatContent": 0,
+            "unsaturatedFatContent": 0,
+            "steps":[
+            {
+            "step": 1,
+            "text": "examplestep1"
+            },
+            {
+            "step": 2,
+            "text": "examplestep2"
+            }
+            ],
+            "ingredients":[
+            {"name": "potato", "description": "new potato", "amount": 5, "unit": "kg"…}
+            ],
+            "@namespaces":{
+            "recipes":{
+            "name": "/api/profiles/link-relations/"
+            }
+            },
+            "@controls":{
+            "self":{
+            "href": "/api/recipes/1/"
+            },
+            "profile":{
+            "href": "/api/profiles/recipes/"
+            },
+            "collection":{
+            "href": "/api/products/"
+            },
+            "profile:delete":{
+            "method": "DELETE",
+            "title": "Delete this resource",
+            "href": "/api/recipes/1/"
+            },
+            "profile:edit-recipe":{"method": "PUT", "encoding": "json", "title": "Edit an existing recipe", "schema":{"type": "object",…},
+            "storage:recipes-all":{
+            "href": "/api/recipes/1/"
+            },
+            "profile:add-ingredient":{"method": "POST", "encoding": "json", "title": "Add a new ingredient to recipe", "schema":{"type": "object",…},
+            "profile:ingredients-all":{
+            "method": "GET",
+            "title": "Get all ingredients of recipe",
+            "href": "/api/recipes/1/ingredients/"
+            },
+            "profile:add-step":{"method": "POST", "encoding": "json", "title": "Add a new step to recipe", "schema":{"type": "object",…},
+            "profile:steps-all":{
+            "method": "GET",
+            "title": "Get all steps of recipe",
+            "href": "/api/recipes/1/steps/"
             }
 
 ### Edit Recipe information [PUT]
@@ -430,26 +535,6 @@ Get the album representation.
                 }
             }
             
-+ Response 409 (application/vnd.mason+json)
-
-    The client is trying to change the album's title to a one that is already in use for the artist.
-
-    + Body
-    
-            {
-                "resource_url": "/api/recipes/1/",
-                "@error": {
-                    "@message": "Recipe id in use",
-                    "@messages": [
-                        "Recipe exists with the same id'"
-                    ]
-                },
-                "@controls": {
-                    "profile": {
-                        "href": "/profiles/error/"
-                    }
-                }
-            }
         
 + Response 415 (application/vnd.mason+json)
 
@@ -506,12 +591,7 @@ Get the album representation.
 
 #Group Users
 
-## Users [/api/users/{id}]
-
-+ Parameters
-
-    + id (integer) - user's unique id (id)
-
+## User collection [/api/users/]
 
 ### List All Users [GET]
 
@@ -529,48 +609,155 @@ Get the album representation.
  + Body
 
             {
-                "@namespaces": {
-                    "dontstarve": {
-                        "name": "/dontstarve/link-relations#"
-                    }
-                },
-                "@controls": {
-                    "self": {
-                        "href": "/api/users/"
-                    },
-                    "dontstarve:users-all": {
-                        "href": "/api/users/",
-                        "title": "All users"
-                    },
-                },
-                "items": [
-                    {
-                        "id": "1",
-                        "username": "ErkkiE",
-
-                        "@controls": {
-                            "self": {
-                                "href": "/api/users/1/"
-                            }, 
-                            "profile": {
-                                "href": "/users/"
-                            }
-                        },
-                    }, 
-                    {
-                        "id": "2",
-                        "author": "SeppoS",
-                        "@controls": {
-                            "self": {
-                                "href": "/api/users/1/"
-                            },
-                            "profile": {
-                                "href": "/users/"
-                            }
-                        }
-                    }
-                ]
+            "users":[
+            {
+                "username": "ville",
+                "@controls":{
+                "self":{"href": "/api/users/ville/"},
+                "profile":{"href": "/api/profiles/users/"}
             }
+            },
+            {
+                "username": "asd",
+                "@controls":{
+                "self":{"href": "/api/users/asd/"},
+                "profile":{"href": "/api/profiles/users/"}
+            }
+            }
+            ],
+            "@controls":{
+                "profile:users-all":{
+                "method": "GET",
+                "title": "Get all users",
+                "href": "/api/users/"
+            },
+                "profile:add-user":{"method": "POST", "encoding": "json", "title": "Add a new user", "schema":{"type": "object",…}
+            }
+            }
+            
+### Create a New User [POST]
+
+You may create new user using this action.
+
++ Relation: add-user
++ Request (application/json)
+
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+              "username":"ville"
+            }
+
++ Response 204
+
+    + Headers
+    
+            Location: /api/users/ville/
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
+
+    + Body
+    
+            {
+    "resource_url": "/api/users/",
+    "@error": {
+        "@message": "Missing fields",
+        "@messages": [
+            "Incomplete request - missing fields"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
++ Response 409 (application/vnd.mason+json)
+
+
+    + Body
+    
+            {
+    "resource_url": "/api/users/",
+    "@error": {
+        "@message": "Duplicate content",
+        "@messages": [
+            "User already exists"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
+## User [/api/users/{id}]
+
++ Parameters
+
+    + id (integer) - user's unique id (id)
+
+### User information [GET]
+
+Get the user representation.
+
++ Relation: self
++ Relation: collection
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+    
+    + Body
+    
+        {
+        "username": "ville",
+        "@namespaces":{
+            "users":{
+            "name": "/api/profiles/link-relations/"
+        }
+        },
+        "@controls":{
+                "self":{
+                    "href": "/api/users/ville/"
+            },
+            "profile":{
+                "href": "/api/profiles/users/"
+            },
+            "collection":{
+                "href": "/api/users/"
+            },
+            "profile:delete":{
+                "method": "DELETE",
+                "title": "Delete this resource",
+                "href": "/api/users/ville/"
+            },
+            "profile:edit-user":{"method": "PUT", "encoding": "json", "title": "Edit an existing user", "schema":{"type": "object",…},
+            "storage:users-all":{
+                "href": "/api/users/ville/"
+            },
+            "profile:add-shoppinglist":{"method": "POST", "encoding": "json", "title": "Create new shoppinglist", "schema":{"type": "object",…},
+            "profile:shoppinglists-all":{
+                "method": "GET",
+                "title": "Get all shoppinglists of user",
+                "href": "/api/users/ville/shoppinglist/"
+            }
+        }
+        }
 
 ### Edit User [PUT]
 
@@ -634,7 +821,7 @@ You may create new user using this action.
             
 + Response 409 (application/vnd.mason+json)
 
-    The client is trying to change the album's title to a one that is already in use for the artist.
+    The client is trying to change the users's title to a one that is already in use for the artist.
 
     + Body
     
@@ -703,205 +890,14 @@ You may create new user using this action.
                     }
                 }
             }
-            
-## Weekly plan [/api/users/{user_id}/plans/{plan_id}]
-+ Parameters
 
-    + plan_id (integer) - weekly plan's unique id (id)
+#Group Shoppinglists
 
-
-### Get Weekly Plans [GET]
-
-+ Relation: collection
-+ Request
-
-    + Headers
-        
-            Accept: application/vnd.mason+jason
-        
-
-+ Response 200 (application/vnd.mason+json)
-
-    + Body
-
-            {
-                "@namespaces": {
-                    "dontstarve": {
-                        "name": "/dontstarve/link-relations#"
-                    }
-                },
-                "@controls": {
-                    "self": {
-                        "href": "/api/users/{user_id}/plans/"
-                    },
-                    "dontstarve:plans-all": {
-                        "href": "/api/users/{user-id}/plans/",
-                        "title": "All plans"
-                    },
-                },
-                "items": [
-                    {
-                        "id": "1",
-                        "week": "1",
-                        "notes": "Delicious plan",
-                        "user_id": "1"
-
-                        "@controls": {
-                            "self": {
-                                "href": "/api/users/1/plans/1"
-                            }, 
-                            "profile": {
-                                "href": "/users/{user_id}/plans/"
-                            }
-                        },
-                    }, 
-                    {
-                        "id": "2",
-                        "week": "3",
-                        "notes": "Spicy plan",
-                        "user_id": "2"
-
-                        "@controls": {
-                            "self": {
-                                "href": "/api/users/2/plans/2"
-                            }, 
-                            "profile": {
-                                "href": "/users/{user_id}/plans/"
-                            }
-                        }
-                    }
-                ]
-            }
-            
-### Create a New Plan [POST]
-
-You may create new plan using this action.
-
-+ Relation: add-plan
-+ Request (application/json)
-
-
-    + Headers
-
-            Accept: application/vnd.mason+json
-        
-    + Body
-    
-            {
-                        "id": "1",
-                        "week": "1",
-                        "notes": "Delicious plan",
-                        "user_id": "1"
-            }
-
-+ Response 201
-
-    + Headers
-    
-            Location: /api/users/{user_id}/plans/
-
-+ Response 400 (application/vnd.mason+json)
-
-    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
-
-    + Body
-    
-            {
-                "resource_url": "/api/users/{user_id}/plans/",
-                "@error": {
-                    "@message": "Invalid JSON document",
-                    "@messages": [                    
-                        "'release' is a required property
-                        
-                        Failed validating 'required' in schema:
-                        {'properties': 
-                        {'id': {'default': 1,
-                        'description': 'plan id',
-                        'type': 'integer'},
-                        'week': {'default': 1,
-                        'description': 'plan week',
-                        'type': 'integer'},
-                        'note': {'description': \"Notes\",
-                        'type': 'string'},
-                        'user_id': {'default': 1,
-                        'description': 'user id',
-                        'type': 'integer'},
-                        On instance:
-                        {'id': '1'}"
-                    ]
-                },
-                "@controls": {
-                    "profile": {
-                        "href": "/profiles/error/"
-                    }
-                }
-            }
-
-+ Response 404 (application/vnd.mason+json)
-
-
-    + Body
-    
-            {
-                "resource_url": "/api/users/{user_id}/plans/2",
-                "@error": {
-                    "@message": "Plan not found",
-                    "@messages": [null]
-                },
-                "@controls": {
-                    "profile": {
-                        "href": "/profiles/error/"
-                    }
-                }
-            }
-
-+ Response 409 (application/vnd.mason+json)
-
-
-    + Body
-    
-            {
-                "resource_url": "/api/users/{user_id}/plans/1/",
-                "@error": {
-                    "@message": "Already exists",
-                    "@messages": [
-                        "Plan with that id already exists"
-                    ]
-                },
-                "@controls": {
-                    "profile": {
-                        "href": "/profiles/error/"
-                    }
-                }
-            }
-            
-
-+ Response 415 (application/vnd.mason+json)
-
-    The client did not use the proper content type, or the request body was not valid JSON.
-
-    + Body
-        
-            {
-                "resource_url": "/api/users/{user_id}/plans/1/",
-                "@error": {
-                    "@message": "Unsupported media type",
-                    "@messages": [
-                        "Use JSON"
-                    ]
-                },
-                "@controls": {
-                    "profile": {
-                        "href": "/profiles/error-profile/"
-                    }
-                }
-            }
-
-## Shopping list [/api/users/{user_id}/plans/{plan_id}/shoppinglist/{list_id}]
+## Shopping list collection [/api/users/{username}/shoppinglist/]
 
 + Parameters
 
-    + list_id (integer) - shopping list's unique id (id)
+    + username (string) - unique username of the user
 
 ### Get Shopping Lists [GET]
 
@@ -918,53 +914,194 @@ You may create new plan using this action.
     + Body
 
             {
-                "@namespaces": {
-                    "dontstarve": {
-                        "name": "/dontstarve/link-relations#"
-                    }
-                },
-                "@controls": {
-                    "self": {
-                        "href": "/api/users/{user_id}/plans/{plan_id}/shoppinglist/"
+        "shoppinglists":[
+        {
+            "notes": "waa",
+            "@controls":{
+            "self":{"href": "/api/users/ville/shoppinglist/1/"},
+            "profile":{"href": "/api/profiles/shoppinglists/"}
+        }
+        }
+        ],
+        "@controls":{
+            "profile:shoppinglists-all":{
+                "method": "GET",
+                "title": "Get all shoppinglists of user",
+                "href": "/api/users/ville/shoppinglist/"
+            },
+        "profile:add-shoppinglist":{"method": "POST", "encoding": "json", "title": "Create new shoppinglist", "schema":{"type": "object",…}
+        }
+        }
+        
+### Create a New Shopping list [POST]
+
+You may create new shoppinglist using this action.
+
++ Relation: add-shoppinglist
++ Request (application/json)
+
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+  "notes": "example notes"
+}
+
++ Response 204
+
+    + Headers
+    
+            Location: /api/users/ville/shoppinglist/1/
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
+
+    + Body
+    
+    {
+    "resource_url": "/api/users/ville/shoppinglist/",
+    "@error": {
+        "@message": "Missing fields",
+        "@messages": [
+            "Incomplete request - missing fields"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
+## Shopping list [/api/users/{username}/shoppinglist/{list_id}/]
+
++ Parameters
+
+    + username (string) - unique username of the user
+    + list_id (integer) - unique id of the shoppinglist
+
+
+### Shopping list information [GET]
+
+Get the shoppinglist representation.
+
++ Relation: self
++ Relation: collection
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+    
+    + Body
+    
+        {
+    "notes": "this is shopping list",
+    "owner": "ville",
+    "ingredients": [
+        {
+            "name": "potato",
+            "description": "new potatoes",
+            "amount": 1,
+            "unit": "kg"
+        },
+        {
+            "name": "carrot",
+            "description": "w",
+            "amount": 1,
+            "unit": "kg"
+        }
+    ],
+    "@namespaces": {
+        "shoppinglists": {
+            "name": "/api/profiles/link-relations/"
+        }
+    },
+    "@controls": {
+        "self": {
+            "href": "/api/users/ville/shoppinglist/1/"
+        },
+        "profile": {
+            "href": "/api/profiles/shoppinglists/"
+        },
+        "collection": {
+            "href": "/api/users/ville/shoppinglist/"
+        },
+        "profile:add-ingredient": {
+            "method": "POST",
+            "encoding": "json",
+            "title": "Add a new ingredient to recipe",
+            "schema": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "description",
+                    "amount",
+                    "unit"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "The name of the ingredient",
+                        "type": "string"
                     },
-                    "dontstarve:plans-all": {
-                        "href": "/api/users/{user_id}/plans/{plan_id}/shoppinglist/",
-                        "title": "All plans"
+                    "description": {
+                        "description": "The description of the ingredient",
+                        "type": "string"
                     },
-                },
-                "items": [
-                    {
-                        "id": "1",
-                        "plan_id": "1",
-                        "notes": "Potato week",
-
-                        "@controls": {
-                            "self": {
-                                "href": "/api/users/1/plans/1/shoppinglist/1"
-                            }, 
-                            "profile": {
-                                "href": "/users/{user_id}/plans/{plan_id}/shoppinglist/"
-                            }
-                        },
-                    }, 
-                    {
-                        "id": "2",
-                        "plan_id": "2",
-                        "notes": "Soup week",
-
-                        "@controls": {
-                            "self": {
-                                "href": "/api/users/2/plans/2/shoppinglist/2"
-                            }, 
-                            "profile": {
-                                "href": "/users/{user_id}/plans/{plan_id}/shoppinglist/"
-                            }
-                        }
+                    "amount": {
+                        "description": "The amount of foodstuff needed",
+                        "type": "integer"
+                    },
+                    "unit": {
+                        "description": "grams, litres etc",
+                        "type": "string"
                     }
-                ]
-            }
+                }
+            },
+            "href": "/api/users/ville/shoppinglist/1/ingredients/"
+        },
+        "profile:ingredients-all": {
+            "method": "GET",
+            "title": "Get all ingredients of recipe",
+            "href": "/api/users/ville/shoppinglist/1/ingredients/"
+        },
+        "profile:delete": {
+            "method": "DELETE",
+            "title": "Delete this resource",
+            "href": "/api/users/ville/shoppinglist/1/"
+        },
+        "profile:edit-shoppinglist": {
+            "method": "PUT",
+            "encoding": "json",
+            "title": "Edit an existing shoppinglist",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "notes": {
+                        "description": "The shopping list note like foodstuff",
+                        "type": "string"
+                    }
+                }
+            },
+            "href": "/api/users/ville/shoppinglist/1/"
+        },
+        "storage:shoppinglists-all": {
+            "href": "/api/users/ville/shoppinglist/"
+        }
+    }
+}
 
-### Edit Shopping List [PUT]
+
+### Edit Shoppinglist [PUT]
+
 You may create new user using this action.
 
 + Relation: edit
@@ -977,10 +1114,7 @@ You may create new user using this action.
     + Body
     
             {
-                "id": "1"
-                "plan_id": "1"
-                "week": "1",
-                "notes": "notes"
+                "notes": "asd"
             }
         
 + Response 204
@@ -992,56 +1126,1265 @@ You may create new user using this action.
     + Body
     
             {
-                "resource_url": "/api/users/1/plan/1/shoppinglist/1/",
-                "@error": {
-                    "@message": "Invalid notes size",
-                    "@messages": [
-                        "Too many characters in notes"
-                    ]
-                },
-                "@controls": {
-                    "profile": {
-                        "href": "/profiles/error/"
-                    }
-                }
+        "resource_url": "/api/users/ville/shoppinglist/1/",
+        "@error": {
+            "@message": "Missing fields",
+            "@messages": [
+                "Incomplete request - missing fields"
+            ]
+        },
+        "@controls": {
+            "profile": {
+                "href": "/api/profiles/errors/"
             }
+        }
+}
+
 
 + Response 404 (application/vnd.mason+json)
 
-    Trying to edit shopping list that does not exist
+    Trying to edit shoppinglist that does not exist
 
     + Body
     
             {
-                "resource_url": "/api/users/2/plan/2/shoppinglist/2/",
-                "@error": {
-                    "@message": "Shopping list not found",
-                    "@messages": [null]
-                },
-                "@controls": {
-                    "profile": {
-                        "href": "/profiles/error/"
-                    }
-                }
-            }
-            
-+ Response 415 (application/vnd.mason+json)
+        "resource_url": "/api/users/ville/shoppinglist/5/",
+        "@error":{
+        "@message": "Not found",
+        "@messages":[
+        "User ville has no shoppinglist with id 5"
+        ]
+        },
+        "@controls":{
+        "profile":{
+        "href": "/api/profiles/errors/"
+        }
+        }
+}
+        
+        
 
-    The client sent a request with the wrong content type or the request body was not valid JSON.
+### Delete Shoppinglist [DELETE]
+
++ Relation: delete
++ Request
+
+    + Headers
+        
+            Accept: application/vnd.mason+json
+        
++ Response 204
+
++ Response 404 (application/vnd.mason+json)
+
+    The client is trying to delete a shoppinglist that doesn't exist.
 
     + Body
-        
+    
             {
-                "resource_url": "/api/users/1/plan/1/shoppinglist/1/",
-                "@error": {
-                    "@message": "Unsupported media type",
-                    "@messages": [
-                        "Use JSON"
-                    ]
+    "resource_url": "/api/users/ville/shoppinglist/5/",
+    "@error": {
+        "@message": "Not found",
+        "@messages": [
+            "User ville has no shoppinglist with id 5"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+#Group Steps
+
+## Steps collection [/api/recipes/{recipe_id}/steps/]
+
++ Parameters
+
+    + recipe_id (integer) - unique id of the recipe
+
+### Get Shopping Lists [GET]
+
++ Relation: collection
++ Request
+
+    + Headers
+        
+            Accept: application/vnd.mason+jason
+        
+
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+
+        {
+    "steps": [
+        {
+            "step": 1,
+            "text": "Examplestep1",
+            "@controls": {
+                "self": {
+                    "href": "/api/recipes/1/steps/1/"
                 },
-                "@controls": {
-                    "profile": {
-                        "href": "/profiles/error-profile/"
-                    }
+                "profile": {
+                    "href": "/api/profiles/steps/"
                 }
             }
+        },
+        {
+            "step": 2,
+            "text": "Examplestep2",
+            "@controls": {
+                "self": {
+                    "href": "/api/recipes/1/steps/3/"
+                },
+                "profile": {
+                    "href": "/api/profiles/steps/"
+                }
+            }
+        },
+        {
+            "step": 3,
+            "text": "Examplestep3",
+            "@controls": {
+                "self": {
+                    "href": "/api/recipes/1/steps/4/"
+                },
+                "profile": {
+                    "href": "/api/profiles/steps/"
+                }
+            }
+        }
+    ],
+    "@controls": {
+        "profile:steps-all": {
+            "method": "GET",
+            "title": "Get all steps of recipe",
+            "href": "/api/recipes/1/steps/"
+        },
+        "profile:add-step": {
+            "method": "POST",
+            "encoding": "json",
+            "title": "Add a new step to recipe",
+            "schema": {
+                "type": "object",
+                "required": [
+                    "step",
+                    "text"
+                ],
+                "properties": {
+                    "step": {
+                        "description": "The number of the step",
+                        "type": "integer"
+                    },
+                    "text": {
+                        "description": "The instruction of the step",
+                        "type": "string"
+                    }
+                }
+            },
+            "href": "/api/recipes/1/steps/"
+        }
+    }
+}
+
+### Add step to recipe [POST]
+
+You may add steps to recipe with this
+
++ Relation: add-step
++ Request (application/json)
+
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                "step": "1"
+                "text": "step number 1"
+            }
+
++ Response 204
+
+    + Headers
+    
+            Location: /api/recipes/1/steps/1/
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
+
+    + Body
+    
+            {
+    "resource_url": "/api/recipes/1/steps/",
+    "@error": {
+        "@message": "Missing fields",
+        "@messages": [
+            "Incomplete request - missing fields"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
++ Response 404 (application/vnd.mason+json)
+
+
+    + Body
+    
+           {
+    "resource_url": "/api/recipes/11/steps/",
+    "@error": {
+        "@message": "Missing fields",
+        "@messages": [
+            "Incomplete request - missing fields"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
++ Response 409 (application/vnd.mason+json)
+
+
+    + Body
+    
+            {
+    "resource_url": "/api/recipes/1/steps/",
+    "@error": {
+        "@message": "Duplicate content",
+        "@messages": [
+            "Step already exists"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+        
+
+## Step [/api/recipes/{recipe_id}/steps/{step_id}/]
+
++ Parameters
+
+    + recipe_id (integer) - unique id of the recipe
+    + step_id (integer) - unique number of the step
+
+
+### Step information [GET]
+
+Get the shoppinglist representation.
+
++ Relation: self
++ Relation: collection
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+    + Body
+    
+    {
+    "recipe_id": 1,
+    "step": 1,
+    "text": "Examplestep1",
+    "@namespaces": {
+        "recipe_steps": {
+            "name": "/api/profiles/link-relations/"
+        }
+    },
+    "@controls": {
+        "self": {
+            "href": "/api/recipes/1/steps/1/"
+        },
+        "profile": {
+            "href": "/api/profiles/steps/"
+        },
+        "collection": {
+            "href": "/api/recipes/1/steps/"
+        },
+        "profile:delete": {
+            "method": "DELETE",
+            "title": "Delete this resource",
+            "href": "/api/recipes/1/steps/1/"
+        },
+        "profile:edit-step": {
+            "method": "PUT",
+            "encoding": "json",
+            "title": "Edit an existing step",
+            "schema": {
+                "type": "object",
+                "required": [
+                    "step",
+                    "text"
+                ],
+                "properties": {
+                    "step": {
+                        "description": "The number of the step",
+                        "type": "integer"
+                    },
+                    "text": {
+                        "description": "The instruction of the step",
+                        "type": "string"
+                    }
+                }
+            },
+            "href": "/api/recipes/1/steps/1/"
+        },
+        "storage:recipe_steps-all": {
+            "href": "/api/recipes/1/steps/"
+        }
+    }
+}
+
++ Response 404 (application/vnd.mason+json)
+
+        + Body
+            {
+        "resource_url": "/api/recipes/11/steps/11/",
+        "@error": {
+            "@message": "Not Found",
+            "@messages": [
+                "No user was found with the username 11"
+            ]
+        },
+        "@controls": {
+            "profile": {
+                "href": "/api/profiles/errors/"
+            }
+        }
+    }
+
+
+### Edit Step [PUT]
+
+You may create new user using this action.
+
++ Relation: edit
++ Request (application/json)
+
+ + Headers
+        
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                "step":1,
+                "text": "Testedit"
+            }
+        
++ Response 204
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
+
+    + Body
+    
+        {
+    "resource_url": "/api/recipes/1/steps/1/",
+    "@error": {
+        "@message": "Missing fields",
+        "@messages": [
+            "Incomplete request - missing fields"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
+
++ Response 404 (application/vnd.mason+json)
+
+    Trying to edit step that does not exist
+
+    + Body
+    
+{
+    "resource_url": "/api/recipes/1/steps/11/",
+    "@error": {
+        "@message": "Not found",
+        "@messages": [
+            "No recipe was found with the name 1"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+        
+        
+
+### Delete Step [DELETE]
+
++ Relation: delete
++ Request
+
+    + Headers
+        
+            Accept: application/vnd.mason+json
+        
++ Response 204
+
++ Response 404 (application/vnd.mason+json)
+
+    Trying to delete step that does not exist
+
+
+    + Body
+    
+   {
+    "resource_url": "/api/recipes/1/steps/11/",
+    "@error": {
+        "@message": "Not found",
+        "@messages": [
+            "No recipe was found with the name 1"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+} 
+
+
+#Group Recipe ingredient
+
+## Recipe ingredient collection [/api/recipes/{recipe_id}/ingredients/]
+
++ Parameters
+
+    + recipe_id (integer) - unique id of the recipe
+
+### Get Recipe ingredients [GET]
+
++ Relation: collection
++ Request
+
+    + Headers
+        
+            Accept: application/vnd.mason+jason
+        
+
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+
+        {
+    "ingredients": [
+        {
+            "name": "potato",
+            "description": "new potatoes",
+            "amount": 1,
+            "unit": "kg",
+            "@controls": {
+                "self": {
+                    "href": "/api/recipes/1/ingredients/1/"
+                },
+                "profile": {
+                    "href": "/api/profiles/ingredients/"
+                }
+            }
+        }
+    ],
+    "@controls": {
+        "profile:ingredients-all": {
+            "method": "GET",
+            "title": "Get all ingredients of recipe",
+            "href": "/api/recipes/1/ingredients/"
+        },
+        "profile:add-ingredient": {
+            "method": "POST",
+            "encoding": "json",
+            "title": "Add a new ingredient to recipe",
+            "schema": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "description",
+                    "amount",
+                    "unit"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "The name of the ingredient",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "The description of the ingredient",
+                        "type": "string"
+                    },
+                    "amount": {
+                        "description": "The amount of foodstuff needed",
+                        "type": "integer"
+                    },
+                    "unit": {
+                        "description": "grams, litres etc",
+                        "type": "string"
+                    }
+                }
+            },
+            "href": "/api/recipes/1/ingredients/"
+        }
+    }
+}
+
++ Response 404 (application/vnd.mason+json)
+
+
+    + Body
+    
+        {
+    "resource_url": "/api/recipes/11/ingredients/",
+    "@error": {
+        "@message": "Not found",
+        "@messages": [
+            "No recipe was found with id 11"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+### Add a new Ingredient to a recipe [POST]
+
+You may add ingredient to recipe using this action.
+
++ Relation: add-ingredient
++ Request (application/json)
+
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+{
+      "name": "wuuuuuu",
+      "description": "hoii",
+      "amount": "1",
+      "unit": "kg",
+      "servingsize": "5",
+      "servingsizeunit": "kg",
+      "calories":"111",
+      "carbohydratecontent":"22",
+      "unsaturatedfatcontent":"973370"
+}
+
++ Response 204
+
+    + Headers
+    
+            Location: /api/recipes/1/ingredients/1/
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
+
+    + Body
+    
+            {
+    "resource_url": "/api/recipes/1/ingredients/",
+    "@error": {
+        "@message": "Missing fields",
+        "@messages": [
+            "Incomplete request - missing fields"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
++ Response 404 (application/vnd.mason+json)
+
+
+    + Body
+    
+           {
+    "resource_url": "/api/recipes/11/ingredients/",
+    "@error": {
+        "@message": "Not found",
+        "@messages": [
+            "No recipe was found with id 11"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
+
+
+## Recipe ingredient [/api/recipes/{recipe_id}/ingredients/{ingredient_id}/]
+
++ Parameters
+
+    + recipe_id (integer) - unique id of the recipe
+    + ingredient_id (integer) - unique id of the ingredient
+
+
+### Recipe ingredient information [GET]
+
+Get the shoppinglist representation.
+
++ Relation: self
++ Relation: collection
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+    + Body
+    
+    {
+    "name": "potato",
+    "description": "new potatoes",
+    "amount": 1,
+    "unit": "kg",
+    "calories": null,
+    "carbohydrateContent": null,
+    "cholesterolContent": null,
+    "fatContent": null,
+    "fiberContent": null,
+    "proteinContent": null,
+    "saturatedFatContent": null,
+    "sodiumContent": null,
+    "sugarContent": null,
+    "transFatContent": null,
+    "unsaturatedFatContent": null,
+    "@namespaces": {
+        "recipe_ingredients": {
+            "name": "/api/profiles/link-relations/"
+        }
+    },
+    "@controls": {
+        "self": {
+            "href": "/api/recipes/1/ingredients/1/"
+        },
+        "profile": {
+            "href": "/api/profiles/ingredients/"
+        },
+        "collection": {
+            "href": "/api/recipes/1/ingredients/"
+        },
+        "profile:delete": {
+            "method": "DELETE",
+            "title": "Delete this resource",
+            "href": "/api/recipes/1/ingredients/1/"
+        },
+        "profile:edit-ingredient": {
+            "method": "PUT",
+            "encoding": "json",
+            "title": "Edit an existing ingredient",
+            "schema": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "description",
+                    "amount",
+                    "unit"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "The name of the ingredient",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "The description of the ingredient",
+                        "type": "string"
+                    },
+                    "amount": {
+                        "description": "The amount of foodstuff needed",
+                        "type": "integer"
+                    },
+                    "unit": {
+                        "description": "grams, litres etc",
+                        "type": "string"
+                    }
+                }
+            },
+            "href": "/api/recipes/1/ingredients/1/"
+        }
+    }
+}
+
+
++ Response 404 (application/vnd.mason+json)
+
+        + Body
+           {
+    "resource_url": "/api/recipes/1/ingredients/11/",
+    "@error": {
+        "@message": "Not Found",
+        "@messages": [
+            "No ingredient was found with id 11"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
+
+### Edit Recipe ingredient [PUT]
+
+You may create new user using this action.
+
++ Relation: edit
++ Request (application/json)
+
+ + Headers
+        
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                  "name": "potato",
+                  "description": "hoii",
+                  "amount": "4",
+                  "unit": "kg",
+                  "servingsize": "5",
+                  "servingsizeunit": "kg",
+                  "calories":"111",
+                  "carbohydratecontent":"22",
+                  "unsaturatedfatcontent":"973370"
+            }
+        
++ Response 204
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
+
+    + Body
+    
+       {
+    "resource_url": "/api/recipes/1/ingredients/1/",
+    "@error": {
+        "@message": "Missing fields",
+        "@messages": [
+            "Incomplete request - missing fields"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
+
+
++ Response 404 (application/vnd.mason+json)
+
+    Trying to edit step that does not exist
+
+    + Body
+    
+{
+    "resource_url": "/api/recipes/1/ingredients/11/",
+    "@error": {
+        "@message": "Not Found",
+        "@messages": [
+            "No ingredient was found with id 11"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
+        
+        
+
+### Delete Recipe ingredient [DELETE]
+
++ Relation: delete
++ Request
+
+    + Headers
+        
+            Accept: application/vnd.mason+json
+        
++ Response 204
+
++ Response 404 (application/vnd.mason+json)
+
+    Trying to delete step that does not exist
+
+
+    + Body
+    
+ {
+    "resource_url": "/api/recipes/1/ingredients/11/",
+    "@error": {
+        "@message": "Not Found",
+        "@messages": [
+            "No ingredient was found with id 11"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+#Group Shopping list ingredient
+
+## Shopping list ingredient collection [/api/users/{username}/shoppinglist/{list_id}/ingredients/]
+
++ Parameters
+
+    + username (string) - unique username of user
+    + list_id (integer) - unique id of the shoppinglist
+
+### Get Recipe ingredients [GET]
+
++ Relation: collection
++ Request
+
+    + Headers
+        
+            Accept: application/vnd.mason+jason
+        
+
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+
+        {
+    "ingredients": [
+        {
+            "name": "potato",
+            "description": "new potatoes",
+            "amount": 1,
+            "unit": "kg",
+            "@controls": {
+                "self": {
+                    "href": "/api/recipes/1/ingredients/1/"
+                },
+                "profile": {
+                    "href": "/api/profiles/ingredients/"
+                }
+            }
+        }
+    ],
+    "@controls": {
+        "profile:ingredients-all": {
+            "method": "GET",
+            "title": "Get all ingredients of recipe",
+            "href": "/api/recipes/1/ingredients/"
+        },
+        "profile:add-ingredient": {
+            "method": "POST",
+            "encoding": "json",
+            "title": "Add a new ingredient to recipe",
+            "schema": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "description",
+                    "amount",
+                    "unit"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "The name of the ingredient",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "The description of the ingredient",
+                        "type": "string"
+                    },
+                    "amount": {
+                        "description": "The amount of foodstuff needed",
+                        "type": "integer"
+                    },
+                    "unit": {
+                        "description": "grams, litres etc",
+                        "type": "string"
+                    }
+                }
+            },
+            "href": "/api/recipes/1/ingredients/"
+        }
+    }
+}
+
++ Response 404 (application/vnd.mason+json)
+
+
+    + Body
+    
+        {
+    "resource_url": "/api/recipes/11/ingredients/",
+    "@error": {
+        "@message": "Not found",
+        "@messages": [
+            "No recipe was found with id 11"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+### Add a new Ingredient to a shoppinglist [POST]
+
+You may add ingredients to recipe using this action.
+
++ Relation: add-ingredient
++ Request (application/json)
+
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+{
+      "name": "wuuuuuu",
+      "description": "hoii",
+      "amount": "1",
+      "unit": "kg",
+      "servingsize": "5",
+      "servingsizeunit": "kg",
+      "calories":"111",
+      "carbohydratecontent":"22",
+      "unsaturatedfatcontent":"973370"
+}
+
++ Response 204
+
+    + Headers
+    
+            Location: /api/users/ville/shoppinglist/1/ingredients/1/
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
+
+    + Body
+    
+{
+    "resource_url": "/api/users/ville/shoppinglist/1/ingredients/",
+    "@error": {
+        "@message": "Missing fields",
+        "@messages": [
+            "Incomplete request - missing fields"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
+
++ Response 404 (application/vnd.mason+json)
+
+
+    + Body
+    
+{
+    "resource_url": "/api/users/ville/shoppinglist/11/ingredients/",
+    "@error": {
+        "@message": "Not Found",
+        "@messages": [
+            "No shopping list with id 11 was found with the username ville"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
+
+
+## Recipe ingredient [/api/users/{username}/shoppinglist/{list_id}/ingredients/{ingredient_id}/]
+
++ Parameters
+    
+    + username (string) - unique username of user
+    + list_id (integer) - list id of the recipe
+    + ingredient_id (integer) - unique id of the ingredient
+
+
+### Recipe ingredient information [GET]
+
+Get the shoppinglist representation.
+
++ Relation: self
++ Relation: collection
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+    + Body
+    
+    {
+    "name": "wuuuuuu",
+    "description": "hoii",
+    "amount": 1,
+    "unit": "kakka",
+    "calories": 111,
+    "carbohydrateContent": 22,
+    "cholesterolContent": null,
+    "fatContent": null,
+    "fiberContent": null,
+    "proteinContent": null,
+    "saturatedFatContent": null,
+    "sodiumContent": null,
+    "sugarContent": null,
+    "transFatContent": null,
+    "unsaturatedFatContent": 973370,
+    "@namespaces": {
+        "list_ingredients": {
+            "name": "/api/profiles/link-relations/"
+        }
+    },
+    "@controls": {
+        "self": {
+            "href": "/api/users/ville/shoppinglist/1/ingredients/2/"
+        },
+        "profile": {
+            "href": "/api/profiles/ingredients/"
+        },
+        "collection": {
+            "href": "/api/users/ville/shoppinglist/1/ingredients/"
+        },
+        "profile:delete": {
+            "method": "DELETE",
+            "title": "Delete this resource",
+            "href": "/api/users/ville/shoppinglist/1/ingredients/2/"
+        },
+        "profile:edit-ingredient": {
+            "method": "PUT",
+            "encoding": "json",
+            "title": "Edit an existing ingredient",
+            "schema": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "description",
+                    "amount",
+                    "unit"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "The name of the ingredient",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "The description of the ingredient",
+                        "type": "string"
+                    },
+                    "amount": {
+                        "description": "The amount of foodstuff needed",
+                        "type": "integer"
+                    },
+                    "unit": {
+                        "description": "grams, litres etc",
+                        "type": "string"
+                    }
+                }
+            },
+            "href": "/api/users/ville/shoppinglist/1/ingredients/2/"
+        },
+        "storage:recipe_ingredients-all": {
+            "href": "/api/users/ville/shoppinglist/1/ingredients/"
+        }
+    }
+}
+
+
+
++ Response 404 (application/vnd.mason+json)
+
+        + Body
+{
+    "resource_url": "/api/users/ville/shoppinglist/1/ingredients/21/",
+    "@error": {
+        "@message": "Not Found",
+        "@messages": [
+            "No ingredient was found with id 21"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
+
+### Edit Recipe ingredient [PUT]
+
+You may create new user using this action.
+
++ Relation: edit
++ Request (application/json)
+
+ + Headers
+        
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                  "name": "potato",
+                  "description": "hoii",
+                  "amount": "4",
+                  "unit": "kg",
+                  "servingsize": "5",
+                  "servingsizeunit": "kg",
+                  "calories":"111",
+                  "carbohydratecontent":"22",
+                  "unsaturatedfatcontent":"973370"
+            }
+        
++ Response 204
+
++ Response 400 (application/vnd.mason+json)
+
+    The client is trying to send a JSON document that doesn't validate against the schema, or has non-existent release date.
+
+    + Body
+    
+{
+    "resource_url": "/api/users/ville/shoppinglist/1/ingredients/2/",
+    "@error": {
+        "@message": "Missing fields",
+        "@messages": [
+            "Incomplete request - missing fields"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
+
+
+
++ Response 404 (application/vnd.mason+json)
+
+    Trying to edit step that does not exist
+
+    + Body
+    
+{
+    "resource_url": "/api/users/ville/shoppinglist/1/ingredients/21/",
+    "@error": {
+        "@message": "Not Found",
+        "@messages": [
+            "No user was found with the username None"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
+
+
+
+        
+        
+
+### Delete Recipe ingredient [DELETE]
+
++ Relation: delete
++ Request
+
+    + Headers
+        
+            Accept: application/vnd.mason+json
+        
++ Response 204
+
++ Response 404 (application/vnd.mason+json)
+
+    Trying to delete step that does not exist
+
+
+    + Body
+    
+{
+    "resource_url": "/api/users/ville/shoppinglist/1/ingredients/21/",
+    "@error": {
+        "@message": "Not Found",
+        "@messages": [
+            "No user was found with the username None"
+        ]
+    },
+    "@controls": {
+        "profile": {
+            "href": "/api/profiles/errors/"
+        }
+    }
+}
