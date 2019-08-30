@@ -1,9 +1,0 @@
-pytest
-sqlalchemy
-flask
-flask_sqlalchemy
-jsonschema
-flask_restful
-
-requests
-PySimpleGUI

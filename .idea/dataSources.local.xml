@@ -4,10 +4,12 @@
     <data-source name="test" uuid="6bd78896-d1fe-4077-985d-152ac0b11b6a">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="SQLITE" exact-version="0" />
       <auth-required>false</auth-required>
+      <schema-mapping />
     </data-source>
     <data-source name="test [2]" uuid="869a7667-10a6-4a0a-9a0a-e498b30ce34d">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="SQLITE" exact-version="0" />
       <auth-required>false</auth-required>
+      <schema-mapping />
     </data-source>
   </component>
 </project>
